@@ -1,0 +1,2706 @@
+<!DOCTYPE html>
+<html lang="es" class="lang-es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diego · ECXM OPS · el sistema operativo de un negocio COD</title>
+<meta name="description" content="Sistema operativo completo de un negocio de dropshipping COD en Colombia, construido en solitario con IA: espiar la competencia, analizar el producto, clonar la landing, generar creativos, controlar el día y cerrar el mes. Siete etapas encadenadas, una CLI de 35 comandos y un gate de igualdad exacta sobre la única cifra que se convierte en el pago de una persona.">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="Diego · ECXM OPS · el gate que impide que un sistema mienta con dinero">
+<meta property="og:description" content="Siete etapas encadenadas en un solo sistema, de espiar la competencia a cerrar el mes. La utilidad neta decide si un producto es winner, y eso cambia el reparto del contrato. Por eso esa cifra pasa por un gate golden de igualdad exacta. Solo, con IA.">
+<meta property="og:image" content="../assets/og-ecxm-ops.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Diego · ECXM OPS · el gate que impide que un sistema mienta con dinero">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="website">
+<meta name="author" content="Diego · ECXM OPS">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AE%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;450;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  /* set language ASAP — no FOUC. stored pref > browser lang > es */
+  (function(){try{
+    var l=localStorage.getItem('pf_lang');
+    if(!l){l=(navigator.language||'es').toLowerCase().indexOf('en')===0?'en':'es';}
+    document.documentElement.lang=l;
+    document.documentElement.className='lang-'+l;
+  }catch(e){}})();
+</script>
+<style>
+/* ════════════════════════════════════════════════════════════════
+   PORTFOLIO · ECXM OPS — Diego
+   Mismo sistema de diseño que los portfolios previos (dark-first,
+   tipografía kinética, grano + aurora, motion funcional, ES/EN) y
+   la MISMA paleta de la familia — violeta → cian → lima — para que
+   todos se lean como un solo portafolio. Lo que cambia aquí es la
+   narrativa y los componentes: rail de pipeline, cadena del dinero,
+   mapa cross-pipe y la calculadora real de precios.
+   Self-contained. Vanilla JS. Respeta prefers-reduced-motion.
+   ════════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06060a; --bg2:#0a0a11; --surface:#101019; --surface2:#15151f;
+  --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.13);
+  --text:#f1f1f5; --muted:#82828f; --muted2:#b4b4c2;
+  /* signature neon — compartido con el resto de portfolios */
+  --g1:#9b5cff;            /* electric violet */
+  --g2:#22d3ff;            /* cyan            */
+  --g3:#9bff57;            /* acid lime       */
+  --grad:linear-gradient(112deg,var(--g1),var(--g2));
+  --grad3:linear-gradient(112deg,var(--g1) 0%,var(--g2) 55%,var(--g3) 105%);
+  --accent:#a273ff; --accent-soft:rgba(155,92,255,.10); --accent-line:rgba(155,92,255,.32);
+  --cyan-soft:rgba(34,211,255,.10);
+  --live:#5dff9b; --kill:#ff5d7a; --warn:#ffce6a;
+  --hl:#bd9bff; --hl2:#8fbaff;
+  --maxw:1060px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:350;line-height:1.7;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;position:relative}
+.mono{font-family:'JetBrains Mono',monospace}
+.display{font-family:'Space Grotesk',sans-serif}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(155,92,255,.26);color:#fff}
+img,svg{display:block}
+:focus-visible{outline:2px solid var(--g2);outline-offset:3px;border-radius:4px}
+
+/* i18n: hide the inactive language */
+html.lang-es .t-en{display:none!important}
+html.lang-en .t-es{display:none!important}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,6vw,40px)}
+.grad-text{background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.eyebrow{font-size:.71rem;letter-spacing:.22em;text-transform:uppercase;font-weight:600;display:inline-flex;align-items:center;gap:12px;
+  font-family:'JetBrains Mono',monospace;color:var(--hl)}
+.eyebrow .grad-text{font-weight:600}
+.eyebrow::before{content:'';width:26px;height:1px;background:var(--grad);opacity:.9}
+
+/* ── ambient layers: aurora + grain ── */
+.aurora{position:fixed;inset:-20% -10% auto -10%;height:120vh;z-index:-2;pointer-events:none;filter:blur(70px);opacity:.5}
+.aurora b{position:absolute;border-radius:50%;mix-blend-mode:screen;will-change:transform}
+.aurora .b1{width:46vw;height:46vw;left:-6vw;top:-8vh;background:radial-gradient(circle at 30% 30%,rgba(155,92,255,.5),transparent 62%);animation:drift1 26s ease-in-out infinite}
+.aurora .b2{width:42vw;height:42vw;right:-4vw;top:4vh;background:radial-gradient(circle at 60% 40%,rgba(34,211,255,.42),transparent 62%);animation:drift2 32s ease-in-out infinite}
+.aurora .b3{width:34vw;height:34vw;left:32vw;top:34vh;background:radial-gradient(circle at 50% 50%,rgba(155,255,87,.16),transparent 60%);animation:drift3 38s ease-in-out infinite}
+@keyframes drift1{50%{transform:translate(8vw,6vh) scale(1.12)}}
+@keyframes drift2{50%{transform:translate(-7vw,8vh) scale(1.08)}}
+@keyframes drift3{50%{transform:translate(4vw,-6vh) scale(1.14)}}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ── scroll progress ── */
+.progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:95;background:var(--grad3);box-shadow:0 0 12px rgba(155,92,255,.55)}
+
+
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(93,255,155,.45)}70%{box-shadow:0 0 0 7px rgba(93,255,155,0)}100%{box-shadow:0 0 0 0 rgba(93,255,155,0)}}
+
+/* ── buttons ── */
+.cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:40px}
+.btn{display:inline-flex;align-items:center;gap:9px;font-size:.92rem;font-weight:500;padding:13px 22px;border-radius:11px;border:1px solid transparent;cursor:pointer;transition:transform .22s cubic-bezier(.2,.7,.2,1),box-shadow .22s,border-color .22s,background .22s}
+.btn-primary{background:var(--grad);color:#08080d;font-weight:600;box-shadow:0 6px 26px rgba(155,92,255,.28)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(34,211,255,.38)}
+.btn-ghost{border-color:var(--line2);color:var(--text);background:rgba(255,255,255,.015)}
+.btn-ghost:hover{border-color:var(--accent-line);background:var(--accent-soft);transform:translateY(-2px)}
+.btn svg{width:14px;height:14px}
+
+/* ── hero ── */
+.hero{padding:clamp(54px,10vw,104px) 0 clamp(34px,6vw,58px)}
+h1{font-family:'Space Grotesk';font-weight:600;font-size:clamp(2.5rem,6.6vw,4.9rem);line-height:1.02;letter-spacing:-.04em;margin:24px 0 28px;max-width:16ch;
+  /* Reparte las lineas en vez de llenar la primera y dejar la ultima
+     corta. Medido antes de unificar: SEKURA caia en 6 lineas a 390 con
+     la ultima al 12%. Donde no este soportado se ignora. Esta regla es
+     IDENTICA en las 6: el indice es el maestro. */
+  text-wrap:balance}
+.lede{font-size:clamp(1.04rem,1.5vw,1.22rem);color:var(--muted2);max-width:690px;line-height:1.8}
+.lede strong{color:var(--text);font-weight:500}
+.hero-note{margin-top:20px;font-size:.86rem;color:var(--muted);font-family:'JetBrains Mono';max-width:690px;line-height:1.6}
+.stats{display:flex;flex-wrap:wrap;gap:clamp(26px,5vw,54px);margin-top:62px;padding-top:38px;border-top:1px solid var(--line)}
+.stat .n{font-family:'Space Grotesk';font-weight:600;font-size:clamp(1.8rem,3.1vw,2.5rem);letter-spacing:-.02em;line-height:1}
+.stat .n .u{font-size:.56em}
+.stat .l{font-size:.78rem;color:var(--muted);margin-top:10px;line-height:1.5;max-width:23ch}
+
+
+
+
+
+
+
+
+
+
+/* ── section scaffold ── */
+section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);position:relative}
+.sec-head{max-width:720px;margin-bottom:46px}
+.sec-head h2{font-family:'Space Grotesk';font-weight:600;font-size:clamp(1.8rem,3.6vw,2.7rem);letter-spacing:-.035em;line-height:1.1;margin:16px 0}
+.sec-head p{color:var(--muted2);font-size:1.02rem;line-height:1.78}
+.sec-head p strong{color:var(--text);font-weight:500}
+.sec-head p .hl{color:var(--hl)}
+/* .bridge — traída del maestro (INDEX:191) al comprimir #metodo el 2026-08-20: el marcado la
+   usa y la página no la definía. Byte a byte igual que en el índice; no la edites por separado. */
+.bridge{border-left:2px solid;border-image:linear-gradient(180deg,var(--g1),var(--g3)) 1;
+  padding:4px 0 4px 18px;margin:26px 0 6px;font-size:.94rem;color:var(--muted2);line-height:1.72;max-width:62ch}
+.bridge strong{color:var(--text);font-weight:500}
+/* El maestro no tiene enlaces dentro de .bridge, así que no hereda afordancia: medido, el <a>
+   salía en rgb(180,180,194) —el MISMO color del párrafo— y sin subrayado. Un enlace que no se
+   ve como enlace no se clica. Regla local, deliberada; no es deriva del chasis. */
+.bridge a{color:var(--hl);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.bridge a:hover{color:var(--text)}
+
+/* ── video ── */
+.video{position:relative;border-radius:20px;border:1px solid var(--line2);overflow:hidden;background:#000;aspect-ratio:16/9;
+  box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.video::before{content:'';position:absolute;inset:0;border-radius:20px;padding:1px;pointer-events:none;z-index:4;
+  background:linear-gradient(140deg,rgba(155,92,255,.5),rgba(34,211,255,.18),transparent 55%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.video iframe,.video video{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* el hueco reservado (.video-ph) se fue con el vídeo real: las 8 reglas que lo
+   pintaban ya no tenían marcado al que aplicarse. Siguen vivas en las 4 páginas
+   que todavía esperan su vídeo. */
+.video-note{margin-top:16px;font-size:.83rem;color:var(--muted);font-family:'JetBrains Mono';line-height:1.6}
+.video-note b{color:var(--hl)}
+
+/* ── reproductor · el raton previsualiza el corte hero, el clic abre el tour ──
+   Dos piezas, un solo <video>: se cambia el src. El corte hero es el embed por
+   defecto que pide el guion; el tour vive detras de un clic porque pesa 25 MB y
+   nadie los descarga sin haberlo pedido (por eso preload="none" al cambiar).
+   Los dos son MUDOS con captions quemados: no hay pista de audio que gestionar. */
+.video.vp{cursor:pointer}
+.video.vp video{object-fit:cover;background:#000}
+.vp-ov{position:absolute;inset:0;z-index:3;width:100%;border:0;color:inherit;font:inherit;text-align:center;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;overflow:hidden;padding:0 12px;
+  background:radial-gradient(120% 110% at 50% 42%,rgba(7,7,11,.28),rgba(7,7,11,.8));
+  transition:opacity .32s,visibility .32s,background .3s}
+.vp-ov .play{width:84px;height:84px;border-radius:50%;background:var(--accent-soft);border:1px solid var(--accent-line);
+  display:flex;align-items:center;justify-content:center;transition:transform .25s,box-shadow .25s}
+.vp-ov .play svg{width:28px;height:28px;margin-left:5px;fill:url(#pg)}
+.video.vp:hover .vp-ov .play{transform:scale(1.07);box-shadow:0 0 44px rgba(34,211,255,.4)}
+.vp-ov:focus-visible{outline:2px solid var(--accent);outline-offset:-6px}
+.vp-ov .vt{font-family:'Space Grotesk';font-weight:500;font-size:1.04rem;color:var(--text)}
+.vp-ov .vs{font-size:.76rem;color:var(--muted2);font-family:'JetBrains Mono';line-height:1.6;letter-spacing:.02em;max-width:46ch;padding:0 20px;text-wrap:balance}
+.video.is-tour .vp-ov{opacity:0;visibility:hidden;pointer-events:none}
+/* mientras previsualiza, el telon se retira: un corte hero que se ve a traves
+   de una capa negra y con dos parrafos encima no es una vista previa */
+.video.is-preview .vp-ov{background:rgba(7,7,11,.16)}
+.video.is-preview .vp-ov .vt,.video.is-preview .vp-ov .vs{display:none}
+.video.is-preview .vp-ov .play{transform:scale(.68);opacity:.55}
+/* abajo a la izquierda: los dos videos llevan su propio rotulo ARRIBA a la
+   izquierda (numero de pestanas / seccion) y las dos etiquetas se pisaban */
+.vp-tag{position:absolute;z-index:3;left:14px;bottom:14px;pointer-events:none;opacity:0;transition:opacity .3s;
+  font-family:'JetBrains Mono';font-size:.63rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);
+  background:rgba(7,7,11,.74);border:1px solid var(--line2);border-radius:999px;padding:6px 12px}
+.video.is-preview .vp-tag{opacity:1}
+.vp-chaps{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:10px;margin-top:15px}
+.vp-chaps .vc{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:11px;cursor:pointer;text-align:left;
+  border:1px solid var(--line2);background:rgba(255,255,255,.02);color:var(--muted2);
+  font-family:'JetBrains Mono';font-size:.72rem;line-height:1.35;transition:border-color .2s,color .2s,transform .2s}
+.vp-chaps .vc:hover{border-color:var(--accent-line);color:var(--text);transform:translateY(-2px)}
+.vp-chaps .vc b{color:var(--muted);font-weight:500;white-space:nowrap}
+.vp-chaps .vc b:last-child{margin-left:auto}
+.vp-chaps .vc[aria-current="true"]{border-color:var(--accent-line);color:var(--text);background:var(--accent-soft)}
+/* en movil no hay hover y la caja mide ~150px de alto: el parrafo no cabe */
+@media(max-width:640px){
+  .vp-ov{gap:10px}
+  .vp-ov .play{width:56px;height:56px}
+  .vp-ov .play svg{width:20px;height:20px;margin-left:3px}
+  .vp-ov .vt{font-size:.9rem}
+  .vp-ov .vs{display:none}
+}
+
+/* ── pipeline rail (componente propio de este proyecto) ── */
+.rail{margin-top:46px}
+.rail-track{display:flex;gap:0;position:relative;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.rail-track::before{content:'';position:absolute;left:0;right:0;top:31px;height:2px;background:linear-gradient(90deg,var(--g1),var(--g2) 60%,var(--g3));opacity:.32}
+.rl{flex:1 0 132px;position:relative;background:transparent;border:0;padding:0 6px;cursor:pointer;text-align:center;font:inherit;color:inherit}
+.rl .dot{width:26px;height:26px;margin:19px auto 0;border-radius:50%;background:var(--surface);border:1.6px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:.72rem;font-weight:600;color:var(--muted2);
+  position:relative;z-index:2;transition:border-color .22s,color .22s,box-shadow .22s,transform .22s}
+.rl .nm{margin-top:12px;font-family:'Space Grotesk';font-weight:500;font-size:.86rem;transition:color .22s}
+.rl .tg{margin-top:4px;font-family:'JetBrains Mono';font-size:.63rem;color:var(--muted);letter-spacing:.03em}
+.rl[aria-selected="true"] .dot,.rl:hover .dot{border-color:var(--accent-line);color:var(--accent);box-shadow:0 0 26px rgba(155,92,255,.35);transform:scale(1.12)}
+.rl[aria-selected="true"] .nm{color:#fff}
+.rl[aria-selected="true"]::after{content:'';position:absolute;left:50%;top:56px;width:1px;height:16px;background:var(--accent-line)}
+.rail-panel{margin-top:26px;background:var(--surface);border:1px solid var(--line2);border-radius:16px;padding:clamp(20px,3vw,30px);
+  box-shadow:0 22px 60px rgba(0,0,0,.45);min-height:172px}
+.rail-panel .rp-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.rail-panel h4{font-family:'Space Grotesk';font-weight:600;font-size:1.16rem;letter-spacing:-.01em}
+.rail-panel .rp-cost{font-family:'JetBrains Mono';font-size:.72rem;padding:4px 11px;border-radius:100px;border:1px solid var(--accent-line);color:var(--accent);background:var(--accent-soft);white-space:nowrap}
+.rail-panel p{color:var(--muted2);font-size:.96rem;line-height:1.75}
+.rail-panel .rp-meta{margin-top:14px;padding-top:13px;border-top:1px solid var(--line);font-family:'JetBrains Mono';font-size:.74rem;color:var(--muted);line-height:1.6}
+.rail-panel .rp-meta b{color:var(--hl2);font-weight:500}
+.rail-note{margin-top:14px;font-size:.75rem;color:var(--muted);font-family:'JetBrains Mono'}
+
+/* ── engine / diagramas ── */
+.engine{position:relative;border-radius:18px;padding:clamp(12px,2vw,22px);
+  background:radial-gradient(120% 130% at 50% -10%,rgba(155,92,255,.09),rgba(34,211,255,.04) 55%,transparent);
+  border:1px solid var(--line2);box-shadow:0 22px 60px rgba(0,0,0,.5);overflow:hidden}
+.engine::before{content:'';position:absolute;inset:0;border-radius:18px;padding:1px;pointer-events:none;z-index:2;
+  background:linear-gradient(140deg,rgba(155,92,255,.5),rgba(34,211,255,.3),transparent 60%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.engine svg{width:100%;height:auto;display:block}
+.engine-cap{margin-top:14px;font-size:.79rem;color:var(--muted);font-family:'JetBrains Mono';line-height:1.65}
+.engine-cap b{color:var(--hl)}
+.zoom-hint{display:none;margin-top:10px;font-size:.74rem;color:var(--g2);font-family:'JetBrains Mono'}
+@media(max-width:880px){.zoom-hint{display:block}}
+
+/* ── procedencia table ── */
+.prov{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:34px}
+.prov th{text-align:left;font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);
+  padding:0 14px 15px;border-bottom:1px solid var(--line2);font-family:'JetBrains Mono'}
+.prov td{padding:17px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--muted2)}
+.prov tbody tr{transition:background .2s}
+.prov tbody tr:hover{background:rgba(255,255,255,.018)}
+.prov .src{color:var(--text);font-weight:500;font-family:'JetBrains Mono';font-size:.86rem}
+.prov .rule{font-size:.83rem;line-height:1.55}
+.prov .rule b{color:var(--text);font-weight:500}
+.tagp{display:inline-block;padding:4px 10px;border-radius:100px;font-size:.68rem;font-weight:500;white-space:nowrap;font-family:'JetBrains Mono'}
+.tp-cash{background:var(--accent-soft);color:var(--hl);border:1px solid var(--accent-line)}
+.tp-perf{background:var(--cyan-soft);color:var(--hl2);border:1px solid rgba(34,211,255,.3)}
+.tp-base{background:rgba(255,255,255,.04);color:var(--muted2);border:1px solid var(--line2)}
+.tp-est{background:rgba(255,206,106,.1);color:var(--warn);border:1px solid rgba(255,206,106,.28)}
+
+/* ── silver bullet / code ── */
+.sb{display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:start;margin-top:40px}
+.sb-code{position:relative;background:#08090d;border:1px solid var(--line);border-radius:16px;padding:24px;
+  font-family:'JetBrains Mono';font-size:.775rem;line-height:1.95;color:var(--muted2);overflow-x:auto;white-space:pre}
+.sb-code::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--grad3);opacity:.5}
+.sb-code .cm{color:#5f5f6c}.sb-code .r{color:#ff8298}.sb-code .g{color:#7dffb4}.sb-code .a{color:#bd9bff}.sb-code .b{color:#8fbaff}
+.sb-body p{color:var(--muted2);font-size:.96rem;line-height:1.82;margin-bottom:16px}
+.sb-body p:last-child{margin-bottom:0}
+.sb-body strong{color:var(--text);font-weight:500}.sb-body .hl{color:var(--hl)}
+.sb-body .sb-kicker{margin-top:16px;padding-top:15px;border-top:1px solid var(--line);font-size:1.06rem;line-height:1.5}
+.sb-body .sb-kicker strong{background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;font-weight:600}
+.sb-body em{font-style:normal;color:var(--g2)}
+.sb-body .mono{font-size:.86em;color:var(--hl2)}
+
+/* ── terminal ── */
+.term{background:#08090d;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:32px;box-shadow:0 22px 60px rgba(0,0,0,.45)}
+.term-bar{display:flex;align-items:center;gap:8px;padding:11px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.015)}
+.term-bar i{width:9px;height:9px;border-radius:50%;background:#2a2a33;display:block}
+.term-bar span{margin-left:8px;font-family:'JetBrains Mono';font-size:.71rem;color:var(--muted)}
+.term pre{padding:20px 22px;font-family:'JetBrains Mono';font-size:.775rem;line-height:1.9;color:var(--muted2);overflow-x:auto;white-space:pre}
+.term .ok{color:var(--live);font-weight:600}
+.term .cm{color:#5f5f6c}
+.term .pr{color:var(--g2)}
+.term .hi{color:var(--text)}
+
+/* ── truth strip ── */
+.truth{margin-top:44px;display:flex;gap:18px;align-items:flex-start;border-top:1px solid var(--line);padding-top:30px}
+.truth .tl{font-family:'Space Grotesk';font-weight:600;font-size:.9rem;flex:0 0 auto;max-width:200px}
+.truth p{color:var(--muted2);font-size:.94rem;line-height:1.74}
+.truth b{color:var(--text);font-weight:500}
+
+/* ── calculadora real ── */
+.calc{background:var(--surface);border:1px solid var(--line2);border-radius:18px;padding:clamp(22px,3vw,34px);box-shadow:0 22px 60px rgba(0,0,0,.45)}
+.calc-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:4px}
+.calc-top .cl{font-family:'JetBrains Mono';font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.calc-top .cn{font-family:'Space Grotesk';font-weight:600;font-size:1.4rem}
+.calc-top .cn b{background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.calc input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:100px;background:linear-gradient(90deg,var(--g1),var(--g2));outline:none;margin:16px 0 28px;cursor:pointer}
+.calc input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 0 0 4px rgba(155,92,255,.3),0 4px 12px rgba(0,0,0,.5)}
+.calc input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 0 0 4px rgba(155,92,255,.3)}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tier{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:13px;padding:18px;transition:border-color .25s,transform .25s}
+.tier:hover{border-color:var(--accent-line);transform:translateY(-2px)}
+.tier .tk{font-family:'JetBrains Mono';font-size:.68rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+.tier .tp{font-family:'Space Grotesk';font-weight:600;font-size:1.55rem;letter-spacing:-.02em;margin-top:8px;line-height:1}
+.tier .tp b{background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.tier .td{margin-top:9px;font-family:'JetBrains Mono';font-size:.72rem;color:var(--muted);line-height:1.6}
+.tier .td s{color:#6b6b78}
+.tier .off{color:var(--warn);font-weight:600}
+.calc-foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+.calc-foot .cf-l{font-size:.95rem;color:var(--muted2);line-height:1.6;flex:1;min-width:240px}
+.calc-foot .cf-l b{color:var(--text);font-weight:500}
+.calc-be{text-align:right;white-space:nowrap}
+.calc-be b{font-family:'Space Grotesk';font-weight:600;font-size:clamp(1.7rem,3.4vw,2.3rem);letter-spacing:-.02em;line-height:1;
+  background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.calc-be small{display:block;font-family:'JetBrains Mono';font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin-top:6px}
+.calc-note{margin-top:18px;font-size:.75rem;color:var(--muted);font-family:'JetBrains Mono';line-height:1.7}
+.calc-note b{color:var(--hl)}
+.calc-params{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font-family:'JetBrains Mono';font-size:.71rem;color:var(--muted)}
+.calc-params span b{color:var(--muted2);font-weight:500}
+@media(max-width:700px){.tiers{grid-template-columns:1fr}}
+
+/* ── generic card grids ── */
+.layers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.layer{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;transition:border-color .25s,transform .25s,box-shadow .25s}
+.layer:hover{border-color:var(--accent-line);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.layer .n{font-family:'JetBrains Mono';font-size:.71rem;letter-spacing:.06em;font-weight:600}
+.layer h4{font-family:'Space Grotesk';font-weight:500;font-size:1.03rem;margin:10px 0 8px}
+.layer p{font-size:.85rem;color:var(--muted);line-height:1.64}
+.layer p .hl{color:var(--hl)}
+/* auto-fit, no repeat(4,1fr): al quitar 2 de las 4 tarjetas de #precio el 2026-08-20 la rejilla
+   seguia reservando 4 columnas y dejaba 466 px de hueco muerto a 1440 — es [INC-CSS-02] otra vez.
+   Con auto-fit el bloque de 4 tarjetas sigue saliendo en 4 columnas y el de 2 ocupa el ancho. */
+.scale-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:32px}
+.sf{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;transition:border-color .25s,transform .25s,box-shadow .25s}
+.sf:hover{border-color:var(--accent-line);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.sf .sfn{font-family:'Space Grotesk';font-weight:600;font-size:1.7rem;letter-spacing:-.02em;line-height:1}
+.sf .sfn b{background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.sf h4{font-family:'Space Grotesk';font-weight:500;font-size:.93rem;margin:11px 0 6px}
+.sf p{font-size:.79rem;color:var(--muted);line-height:1.58}
+@media(max-width:880px){.scale-facts{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.scale-facts{grid-template-columns:1fr}}
+
+/* ── superficies (calibrado de ceremonia) ── */
+.surf{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+.su{border-radius:14px;padding:22px;border:1px solid var(--line);background:var(--surface);position:relative;overflow:hidden}
+.su::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.su.irr::before{background:var(--kill)}
+.su.sen::before{background:var(--warn)}
+.su.min::before{background:var(--live)}
+.su .lv{font-family:'JetBrains Mono';font-size:.67rem;letter-spacing:.11em;text-transform:uppercase;font-weight:600}
+.su.irr .lv{color:#ff8298}.su.sen .lv{color:var(--warn)}.su.min .lv{color:var(--live)}
+.su h4{font-family:'Space Grotesk';font-weight:500;font-size:1rem;margin:10px 0 8px}
+.su p{font-size:.83rem;color:var(--muted);line-height:1.62}
+.su .cer{margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-family:'JetBrains Mono';font-size:.71rem;color:var(--muted2)}
+
+/* ── table / decisiones ── */
+.stbl{width:100%;border-collapse:collapse;font-size:.9rem}
+.stbl th{text-align:left;font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);
+  padding:0 14px 15px;border-bottom:1px solid var(--line2);font-family:'JetBrains Mono'}
+.stbl td{padding:18px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--muted2)}
+.stbl tbody tr{transition:background .2s}
+.stbl tbody tr:hover{background:rgba(255,255,255,.018)}
+.stbl .sn{color:var(--text);font-weight:500;font-family:'Space Grotesk';font-size:.97rem}
+.stbl .sd{font-size:.78rem;color:var(--muted);margin-top:4px;display:block;max-width:330px;line-height:1.45}
+.stbl .mono{font-size:.81rem;color:var(--muted2)}
+.v{display:inline-block;padding:5px 11px;border-radius:100px;font-size:.71rem;font-weight:500;white-space:nowrap;font-family:'JetBrains Mono'}
+.v-kill{background:rgba(255,93,122,.10);color:#ff8298;border:1px solid rgba(255,93,122,.24)}
+.v-res{background:var(--accent-soft);color:var(--hl);border:1px solid var(--accent-line)}
+.v-marg{background:var(--cyan-soft);color:var(--hl2);border:1px solid rgba(34,211,255,.26)}
+.v-val{background:rgba(93,255,155,.09);color:var(--live);border:1px solid rgba(93,255,155,.24)}
+.v-inc{background:rgba(255,206,106,.10);color:var(--warn);border:1px solid rgba(255,206,106,.26)}
+
+/* ── método cards ── */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px}
+.mc{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;transition:border-color .25s,transform .25s,box-shadow .25s}
+.mc:hover{border-color:var(--accent-line);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.mc h4{font-family:'Space Grotesk';font-weight:500;font-size:1.03rem;margin-bottom:9px;display:flex;align-items:center;gap:11px}
+.mc h4 .ic{width:22px;height:22px;flex:0 0 auto}
+.mc p{font-size:.86rem;color:var(--muted);line-height:1.66}.mc .hl{color:var(--hl)}
+
+/* ── estado abierto ── */
+.open{margin-top:40px;border:1px dashed var(--line2);border-radius:16px;padding:clamp(20px,3vw,28px);background:rgba(255,255,255,.012)}
+.open h4{font-family:'Space Grotesk';font-weight:600;font-size:1.02rem;margin-bottom:6px}
+.open .oi{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.open .oi:last-child{border-bottom:0;padding-bottom:0}
+.open .ok2{font-family:'JetBrains Mono';font-size:.68rem;color:var(--warn);border:1px solid rgba(255,206,106,.26);border-radius:100px;padding:3px 9px;flex:0 0 auto;margin-top:2px}
+.open .ov{font-size:.87rem;color:var(--muted2);line-height:1.62}
+.open .ov b{color:var(--text);font-weight:500}
+.open .intro{font-size:.88rem;color:var(--muted);margin-bottom:10px;line-height:1.62}
+
+/* ── contact ── */
+.contact{text-align:center;max-width:680px;margin:0 auto}
+.contact h2{font-family:'Space Grotesk';font-weight:600;font-size:clamp(1.9rem,4vw,2.9rem);letter-spacing:-.035em;line-height:1.12;margin:18px 0 20px}
+.contact p{color:var(--muted2);font-size:1.05rem;line-height:1.7;margin-bottom:32px}
+.contact .cta{justify-content:center}
+footer{border-top:1px solid var(--line);padding:30px 0;display:flex;justify-content:space-between;gap:14px;
+  font-size:.8rem;color:var(--muted);flex-wrap:wrap;font-family:'JetBrains Mono'}
+footer .hl{color:var(--muted2)}
+
+/* ── reveal ── */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ── system constellation ── */
+.cn-svg{display:block;width:100%;height:auto;overflow:visible}
+.cn-edge{stroke:#39344d;stroke-width:1.4;opacity:.55;transition:stroke .25s,opacity .25s,stroke-width .25s}
+.cn-edge.on{stroke:url(#cn-grad-full);opacity:.95;stroke-width:2.2}
+.cn-node{cursor:pointer;transition:opacity .25s;outline:none}
+.cn-dot{fill:rgba(12,12,20,.94);stroke-width:1.9;transition:filter .25s,stroke-width .25s}
+.cn-node:hover .cn-dot,.cn-node.hot .cn-dot,.cn-node:focus-visible .cn-dot{filter:drop-shadow(0 0 7px currentColor);stroke-width:2.6}
+.cn-label{font:700 14px 'Space Grotesk','Inter',sans-serif;fill:#f1f1f5;pointer-events:none}
+.cn-sub{font:400 11px 'Inter',sans-serif;fill:#9a9ab0;pointer-events:none;opacity:0;transition:opacity .25s}
+.cn-node:hover .cn-sub,.cn-node.hot .cn-sub,.cn-node:focus-visible .cn-sub{opacity:1}
+.cn-svg.dimming .cn-node:not(.hot){opacity:.28}
+.cn-svg.dimming .cn-edge:not(.on){opacity:.14}
+
+@media(max-width:880px){
+  .truth{display:block}
+  .truth .tl{display:block;margin-bottom:10px;max-width:none}
+  .layers,.sb,.mgrid,.surf{grid-template-columns:1fr;gap:18px}
+  .stbl .sd{max-width:none}
+  .stbl thead,.prov thead{display:none}
+  .stbl,.stbl tbody,.stbl tr,.stbl td,
+  .prov,.prov tbody,.prov tr,.prov td{display:block;width:100%}
+  .stbl tr,.prov tr{border:1px solid var(--line);border-radius:14px;margin-bottom:16px;padding:6px 4px;background:var(--surface)}
+  .stbl td,.prov td{border:0;padding:10px 16px}
+  .stbl td::before,.prov td::before{content:attr(data-h-es);display:block;font-family:'JetBrains Mono';font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  html.lang-en .stbl td::before,html.lang-en .prov td::before{content:attr(data-h)}
+}
+@media(max-width:520px){footer{flex-direction:column;text-align:center}}
+@media(prefers-reduced-motion:reduce){
+  /* la aurora y la constelación son parte del concepto y siguen animando;
+     solo hacemos instantáneos los reveals. */
+  .reveal{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+}
+
+@media(max-width:560px){.tw-id .tw-path{display:none}}
+
+/* ══ CHASIS DE TERMINAL · portado del indice (el maestro) ══
+   Vive DUPLICADO en las 6 paginas: no hay build step
+   (file-organization.md). Todo arreglo se aplica a las 6
+   en la misma pasada, o el chasis diverge en semanas. ══ */
+@keyframes caret{50%{opacity:0}}
+/* ── ventana ──
+   Modo ventana: marco flotante, esquinas, sombra y barra de titulo con
+   los tres puntos. */
+html,body{height:100%}
+body{overflow:hidden}
+.tw{position:fixed;inset:clamp(0px,2.2vh,26px) clamp(0px,2.2vw,34px);z-index:10;
+  display:flex;flex-direction:column;overflow:hidden;
+  /* sin backdrop-filter: el compositing translucido sobre texto que se
+     repinta linea a linea es justo lo que parpadeaba. Fondo opaco. */
+  background:#07070d;
+  border:1px solid var(--line2);border-radius:14px;
+  box-shadow:0 40px 120px rgba(0,0,0,.72),0 0 0 1px rgba(155,92,255,.07)}
+.tw-bar{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:11px 15px;
+  border-bottom:1px solid var(--line);background:rgba(255,255,255,.022);
+  font-family:'JetBrains Mono';font-size:.72rem;color:var(--muted)}
+.tw-dots{display:flex;gap:7px;flex:0 0 auto}
+.tw-dots i{width:11px;height:11px;border-radius:50%;background:var(--line2)}
+.tw-dots i:nth-child(1){background:#ff5d7a55}
+.tw-dots i:nth-child(2){background:#ffce6a55}
+.tw-dots i:nth-child(3){background:#5dff9b55}
+/* ── identidad ──
+   Antes: un cuadrado en degradado + «diego@portfolio» + la ruta. El
+   cuadrado era un logotipo web pegado dentro de una terminal, y
+   «@portfolio» no aporta nada que no diga ya el dominio. Queda el
+   nombre como comando y la ruta viva al lado. */
+.tw-id{display:inline-flex;align-items:baseline;gap:10px;flex:0 1 auto;min-width:0;
+  color:var(--muted2);text-decoration:none;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.tw-id b{color:var(--text);font-weight:600}
+.tw-id:hover b{color:var(--g2)}
+.tw-id .tw-path{color:var(--hl2)}
+.tw-id .tw-path:not(:empty)::before{content:'· ';color:#3a3a46}
+.tw-gap{flex:1 1 auto}
+
+/* ── salidas: correo y LinkedIn ──
+   Un boton con texto pesaba demasiado para lo que es. Como iconos, la
+   via de contacto sigue a un clic y deja de competir con la ruta. */
+.tw-io{display:inline-flex;align-items:center;gap:4px;flex:0 0 auto}
+.tw-io a{display:inline-flex;align-items:center;justify-content:center;
+  width:30px;height:26px;border-radius:6px;color:var(--muted);
+  transition:color .18s,background .18s}
+.tw-io a:hover{color:var(--g2);background:rgba(34,211,255,.10)}
+.tw-io svg{width:15px;height:15px;display:block}
+/* La pastilla de contacto: unico elemento de la barra con texto y con
+   color propio. Es la accion que la pagina existe para pedir, asi que
+   no compite en gris con los otros dos. */
+.tw-io a.tw-mail{color:var(--g2);background:rgba(34,211,255,.09);
+  border:1px solid rgba(34,211,255,.28)}
+/* ── area tactil del CTA ──
+   El sobre mide 26x26 y el minimo tactil son 44x44: un CTA que se falla al
+   tocar es un CTA que no se usa, y este es la unica accion que la pagina
+   existe para pedir. Se agranda con un ::after invisible en vez de con
+   padding: asi la zona de toque llega a 44 sin mover un pixel de la barra,
+   que a 390 no tiene sitio de sobra. Vive en las 6 paginas — el indice es
+   el maestro del chasis. */
+.tw-io a{position:relative}
+.tw-io a.tw-mail::after{content:'';position:absolute;left:50%;top:50%;
+  width:44px;height:44px;transform:translate(-50%,-50%)}
+.tw-io a.tw-mail:hover{background:rgba(34,211,255,.18);border-color:rgba(34,211,255,.5)}
+
+/* ── idioma ──
+   Desplegable propio. El <select> nativo no valia: su panel lo dibuja
+   el sistema operativo y no acepta CSS — ni esquinas redondeadas, ni
+   fondo, ni el color de seleccion. Con un boton y una lista propios,
+   hereda el diseño de la ventana entero. */
+.tw-lang{position:relative;flex:0 0 auto}
+.tw-lang>button{display:inline-flex;align-items:center;gap:6px;
+  font:inherit;font-family:'JetBrains Mono';font-size:.7rem;
+  color:var(--muted2);background:transparent;border:1px solid var(--line2);
+  border-radius:7px;padding:4px 8px;cursor:pointer;
+  transition:border-color .18s,color .18s,background .18s}
+.tw-lang>button:hover,.tw-lang>button[aria-expanded="true"]{
+  border-color:var(--accent-line);color:var(--text);background:var(--accent-soft)}
+.tw-lang>button i{width:0;height:0;border-left:3.5px solid transparent;
+  border-right:3.5px solid transparent;border-top:4px solid currentColor;
+  opacity:.75;transition:transform .18s}
+.tw-lang>button[aria-expanded="true"] i{transform:rotate(180deg)}
+
+/* la lista va en position:fixed a proposito: .tw tiene overflow:hidden
+   para sus esquinas, y cualquier capa absoluta dentro de la barra
+   quedaria recortada. Las coordenadas las pone el JS al abrir. */
+/* flex en columna, no block: en un contenedor de bloque los saltos de
+   linea del HTML entre los <li> generaban caja y metian ~30 px de aire
+   entre las dos opciones. Un contenedor flex descarta los nodos de solo
+   espacio en blanco, asi que el hueco desaparece sin tocar el marcado. */
+.tw-langlist{position:fixed;z-index:120;margin:0;padding:4px;list-style:none;
+  display:flex;flex-direction:column;gap:2px;
+  min-width:64px;background:var(--surface);border:1px solid var(--line2);
+  border-radius:9px;box-shadow:0 14px 34px rgba(0,0,0,.55);
+  font-family:'JetBrains Mono';font-size:.7rem}
+.tw-langlist[hidden]{display:none!important}
+.tw-langlist li{padding:6px 10px;border-radius:6px;color:var(--muted2);cursor:pointer;
+  transition:background .14s,color .14s}
+/* OJO con el nombre: la clase «act» ya existe en la pagina (los actos
+   del metodo) y trae display:flex y margin:30px 0 2px. Al reutilizarla
+   aqui, la opcion resaltada heredaba 30 px de margen superior y abria
+   un hueco en la lista. Prefijada para que no vuelva a pasar. */
+.tw-langlist li:hover,.tw-langlist li.tw-hi{background:var(--accent-soft);color:var(--text)}
+.tw-langlist li[aria-selected="true"]{color:var(--g2)}
+
+@media(max-width:640px){
+  /* los tres puntos se quedan tambien en movil: son la mitad de lo que
+     hace que esto se lea como una ventana y no como una cabecera web */
+  .tw-bar{gap:8px;padding:10px 11px}
+  .tw-dots{gap:5px}
+  .tw-dots i{width:9px;height:9px}
+  .tw-io a{width:26px}
+}
+/* La ruta NO se oculta en movil aunque sea estrecho: desde que no hay
+   nav ni drawer, es el unico indicador de en que seccion estas. Si no
+   cabe, que se recorte con puntos suspensivos — pero que este. */
+@media(max-width:360px){
+  .tw-bar{gap:6px;padding:9px 9px}
+  /* 24 y no 23: por debajo de 24x24 el objetivo tactil queda bajo el
+     minimo, y esto es justo el ancho de movil del lector que llega de
+     LinkedIn. El px que se gana apretando no vale el toque fallado. */
+  .tw-io a{width:24px}
+}
+.tw-meta{flex:0 0 auto}
+@media(max-width:700px){.tw-meta{display:none}}
+.tw-body{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;position:relative;
+  scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.tw-body::-webkit-scrollbar{width:10px}
+.tw-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border-radius:6px;
+  border:3px solid transparent;background-clip:content-box}
+.tw-body::-webkit-scrollbar-thumb:hover{background:rgba(155,92,255,.4);background-clip:content-box}
+
+/* ── linea de escritura, pegada al fondo de la ventana ── */
+.tw-prompt{flex:0 0 auto;display:flex;align-items:center;gap:8px;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid var(--line);background:rgba(255,255,255,.022);
+  font-family:'JetBrains Mono';font-size:.8rem}
+.twp-u{color:var(--g3);flex:0 0 auto}
+.twp-d{color:var(--hl2);flex:0 0 auto}
+.twp-s{color:var(--muted);flex:0 0 auto}
+.tw-prompt input{flex:1 1 auto;min-width:0;background:transparent;border:0;outline:0;
+  color:var(--text);font:inherit;caret-color:transparent}
+.tw-prompt input::placeholder{color:var(--muted);opacity:.7}
+.twp-car{flex:0 0 auto;color:var(--g2);animation:caret 1.05s steps(1) infinite}
+.tw-prompt:focus-within{background:rgba(155,92,255,.05)}
+@media(max-width:700px){.twp-u{display:none}.tw-prompt{font-size:.76rem}}
+
+/* respuestas del interprete, impresas al final del cuerpo */
+.tw-out{font-family:'JetBrains Mono';font-size:.76rem;line-height:1.8;color:var(--muted2);
+  padding:2px clamp(20px,6vw,40px)}
+.tw-out .ko{color:var(--kill)}
+.tw-out .ok{color:var(--live)}
+.tw-out b{color:var(--text);font-weight:600}
+
+/* ── eco de comando delante de cada seccion ── */
+.tw-cmd{font-family:'JetBrains Mono';font-size:.76rem;line-height:1.7;
+  padding:26px clamp(20px,6vw,40px) 0;max-width:var(--maxw);margin:0 auto;
+  display:flex;gap:7px;flex-wrap:wrap}
+.tw-cmd .u{color:var(--g3)}
+.tw-cmd .d{color:var(--hl2);margin-left:-7px}
+.tw-cmd .s{color:var(--muted);margin-left:-7px}
+.tw-cmd b{color:var(--text);font-weight:600}
+.tw-cmd.tw-first{padding-top:20px}
+/* el eco teclea de izquierda a derecha con su propio cursor: escribir
+   la orden e imprimir la salida son dos gestos distintos */
+.tw-cmd.typing::after{content:'\258B';color:var(--g2);margin-left:2px;
+  animation:caret 1.05s steps(1) infinite}
+/* con el eco delante, la seccion ya no necesita su propia linea superior */
+.tw-cmd + section{border-top:0;padding-top:22px}
+.progress{position:sticky;top:0}
+
+
+/* ── consola: la respuesta aparece ENCIMA de la linea de escritura ──
+   Antes se imprimia al final del documento: desde ~/method la respuesta
+   caia diez pantallas mas abajo y parecia que el comando no hacia nada. ── */
+.tw-con{flex:0 0 auto;max-height:38vh;overflow-y:auto;border-top:1px solid var(--line);
+  background:rgba(0,0,0,.35);font-family:'JetBrains Mono';font-size:.74rem;line-height:1.75;
+  padding:10px clamp(14px,2.4vw,18px)}
+.tw-con:empty{display:none}
+.tw-con .ln{color:var(--muted2);white-space:pre-wrap}
+.tw-con .ln.echo{color:var(--text)}
+.tw-con .ln.echo b{color:var(--g3)}
+.tw-con .ko{color:var(--kill)}
+.tw-con .ok{color:var(--live)}
+.tw-con .cc{color:var(--g2)}
+.tw-con .dim{color:var(--muted)}
+.tw-con table{border-collapse:collapse;margin:2px 0 6px}
+.tw-con td{padding:1px 16px 1px 0;vertical-align:top}
+.tw-con td:first-child{color:var(--g2);white-space:nowrap}
+
+.tw-con .ln{transition:opacity .28s ease,transform .28s ease,max-height .28s ease}
+.tw-con .ln.gone{opacity:0;transform:translateY(-5px);max-height:0;overflow:hidden}
+.tw-con:hover{box-shadow:inset 2px 0 0 var(--accent-line)}
+
+/* autocompletado en vivo: nunca hace falta acordarse de "help" */
+.tw-ac{flex:0 0 auto;display:none;gap:0;flex-direction:column;border-top:1px solid var(--line);
+  background:rgba(155,92,255,.05);max-height:31vh;overflow-y:auto;
+  font-family:'JetBrains Mono';font-size:.74rem}
+.tw-ac.on{display:flex}
+.tw-ac .it{display:flex;align-items:baseline;gap:12px;padding:7px clamp(14px,2.4vw,18px);cursor:pointer}
+.tw-ac .it .c{color:var(--g2);flex:0 0 auto;min-width:14ch}
+.tw-ac .it .l{color:var(--muted);flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tw-ac .it[aria-selected="true"]{background:rgba(155,92,255,.16)}
+.tw-ac .it[aria-selected="true"] .c{color:var(--hl)}
+.tw-ac .it[aria-selected="true"] .l{color:var(--text)}
+.tw-ac .hint{padding:6px clamp(14px,2.4vw,18px);color:var(--muted);font-size:.66rem;
+  border-top:1px solid var(--line)}
+
+/* el sistema de streaming por bloques (v3) y la cortina (v4) se han
+   retirado enteros: los reemplaza el motor de impresion linea a linea
+   que hay al final de esta hoja. */
+
+/* ── el parpadeo que se veia en el video: con el raton quieto, el
+   contenido se desliza por debajo y :hover entra y sale solo. Mientras
+   se scrollea se desactivan los estados de puntero. ── */
+.scrolling .pj,.scrolling .mc,.scrolling .cap,.scrolling .claim,
+.scrolling .ldg-row,.scrolling .lex-r,.scrolling .cx-l,
+.scrolling .spot{pointer-events:none!important}
+.scrolling .spot::after{opacity:0!important}
+
+
+/* ══ MOTOR DE IMPRESION v5 · linea a linea ═══════════════════════════
+   La cortina de la v4 era un rectangulo opaco de una pantalla de alto
+   que iba por detras del scroll: dejaba medio viewport en negro y
+   cortaba las tarjetas a media linea. Fuera.
+
+   Ahora no hay ninguna capa que tape nada. El texto se parte en sus
+   LINEAS VISUALES reales (Range.getClientRects) y cada linea se
+   imprime cuando le toca al cabezal — de arriba abajo, sin fundido,
+   como una tty. Lo que aun no se ha impreso no es negro: no esta.
+   Y nada que quede por encima del scroll puede seguir sin imprimir:
+   el cabezal vacia la cola de golpe antes de dejarlo atras.
+   ═════════════════════════════════════════════════════════════════ */
+.tw-doc{position:relative}
+
+/* la linea sin imprimir ocupa su sitio (cero salto de layout) pero no
+   se ve. Sin transition: una terminal no funde, escribe. */
+.pl{opacity:0}
+.pl.on{opacity:1}
+/* el span de linea es un detalle de implementacion del motor: no puede
+   heredar cromo de nadie (fondo de chip, borde, padding, corchetes) o
+   el documento se llena de cajas y separaciones fantasma */
+.pl{background:none!important;border:0!important;padding:0!important;margin:0!important}
+.pl::before,.pl::after{content:none!important}
+
+/* la caja (tarjeta, panel, regla) aparece justo antes de su primera
+   linea: en la v4 los contenedores se pintaban de golpe mucho antes
+   que su contenido y se veia el esqueleto vacio. */
+.pbox{visibility:hidden}
+.pbox.on{visibility:visible}
+
+/* cursor de bloque en la linea en curso. Va absoluto sobre #twDoc: no
+   entra en el flujo, asi que no puede provocar reflow por frame. */
+.pcur{position:absolute;z-index:35;width:.6em;pointer-events:none;display:none;
+  background:var(--g2);box-shadow:0 0 12px rgba(34,211,255,.6);opacity:.95}
+.pcur.on{display:block}
+/* Antes salia del cursor una linea horizontal fina hacia la derecha.
+   La puse para que se viera donde estaba el cabezal cuando pensaba que
+   el efecto no se apreciaba — pero el problema era otro, y la linea se
+   queda como un subrayado raro cruzando el parrafo. Fuera.
+
+   El comportamiento correcto es el de una tty: mientras escribe, el
+   cursor va SOLIDO; cuando se detiene, parpadea. */
+.pcur.blink{animation:caret 1.05s steps(1) infinite}
+
+/* aqui NO hace falta un @media de reduced-motion, y ponerlo era un
+   error: .pl y .pbox las crea el JS, asi que si el efecto esta apagado
+   esas clases no llegan a existir y no hay nada que revertir. Con el
+   @media, forzar el efecto desde [fx] no servia de nada — el CSS
+   volvia a encender todas las lineas por detras. */
+
+
+/* ══ reglas que el marcado portado usa y esta pagina no definia ══
+   El barrido de truth-loop §4.7: que clase USADA no encuentra
+   regla. Sin esto, `.sr` no existia aqui y la etiqueta de lector
+   de pantalla se veia en la barra ([INC-CSS-01]). ══ */
+.sr{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* el outline:none de arriba gana a la regla global :focus-visible por
+   especificidad (0,2,1 vs 0,1,0), asi que el slider se quedaba SIN
+   indicador de foco para quien navega con teclado. Se devuelve aqui,
+   con la especificidad suficiente para ganar. */
+.calc input[type=range]:focus-visible{outline:2px solid var(--g2);outline-offset:3px}
+
+/* ── el verbo vuelve al CTA (14-08) ──
+   Se probo con solo el sobre y `recruiter-sim` lo midio en las 6 portadas:
+   un icono OFRECE un canal, un verbo PIDE algo, y en movil no hay hover que
+   revele el `title`. A <=430px la etiqueta se retira y el GitHub tambien:
+   la barra no da para breadcrumb + pastilla + tres iconos + idioma, y de las
+   tres cosas que sobran, la que NO puede caerse es el contacto. */
+.tw-io a.tw-mail{width:auto;gap:7px;padding:0 11px}
+.tw-mail-t{font-family:'JetBrains Mono';font-size:.7rem;font-weight:500;
+  letter-spacing:.01em;white-space:nowrap;line-height:1}
+@media(max-width:560px){
+  /* el verbo se queda: es la accion que la pagina existe para pedir, y en
+     movil no hay hover que revele el title de un icono. Ceden el prefijo del
+     breadcrumb y los dos destinos secundarios — GitHub vive ahora tambien en
+     la seccion de contacto, asi que no se pierde. */
+  .tw-who{display:none}
+  .tw-io a:not(.tw-mail){display:none}
+  /* y la ruta deja de encogerse: es flex:0 1 auto, asi que era ELLA la que
+     cedia cuando la etiqueta crecia — `Write to me` mide 14px mas que
+     `Escribeme` y cortaba /video-pipeline en la unica pagina donde la suma
+     apretaba. Quien tiene que ceder es el hueco elastico, no el unico
+     indicador de posicion que queda sin nav. */
+  .tw-id{flex:0 0 auto}
+}
+</style>
+</head>
+<body class="lang-es">
+
+<!-- gradient defs for icons -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9b5cff"/><stop offset="1" stop-color="#22d3ff"/></linearGradient>
+</defs></svg>
+
+<div class="aurora" aria-hidden="true"><b class="b1"></b><b class="b2"></b><b class="b3"></b></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<!-- nav -->
+
+<div class="tw" id="tw">
+  <!-- ── barra: identidad, ruta viva y salida ──
+       Antes esto convivia con una nav web de 75 px justo debajo, y las
+       dos decian lo mismo: la barra ponia la ruta y la nav subrayaba la
+       misma seccion, en dos idiomas visuales apilados. Con las cuatro
+       vias de navegacion que ya hay (esta ruta, la paleta ⌘K, el
+       autocompletado del prompt y el propio scroll), los ocho enlaces
+       sobraban. La marca y la ruta se funden en una sola cadena: aqui
+       el breadcrumb ES el logotipo. -->
+  <div class="tw-bar">
+    <span class="tw-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <a class="tw-id" href="../index.html" title="Volver al indice" aria-label="Volver al indice"><b><span class="tw-who">/diego</span>/ecxm-ops</b><span class="tw-path" id="twPathTop"></span></a>
+    <span class="tw-gap"></span>
+    <span class="tw-io">
+      <!-- ── el contacto lleva VERBO ("Escribeme" / "Write to me"), en las 6 y tambien en movil,
+           por decision de Diego (14-08, revirtiendo el "solo icono" del 13-08). LinkedIn y GitHub
+           son destinos y van en gris; esto es la accion que la pagina existe para pedir. ── -->
+      <a class="tw-mail" href="mailto:diegollr98@gmail.com" title="diegollr98@gmail.com">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span></span></a>
+      <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M4.98 3.5a2.5 2.5 0 11-.01 5 2.5 2.5 0 01.01-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.5 4.76 5.76V21h-4v-5.7c0-1.36-.03-3.1-1.9-3.1-1.9 0-2.19 1.47-2.19 3v5.8h-4z"/></svg>
+      </a>
+      <a class="tw-gh" href="https://github.com/diegollr98-design" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 1.8a10.2 10.2 0 00-3.23 19.88c.51.09.7-.22.7-.5v-1.9c-2.84.62-3.44-1.2-3.44-1.2-.47-1.18-1.14-1.5-1.14-1.5-.93-.63.07-.62.07-.62 1.03.07 1.57 1.06 1.57 1.06.91 1.57 2.4 1.12 2.98.85.09-.66.36-1.12.65-1.37-2.27-.26-4.65-1.14-4.65-5.06 0-1.12.4-2.03 1.05-2.75-.1-.26-.46-1.3.1-2.71 0 0 .86-.28 2.81 1.05a9.7 9.7 0 015.12 0c1.95-1.33 2.81-1.05 2.81-1.05.56 1.41.2 2.45.1 2.71.65.72 1.05 1.63 1.05 2.75 0 3.93-2.39 4.8-4.66 5.05.37.32.7.94.7 1.9v2.81c0 .28.18.6.7.5A10.2 10.2 0 0012 1.8z"/></svg>
+      </a>
+    </span>
+    <!-- ── idioma ──
+         Era un <select> nativo. El campo se puede estilar, pero el panel
+         que se despliega lo pinta el sistema operativo y NO acepta CSS:
+         ni esquinas, ni fondo, ni el azul de seleccion. Por eso se veia
+         como una pieza de otro sitio. La unica forma de que herede el
+         diseño de la ventana es no usar el desplegable nativo. -->
+    <div class="tw-lang">
+      <button type="button" id="langBtn" aria-haspopup="listbox" aria-expanded="false">
+        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span>
+        <span id="langCur">ES</span><i aria-hidden="true"></i>
+      </button>
+      <ul class="tw-langlist" id="langList" role="listbox" hidden>
+        <li role="option" data-v="es" aria-selected="true">ES</li>
+        <li role="option" data-v="en" aria-selected="false">EN</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tw-body" id="twBody">
+  <div class="tw-doc" id="twDoc">
+
+
+<div class="wrap" id="top">
+  <!-- hero -->
+  <header class="hero">
+    <div class="eyebrow"><span class="t-es">AI Engineer · operaciones · e-commerce COD Colombia</span><span class="t-en">AI Engineer · operations · COD e-commerce, Colombia</span></div>
+
+    <h1 class="t-es display">Construí el <span class="grad-text">sistema operativo</span> de un negocio entero, y el gate que le impide mentir con dinero.</h1>
+    <h1 class="t-en display">I built the <span class="grad-text">operating system</span> of an entire business, and the gate that stops it lying about money.</h1>
+
+    <p class="lede t-es">
+      ECXM OPS cubre la cadena completa de un negocio de dropshipping COD, de espiar a la competencia a cerrar el mes,
+      en un solo dashboard y una CLI de 35 comandos. El modo de fallo no es que Streamlit pete: es que el pivot
+      <strong>afirme con total fluidez una utilidad neta falsa</strong>. Un decimal mal atribuido es <strong>el sueldo de otra persona</strong>.
+    </p>
+    <p class="lede t-en">
+      ECXM OPS covers the full chain of a COD dropshipping business, from spying on competitors to closing the month,
+      in one dashboard and a 35-command CLI. The failure mode isn't Streamlit crashing: it's the pivot
+      <strong>fluently asserting a false net profit</strong>. One misattributed decimal is <strong>somebody else's pay</strong>.
+    </p>
+
+    <p class="hero-note"><span class="t-es">En uso diario en mi propio negocio desde mayo de 2026, con 6.286 anuncios de la competencia indexados. Construido en solitario, con IA.</span><span class="t-en">In daily use in my own business since May 2026, with 6,286 competitor ads indexed. Built solo, with AI.</span></p>
+
+    <div class="cta">
+      <a href="#recorrido" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="#08080d"><path d="M8 5v14l11-7z"/></svg>
+        <span class="t-es">Ver el recorrido</span><span class="t-en">Watch the walkthrough</span>
+      </a>
+      <a href="#dinero" class="btn btn-ghost"><span class="t-es">El gate del dinero</span><span class="t-en">The money gate</span></a>
+    </div>
+
+    <div class="stats">
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="7"></span></div><div class="l"><span class="t-es">etapas encadenadas · espiar → analizar → clonar → crear → vender → cerrar → decidir</span><span class="t-en">chained stages · spy → analyse → clone → create → sell → close → decide</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="3309"></span></div><div class="l"><span class="t-es">pedidos conciliados en 6 meses cerrados · 136 facturas OCR en 4 divisas</span><span class="t-en">orders reconciled across 6 closed months · 136 OCR invoices in 4 currencies</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="u">$</span><span class="ct" data-to="0"></span></div><div class="l"><span class="t-es">coste LLM del clonador de landings · era ~$0,05 por landing con Vision</span><span class="t-en">LLM cost of the landing cloner · it used to be ~$0.05 per landing with Vision</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="3"></span><span class="u">/3</span></div><div class="l"><span class="t-es">gates golden en verde por igualdad exacta · uno de ellos decide una liquidación</span><span class="t-en">golden gates green on exact equality · one of them decides a payout</span></div></div>
+    </div>
+  </header>
+</div>
+
+
+<!-- recorrido -->
+<p class="tw-cmd" aria-hidden="true"><span class="u">diego@portfolio</span><span class="d">:~/tour</span><span class="s">$</span> <b>/tour</b></p>
+<section id="recorrido">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="t-es">Recorrido</span><span class="t-en">Walkthrough</span></div>
+      <h2 class="t-es">Un producto entra por un extremo y sale una liquidación por el otro</h2>
+      <h2 class="t-en">A product goes in one end and a payout comes out the other</h2>
+      <p class="t-es">No son siete scripts sueltos: es <strong>una sola cadena</strong> donde la salida de cada etapa es la entrada de la siguiente, y donde el estado vive en archivos que las demás etapas saben leer. Pulsa cualquier estación para ver qué hace, qué cuesta y con qué se sincroniza.</p>
+      <p class="t-en">These aren't seven loose scripts: it's <strong>a single chain</strong> where each stage's output is the next one's input, and where state lives in files the other stages know how to read. Click any station to see what it does, what it costs and what it syncs with.</p>
+    </div>
+
+    <div class="video vp reveal" id="vpBox" data-hero="ECXM-OPS-hero-90s.mp4" data-tour="ECXM-OPS-tour-completo.mp4">
+      <video id="vpVideo" src="ECXM-OPS-hero-90s.mp4" poster="../assets/poster-ecxm-ops.jpg"
+             muted loop playsinline preload="metadata"></video>
+      <span class="vp-tag"><span class="t-es">vista previa · corte hero</span><span class="t-en">preview · hero cut</span></span>
+      <button class="vp-ov" id="vpBtn" type="button">
+        <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+        <span class="vt"><span class="t-es">Recorrido del sistema · 6:18</span><span class="t-en">System walkthrough · 6:18</span></span>
+        <span class="vs"><span class="t-es">Sin voz: el sistema real con los rótulos en pantalla. Pasa el ratón para ver el corte de 90 s; pulsa para el recorrido entero.</span><span class="t-en">No voice-over: the real system with on-screen captions. Hover for the 90 s cut; click for the full walkthrough.</span></span>
+      </button>
+    </div>
+    <div class="vp-chaps reveal" id="vpChaps" role="group" aria-label="Capítulos del recorrido">
+      <button type="button" class="vc" data-t="0"><b>01</b><span class="t-es">De espiar a la competencia a clonar su landing</span><span class="t-en">From spying on competitors to cloning their landing</span><b>0:00</b></button>
+      <button type="button" class="vc" data-t="172.6"><b>02</b><span class="t-es">Del creativo al dinero: la atribución</span><span class="t-en">From the creative to the money: attribution</span><b>2:52</b></button>
+      <button type="button" class="vc" data-t="268.7"><b>03</b><span class="t-es">El gate que bloquea, y por qué existe</span><span class="t-en">The gate that blocks, and why it exists</span><b>4:28</b></button>
+    </div>
+    <p class="video-note"><span class="t-es">Guion: escaneo de la Ads Library → producto al LAB (precios + copy + títulos) → réplica de la landing en <b>$0</b> → creativos → control diario → cierre de mes → la tabla que dice qué producto es winner.</span><span class="t-en">Script: Ads Library scan → product into the LAB (pricing + copy + titles) → landing replica at <b>$0</b> → creatives → daily control → month close → the table that says which product is a winner.</span></p>
+
+    <!-- rail -->
+    <div class="rail reveal">
+      <div class="rail-track" role="tablist" aria-label="Etapas del sistema">
+        <button class="rl" role="tab" aria-selected="true" data-i="0"><span class="dot">01</span><span class="nm"><span class="t-es">Espiar</span><span class="t-en">Spy</span></span><span class="tg">SNIPE</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="1"><span class="dot">02</span><span class="nm"><span class="t-es">Analizar</span><span class="t-en">Analyse</span></span><span class="tg">LAB</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="2"><span class="dot">03</span><span class="nm"><span class="t-es">Clonar</span><span class="t-en">Clone</span></span><span class="tg">REP</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="3"><span class="dot">04</span><span class="nm"><span class="t-es">Crear</span><span class="t-en">Create</span></span><span class="tg">CREATIVE</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="4"><span class="dot">05</span><span class="nm"><span class="t-es">Vender</span><span class="t-en">Sell</span></span><span class="tg">DÍA A DÍA</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="5"><span class="dot">06</span><span class="nm"><span class="t-es">Cerrar</span><span class="t-en">Close</span></span><span class="tg">MES</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="6"><span class="dot">07</span><span class="nm"><span class="t-es">Decidir</span><span class="t-en">Decide</span></span><span class="tg">ANALYTICS</span></button>
+      </div>
+      <div class="rail-panel" id="rail-panel" role="tabpanel" aria-live="polite"></div>
+      <p class="rail-note"><span class="t-es">Estas 7 etapas del ciclo del producto viven en 6 pestañas del dashboard (cerrar y vender comparten FINANZAS). Hay 3 más de soporte (FEEDBACK, ACADEMIA y ROADMAP, que renderiza el mapa de arquitectura del propio dashboard) 9 en total.</span><span class="t-en">These 7 product-cycle stages live in 6 dashboard tabs (sell and close share FINANCE). There are 3 more support tabs (FEEDBACK, ACADEMIA and ROADMAP, which renders the dashboard's own architecture map) 9 in total.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- FLAGSHIP: el dinero -->
+<p class="tw-cmd" aria-hidden="true"><span class="u">diego@portfolio</span><span class="d">:~/margin</span><span class="s">$</span> <b>/margin</b></p>
+<section id="dinero">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="t-es">Flagship · la superficie irreversible</span><span class="t-en">Flagship · the irreversible surface</span></div>
+      <h2 class="t-es">La única cifra del sistema que se convierte en el pago de una persona</h2>
+      <h2 class="t-en">The one figure in the system that turns into somebody's pay</h2>
+      <p class="t-es">El contrato del equipo tiene una cláusula corta: un producto es <strong>winner</strong> si cierra el mes con <strong>utilidad neta positiva</strong>, y entonces el reparto pasa de 50/50 a 40/60 a favor del colaborador. Toda la maquinaria de abajo existe para producir <span class="hl">ese número</span>. El dashboard está hecho para que yo confíe y cierre rápido: <strong>esa confianza es exactamente lo que convierte un error de atribución en dinero mal repartido.</strong></p>
+      <p class="t-en">The team contract has one short clause: a product is a <strong>winner</strong> if it closes the month with <strong>positive net profit</strong>, and then the split moves from 50/50 to 40/60 in the collaborator's favour. All the machinery below exists to produce <span class="hl">that number</span>. The dashboard is built so I trust it and close fast: <strong>that trust is exactly what turns an attribution error into money paid out wrong.</strong></p>
+    </div>
+
+    <div class="engine reveal">
+      <svg viewBox="0 0 1080 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cadena del dinero: de los pedidos a la liquidación">
+        <defs>
+          <marker id="mn-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a8a99"/></marker>
+          <linearGradient id="mn-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9b5cff"/><stop offset="1" stop-color="#22d3ff"/></linearGradient>
+        </defs>
+        <style>
+          .mg-rect{fill:rgba(255,255,255,.025)}
+          .mg-title{font:700 12.5px 'Space Grotesk','Inter',sans-serif;fill:#f1f1f5}
+          .mg-sub{font:400 10px 'Inter',sans-serif;fill:#9a9ab0}
+          .mg-el{font:500 10px 'JetBrains Mono',monospace;fill:#8a8a99}
+          .mg-gate{font:600 11px 'JetBrains Mono',monospace;fill:#5dff9b}
+          .mg-flow{stroke-dasharray:5 9;animation:mgmarch 1s linear infinite}
+          @keyframes mgmarch{to{stroke-dashoffset:-14}}
+          .mg-glow{filter:drop-shadow(0 0 5px currentColor)}
+          .mg-pulse{animation:mgpulse 2.6s ease-in-out infinite}
+          @keyframes mgpulse{0%,100%{opacity:.55}50%{opacity:1}}
+        </style>
+
+        <!-- feeders -->
+        <rect class="mg-rect" x="196" y="18" width="164" height="46" rx="10" stroke="#22d3ff" stroke-width="1.5"/>
+        <text x="278" y="38" text-anchor="middle" class="mg-title t-es">WALLET Dropi</text><text x="278" y="38" text-anchor="middle" class="mg-title t-en">Dropi WALLET</text>
+        <text x="278" y="53" text-anchor="middle" class="mg-sub t-es">fletes reales por pedido</text><text x="278" y="53" text-anchor="middle" class="mg-sub t-en">real shipping cost per order</text>
+        <path d="M278,64 L278,120" fill="none" stroke="#22d3ff" stroke-width="1.6" opacity=".5" class="mg-flow" marker-end="url(#mn-arw)"/>
+
+        <rect class="mg-rect" x="420" y="18" width="200" height="46" rx="10" stroke="#9b5cff" stroke-width="1.6"/>
+        <text x="520" y="38" text-anchor="middle" class="mg-title t-es">FACTURAS · OCR</text><text x="520" y="38" text-anchor="middle" class="mg-title t-en">INVOICES · OCR</text>
+        <text x="520" y="53" text-anchor="middle" class="mg-sub t-es">136 PDFs · 4 divisas · caja real</text><text x="520" y="53" text-anchor="middle" class="mg-sub t-en">136 PDFs · 4 currencies · real cash</text>
+        <path d="M520,64 L520,124" fill="none" stroke="#9b5cff" stroke-width="1.6" opacity=".55" class="mg-flow" marker-end="url(#mn-arw)"/>
+        <circle r="2.6" fill="#9b5cff" color="#9b5cff" class="mg-glow"><animateMotion dur="1.6s" repeatCount="indefinite" path="M520,64 L520,124"/></circle>
+
+        <rect class="mg-rect" x="420" y="272" width="200" height="46" rx="10" stroke="#ffce6a" stroke-width="1.4"/>
+        <text x="520" y="292" text-anchor="middle" class="mg-title t-es">SERVICIOS + ADMIN</text><text x="520" y="292" text-anchor="middle" class="mg-title t-en">SERVICES + ADMIN</text>
+        <text x="520" y="307" text-anchor="middle" class="mg-sub t-es">repartidos ∝ ventas entregadas</text><text x="520" y="307" text-anchor="middle" class="mg-sub t-en">allocated ∝ delivered sales</text>
+        <path d="M520,272 L520,212" fill="none" stroke="#ffce6a" stroke-width="1.5" opacity=".45" class="mg-flow" marker-end="url(#mn-arw)"/>
+
+        <!-- main chain -->
+        <rect class="mg-rect" x="14" y="140" width="150" height="56" rx="12" stroke="#8a8a99" stroke-width="1.6"/>
+        <text x="89" y="164" text-anchor="middle" class="mg-title t-es">PEDIDOS · Dropi</text><text x="89" y="164" text-anchor="middle" class="mg-title t-en">ORDERS · Dropi</text>
+        <text x="89" y="180" text-anchor="middle" class="mg-sub t-es">export del mes</text><text x="89" y="180" text-anchor="middle" class="mg-sub t-en">month export</text>
+
+        <path d="M164,168 L196,168" fill="none" stroke="#8a8a99" stroke-width="1.6" opacity=".6" class="mg-flow" marker-end="url(#mn-arw)"/>
+
+        <rect class="mg-rect" x="196" y="140" width="164" height="56" rx="12" stroke="#22d3ff" stroke-width="1.8"/>
+        <text x="278" y="164" text-anchor="middle" class="mg-title">LIMPIO</text>
+        <text x="278" y="180" text-anchor="middle" class="mg-sub t-es">solo los 4 estatus finales</text><text x="278" y="180" text-anchor="middle" class="mg-sub t-en">only the 4 final statuses</text>
+
+        <path d="M360,168 L420,168" fill="none" stroke="#22d3ff" stroke-width="1.8" opacity=".6" class="mg-flow" marker-end="url(#mn-arw)"/>
+        <circle r="3" fill="#22d3ff" color="#22d3ff" class="mg-glow"><animateMotion dur="1.7s" repeatCount="indefinite" path="M360,168 L420,168"/></circle>
+
+        <rect class="mg-rect mg-pulse" x="420" y="124" width="200" height="88" rx="13" stroke="url(#mn-grad)" stroke-width="2.4"/>
+        <text x="520" y="153" text-anchor="middle" class="mg-title t-es">UTILIDAD NETA</text><text x="520" y="153" text-anchor="middle" class="mg-title t-en">NET PROFIT</text>
+        <text x="520" y="170" text-anchor="middle" class="mg-sub t-es">ventas ENT − flete − costo − facturas</text><text x="520" y="170" text-anchor="middle" class="mg-sub t-en">DELIVERED sales − shipping − cost − invoices</text>
+        <text x="520" y="192" text-anchor="middle" class="mg-el" style="fill:#bd9bff">pivot.utilidad_mes()</text>
+
+        <path d="M620,168 L700,168" fill="none" stroke="#9b5cff" stroke-width="2" opacity=".7" class="mg-flow" marker-end="url(#mn-arw)"/>
+        <circle r="3.2" fill="#9b5cff" color="#9b5cff" class="mg-glow"><animateMotion dur="1.5s" repeatCount="indefinite" path="M620,168 L700,168"/></circle>
+        <text x="660" y="152" text-anchor="middle" class="mg-gate">/eval-finanzas</text>
+        <text x="660" y="196" text-anchor="middle" class="mg-el t-es" style="fill:#5dff9b">igualdad exacta</text>
+        <text x="660" y="196" text-anchor="middle" class="mg-el t-en" style="fill:#5dff9b">exact equality</text>
+
+        <rect class="mg-rect" x="700" y="140" width="132" height="56" rx="12" stroke="#ffce6a" stroke-width="1.8"/>
+        <text x="766" y="164" text-anchor="middle" class="mg-title t-es">¿neta &gt; 0?</text><text x="766" y="164" text-anchor="middle" class="mg-title t-en">net &gt; 0?</text>
+        <text x="766" y="180" text-anchor="middle" class="mg-sub t-es">cláusula 4.1</text><text x="766" y="180" text-anchor="middle" class="mg-sub t-en">clause 4.1</text>
+
+        <path d="M832,156 C876,140 884,120 892,100" fill="none" stroke="#5dff9b" stroke-width="1.8" opacity=".6" class="mg-flow" marker-end="url(#mn-arw)"/>
+        <path d="M832,180 C876,196 884,216 892,236" fill="none" stroke="#8a8a99" stroke-width="1.8" opacity=".5" class="mg-flow" marker-end="url(#mn-arw)"/>
+
+        <rect class="mg-rect" x="892" y="70" width="176" height="58" rx="12" stroke="#5dff9b" stroke-width="1.9"/>
+        <text x="980" y="94" text-anchor="middle" class="mg-title">WINNER · 40 / 60</text>
+        <text x="980" y="110" text-anchor="middle" class="mg-sub t-es">60 % para el colaborador</text><text x="980" y="110" text-anchor="middle" class="mg-sub t-en">60 % to the collaborator</text>
+
+        <rect class="mg-rect" x="892" y="208" width="176" height="58" rx="12" stroke="#8a8a99" stroke-width="1.7"/>
+        <text x="980" y="232" text-anchor="middle" class="mg-title t-es">NORMAL · 50 / 50</text><text x="980" y="232" text-anchor="middle" class="mg-title t-en">STANDARD · 50 / 50</text>
+        <text x="980" y="248" text-anchor="middle" class="mg-sub t-es">reparto por defecto</text><text x="980" y="248" text-anchor="middle" class="mg-sub t-en">default split</text>
+      </svg>
+    </div>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle ↔</span><span class="t-en">Pinch to zoom in and read the detail ↔</span></p>
+    <p class="engine-cap reveal t-es">La convención de nombres de campaña en Meta (<b>[NOMBRE]_[PRODUCTO]_[FECHA]</b>) no es cosmética: es lo que permite que el gasto publicitario baje hasta el producto correcto. Si una campaña no la respeta, el sistema lo marca, sin ella la atribución falla y la liquidación se reparte mal.</p>
+    <p class="engine-cap reveal t-en">The Meta campaign naming convention (<b>[NAME]_[PRODUCT]_[DATE]</b>) isn't cosmetic: it's what lets ad spend flow down to the right product. If a campaign breaks it, the system flags it, without it attribution fails and the payout is split wrong.</p>
+
+    <!-- procedencia -->
+    <table class="prov reveal">
+      <thead><tr>
+        <th><span class="t-es">Fuente</span><span class="t-en">Source</span></th>
+        <th><span class="t-es">Qué es</span><span class="t-en">What it is</span></th>
+        <th><span class="t-es">Regla dura</span><span class="t-en">Hard rule</span></th>
+        <th><span class="t-es">Uso</span><span class="t-en">Use</span></th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td data-h="Source" data-h-es="Fuente"><span class="src">LIMPIO</span></td>
+          <td data-h="What it is" data-h-es="Qué es"><span class="t-es">ventas, estatus y flete del export de Dropi</span><span class="t-en">sales, status and shipping from the Dropi export</span></td>
+          <td data-h="Hard rule" data-h-es="Regla dura" class="rule"><span class="t-es">solo los <b>4 estatus finales</b> cuentan para el mes; un pedido en tránsito no tiene resultado todavía</span><span class="t-en">only the <b>4 final statuses</b> count for the month; an in-transit order has no outcome yet</span></td>
+          <td data-h="Use" data-h-es="Uso"><span class="tagp tp-base"><span class="t-es">base</span><span class="t-en">base</span></span></td>
+        </tr>
+        <tr>
+          <td data-h="Source" data-h-es="Fuente"><span class="src">FACTURA (OCR)</span></td>
+          <td data-h="What it is" data-h-es="Qué es"><span class="t-es">costes, servicios y publicidad leídos de los PDFs</span><span class="t-en">costs, services and ad spend read from the PDFs</span></td>
+          <td data-h="Hard rule" data-h-es="Regla dura" class="rule"><span class="t-es">es lo que se pagó <b>de verdad</b>; un cobro con estado «Error» no cuenta</span><span class="t-en">it's what was <b>actually</b> charged; a payment in "Error" state doesn't count</span></td>
+          <td data-h="Use" data-h-es="Uso"><span class="tagp tp-cash"><span class="t-es">caja · liquidación</span><span class="t-en">cash · payout</span></span></td>
+        </tr>
+        <tr>
+          <td data-h="Source" data-h-es="Fuente"><span class="src">CSV Ads</span></td>
+          <td data-h="What it is" data-h-es="Qué es"><span class="t-es">impresiones, visitas y compras de Meta</span><span class="t-en">impressions, visits and purchases from Meta</span></td>
+          <td data-h="Hard rule" data-h-es="Regla dura" class="rule"><span class="t-es"><b>nunca</b> reemplaza a la factura como coste real: no trae ni desglose por campaña ni estado del cobro</span><span class="t-en"><b>never</b> replaces the invoice as real cost: it carries neither per-campaign breakdown nor payment state</span></td>
+          <td data-h="Use" data-h-es="Uso"><span class="tagp tp-perf"><span class="t-es">rendimiento · CPA</span><span class="t-en">performance · CPA</span></span></td>
+        </tr>
+        <tr>
+          <td data-h="Source" data-h-es="Fuente"><span class="src"><span class="t-es">PRORRATEO</span><span class="t-en">ALLOCATION</span></span></td>
+          <td data-h="What it is" data-h-es="Qué es"><span class="t-es">servicios repartidos entre productos</span><span class="t-en">services split across products</span></td>
+          <td data-h="Hard rule" data-h-es="Regla dura" class="rule"><span class="t-es">es una <b>estimación</b> y se etiqueta como tal; jamás se presenta como coste directo del producto</span><span class="t-en">it's an <b>estimate</b> and is labelled as one; never presented as a direct product cost</span></td>
+          <td data-h="Use" data-h-es="Uso"><span class="tagp tp-est"><span class="t-es">estimado</span><span class="t-en">estimated</span></span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sb">
+      <div class="sb-code reveal t-es"><span class="cm"># la garantía no la da el prompt — la fuerza un `return None`</span>
+<span class="cm"># ecxm/finanzas/facturas.py :: _convertir_cop</span>
+
+tasa = _TASAS_COP.get(divisa_norm, <span class="a">None</span>)
+
+<span class="a">if</span> tasa <span class="a">is</span> <span class="a">None</span>:
+    <span class="cm"># divisa desconocida: NO inventar tasa 1.0</span>
+    print(<span class="b">f"AVISO: divisa '{divisa}' desconocida"</span>)
+    <span class="a">return</span> <span class="r">None</span>          <span class="cm"># el dashboard muestra " — "</span>
+
+<span class="a">return</span> round(imp * tasa, <span class="g">2</span>)
+
+<span class="cm"># antes devolvía el importe SIN convertir:</span>
+<span class="cm"># una factura de 29,75 USD entraba como 29,75 COP</span>
+<span class="cm"># → coste subestimado ~4.200× → un producto</span>
+<span class="cm"># perdedor podía aparecer como </span><span class="r">winner</span>
+</div>
+      <div class="sb-code reveal t-en"><span class="cm"># the guarantee isn't the prompt: a `return None` forces it</span>
+<span class="cm"># ecxm/finanzas/facturas.py :: _convertir_cop</span>
+
+rate = _TASAS_COP.get(currency_norm, <span class="a">None</span>)
+
+<span class="a">if</span> rate <span class="a">is</span> <span class="a">None</span>:
+    <span class="cm"># unknown currency: do NOT invent a 1.0 rate</span>
+    print(<span class="b">f"WARNING: currency '{currency}' unknown"</span>)
+    <span class="a">return</span> <span class="r">None</span>          <span class="cm"># the dashboard shows ", "</span>
+
+<span class="a">return</span> round(amount * rate, <span class="g">2</span>)
+
+<span class="cm"># it used to return the amount UNCONVERTED:</span>
+<span class="cm"># a 29.75 USD invoice landed as 29.75 COP</span>
+<span class="cm"># → cost understated ~4,200× → a losing</span>
+<span class="cm"># product could show up as a </span><span class="r">winner</span>
+</div>
+      <div class="sb-body reveal t-es">
+        <p><strong>Abstenerse cuesta 5 segundos; una cifra falsa cuesta una liquidación.</strong> Ante un dato incompleto (divisa desconocida, factura sin desglose, mes sin cerrar) el sistema devuelve <span class="mono">None</span> y avisa en rojo. Nunca un número plausible sin fuente.</p>
+        <p>Ese bug era real y estaba vivo: la conversión silenciosa a tasa 1.0 hacía pasar una factura en dólares por pesos colombianos. No lo cazó ningún test verde: lo cazó preguntarle al código <em>de dónde sale este número</em>.</p>
+        <p>Por eso cada dato lleva su procedencia y las fuentes <strong>no se sustituyen entre sí</strong>. Mezclar la factura (lo que pagué) con el CSV de Meta (cómo rindió) fue un bug de verdad, no una discusión teórica. Hoy es una regla escrita.</p>
+      </div>
+      <div class="sb-body reveal t-en">
+        <p><strong>Abstaining costs 5 seconds; a false figure costs a payout.</strong> Faced with incomplete data (unknown currency, invoice with no breakdown, month not closed) the system returns <span class="mono">None</span> and warns in red. Never a plausible number with no source.</p>
+        <p>That bug was real and live: the silent 1.0-rate conversion passed a dollar invoice off as Colombian pesos. No green test caught it: what caught it was asking the code <em>where does this number come from</em>.</p>
+        <p>That's why every value carries its provenance and the sources <strong>never substitute for one another</strong>. Mixing the invoice (what I paid) with the Meta CSV (how it performed) was a genuine bug, not a theoretical debate. Today it's a written rule.</p>
+      </div>
+    </div>
+
+    <div class="term reveal">
+      <div class="term-bar"><i></i><i></i><i></i><span>/eval-finanzas check-all</span></div>
+      <pre class="t-es"><span class="pr">$</span> python tests/golden_finanzas/eval_finanzas.py check-all
+
+[check] ENERO 2026 — VEREDICTO: <span class="ok">PASA</span> (5 productos, igualdad exacta)
+[check] MARZO 2026 — VEREDICTO: <span class="ok">PASA</span> (4 productos, igualdad exacta)
+[check] ABRIL 2026 — VEREDICTO: <span class="ok">PASA</span> (3 productos, igualdad exacta)
+
+<span class="cm"># el gate corre las FUNCIONES REALES del cierre — pivot.calcular_neta_mes()</span>
+<span class="cm"># y pivot.utilidad_mes() — contra tres meses cerrados y verificados a mano.</span>
+<span class="cm"># Sin reimplementar la lógica: si el golden y producción divergen, es un bug</span>
+<span class="cm"># del golden, no del negocio.</span>
+<span class="cm">#</span>
+<span class="cm"># Igualdad EXACTA, no ±tolerancia: el OCR queda fuera de este camino, así que</span>
+<span class="cm"># dos corridas sobre los mismos inputs dan el mismo número al peso. Una</span>
+<span class="cm"># tolerancia del 0,5 % enmascararía una regresión real.</span>
+<span class="cm">#</span>
+<span class="cm"># Si BLOQUEA, el cambio </span><span class="hi">no se cierra</span><span class="cm">. No es un aviso: es un no.</span></pre>
+      <pre class="t-en"><span class="pr">$</span> python tests/golden_finanzas/eval_finanzas.py check-all
+
+[check] JANUARY 2026 — VERDICT: <span class="ok">PASS</span> (5 products, exact equality)
+[check] MARCH   2026 — VERDICT: <span class="ok">PASS</span> (4 products, exact equality)
+[check] APRIL   2026 — VERDICT: <span class="ok">PASS</span> (3 products, exact equality)
+
+<span class="cm"># the gate runs the REAL closing functions — pivot.calcular_neta_mes() and</span>
+<span class="cm"># pivot.utilidad_mes() — against three closed, hand-verified months.</span>
+<span class="cm"># No reimplemented logic: if golden and production diverge, it's a bug in</span>
+<span class="cm"># the golden, not in the business.</span>
+<span class="cm">#</span>
+<span class="cm"># EXACT equality, not ±tolerance: OCR is out of this path, so two runs over</span>
+<span class="cm"># the same inputs give the same number to the peso. A 0.5 % tolerance would</span>
+<span class="cm"># mask a real regression.</span>
+<span class="cm">#</span>
+<span class="cm"># If it BLOCKS, the change </span><span class="hi">does not ship</span><span class="cm">. It isn't a warning: it's a no.</span></pre>
+    </div>
+
+    <div class="truth reveal">
+      <span class="tl grad-text"><span class="t-es">El límite honesto del gate</span><span class="t-en">The gate's honest limit</span></span>
+      <p class="t-es">Ningún agente puede <b>verificar que una factura sea real</b> o que un flete sea correcto. Lo que sí es verificable por ejecución es que <b>la cifra es reproducible desde inputs congelados</b> y que <b>cada número dice de dónde sale</b>. El golden comprueba aritmética y trazabilidad, no verdad de negocio: eso lo firma una persona mirando el mes real. El pipe <b>propone</b>; yo <b>confirmo</b>. Y el ground-truth del golden lo fijo yo, no el pipe: si el pipe pudiera reescribirlo para aprobar, el gate sería un sello de goma.</p>
+      <p class="t-en">No agent can <b>verify that an invoice is real</b> or that a shipping charge is right. What <i>is</i> verifiable by execution is that <b>the figure is reproducible from frozen inputs</b> and that <b>every number states its source</b>. The golden checks arithmetic and traceability, not business truth: a human signs that off looking at the real month. The pipe <b>proposes</b>; I <b>confirm</b>. And the golden's ground truth is set by me, not by the pipe: if the pipe could rewrite it to pass, the gate would be a rubber stamp.</p>
+    </div>
+  </div>
+</section>
+
+<!-- precio: calculadora real -->
+<p class="tw-cmd" aria-hidden="true"><span class="u">diego@portfolio</span><span class="d">:~/pricing</span><span class="s">$</span> <b>/pricing</b></p>
+<section id="precio">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="t-es">Determinismo · pruébalo tú</span><span class="t-en">Determinism · try it yourself</span></div>
+      <h2 class="t-es">El precio de venta no lo decide una IA</h2>
+      <h2 class="t-en">The selling price is not decided by an AI</h2>
+      <p class="t-es">Es aritmética pura: <span class="mono">precio = (coste × n + costes_fijos) / (1 − margen)</span>, redondeado al siguiente precio psicológico terminado en <span class="hl">.900</span>, más un pequeño optimizador que busca la progresión de descuentos más creíble. <strong>Cero tokens.</strong> Un LLM aquí no aportaría nada y sí podría equivocarse distinto cada vez.</p>
+      <p class="t-en">It's pure arithmetic: <span class="mono">price = (cost × n + fixed_costs) / (1 − margin)</span>, rounded up to the next psychological price ending in <span class="hl">.900</span>, plus a small optimiser that finds the most believable discount progression. <strong>Zero tokens.</strong> An LLM would add nothing here and could get it wrong differently every time.</p>
+    </div>
+
+    <div class="calc reveal">
+      <div class="calc-top">
+        <span class="cl"><span class="t-es">coste del producto en Dropi</span><span class="t-en">product cost at Dropi</span></span>
+        <span class="cn"><b id="pp-v">$30.000</b> <span class="t-es">COP</span><span class="t-en">COP</span></span>
+      </div>
+      <input type="range" min="5000" max="200000" step="1000" value="30000" id="pp-range" aria-label="Coste del producto en COP">
+      <div class="tiers">
+        <div class="tier"><div class="tk">x1</div><div class="tp"><b id="p1">$87.900</b></div><div class="td"><span class="t-es">antes</span><span class="t-en">was</span> <s id="g1v">$200.000</s> · <span class="off" id="e26v">55% off</span></div></div>
+        <div class="tier"><div class="tk">x2</div><div class="tp"><b id="p2">$118.900</b></div><div class="td"><span class="t-es">descuento mostrado</span><span class="t-en">displayed discount</span> <span class="off" id="h27v">65%</span></div></div>
+        <div class="tier"><div class="tk">x3</div><div class="tp"><b id="p3">$150.900</b></div><div class="td"><span class="t-es">descuento mostrado</span><span class="t-en">displayed discount</span> <span class="off" id="h28v">75%</span></div></div>
+      </div>
+      <div class="calc-foot">
+        <span class="cf-l">
+          <span class="t-es"><b>CPA de equilibrio</b>: lo máximo que puedo pagar por una venta antes de perder dinero. Es el número que decide si un anuncio sigue vivo o se apaga.</span>
+          <span class="t-en"><b>Break-even CPA</b>: the most I can pay for one sale before losing money. It's the number that decides whether an ad stays on or gets killed.</span>
+        </span>
+        <span class="calc-be"><b id="be-v">$4.967</b><small><span class="t-es">CPA breakeven COP</span><span class="t-en">break-even CPA, COP</span></small></span>
+      </div>
+      <div class="calc-params">
+        <span><span class="t-es">flete base</span><span class="t-en">base shipping</span> <b>$17.063</b></span>
+        <span><span class="t-es">% entrega</span><span class="t-en">delivery rate</span> <b>75%</b></span>
+        <span><span class="t-es">admin/pedido</span><span class="t-en">admin/order</span> <b>$2.909</b></span>
+        <span><span class="t-es">CPA objetivo</span><span class="t-en">target CPA</span> <b>$15.000</b></span>
+        <span><span class="t-es">margen</span><span class="t-en">margin</span> <b>5%</b></span>
+      </div>
+      <div class="calc-note">
+        <span class="t-es">Esto <b>no es una maqueta</b>: es el algoritmo de <span class="mono">ecxm/predev/precios.py</span> portado a JavaScript línea por línea, incluido el redondeo bancario de Python y el optimizador de progresión de descuentos. Lo verifiqué contra los <b>mismos 7 casos golden</b> que blindan la versión en Python: los 9 campos coinciden al peso en los 7. Los parámetros de arriba son los valores por defecto del repo; en producción se leen del Excel de la tienda.</span>
+        <span class="t-en">This is <b>not a mock-up</b>: it's the algorithm from <span class="mono">ecxm/predev/precios.py</span> ported to JavaScript line by line, including Python's banker's rounding and the discount-progression optimiser. I verified it against the <b>same 7 golden cases</b> that guard the Python version: all 9 fields match to the peso across all 7. The parameters above are the repo defaults; in production they're read from the store's spreadsheet.</span>
+      </div>
+    </div>
+
+    <div class="scale-facts">
+      <div class="sf reveal"><div class="sfn"><b>7/7</b></div><h4><span class="t-es">casos golden idénticos</span><span class="t-en">identical golden cases</span></h4><p><span class="t-es">El port JS y el original Python coinciden en los 9 campos, incluidos los bordes (entrega 0 %, CPA explícito).</span><span class="t-en">The JS port and the Python original agree on all 9 fields, edge cases included (0 % delivery, explicit CPA).</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>0</b></div><h4><span class="t-es">tolerancia</span><span class="t-en">tolerance</span></h4><p><span class="t-es">Redondeo a 2 decimales solo para neutralizar el ruido del float. Nada más se perdona.</span><span class="t-en">Rounding to 2 decimals only to neutralise float noise. Nothing else is forgiven.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- coste 0 -->
+<p class="tw-cmd" aria-hidden="true"><span class="u">diego@portfolio</span><span class="d">:~/cost</span><span class="s">$</span> <b>/cost --zero</b></p>
+<section id="cero">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="t-es">Ingeniería con resultado económico</span><span class="t-en">Engineering with a financial result</span></div>
+      <h2 class="t-es">El pipeline que dejó de pagar por pensar</h2>
+      <h2 class="t-en">The pipeline that stopped paying to think</h2>
+      <p class="t-es">Clonar la landing de un competidor empezó como lo empieza todo el mundo: mandarle capturas a un modelo de visión y pedirle que la reconstruya. Funcionaba, costaba <strong>~$0,05 por landing</strong> y era <strong>distinto en cada corrida</strong>. Hoy el mismo trabajo lo hacen <span class="hl">26 extractores deterministas y 9 parsers de reseñas</span> sobre el HTML real: mismo input, mismo output, <strong>$0</strong>. Vision sigue ahí, pero solo detrás de un flag explícito, nunca como fallback silencioso.</p>
+      <p class="t-en">Cloning a competitor's landing page started the way everyone starts: send screenshots to a vision model and ask it to rebuild the page. It worked, it cost <strong>~$0.05 per landing</strong> and it was <strong>different on every run</strong>. Today the same job is done by <span class="hl">26 deterministic extractors and 9 review parsers</span> over the real HTML: same input, same output, <strong>$0</strong>. Vision is still there, but only behind an explicit flag, never as a silent fallback.</p>
+    </div>
+
+    <div class="scale-facts">
+      <div class="sf reveal"><div class="sfn"><b>5</b></div><h4><span class="t-es">plataformas cubiertas</span><span class="t-en">platforms covered</span></h4><p><span class="t-es">Shopify, Funnelish, GemPages, Pagefly y Tiendanube, cada una con su forma de esconder el mismo contenido.</span><span class="t-en">Shopify, Funnelish, GemPages, Pagefly and Tiendanube, each hiding the same content its own way.</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>27</b></div><h4><span class="t-es">landings de regresión</span><span class="t-en">regression landings</span></h4><p><span class="t-es">Un set real de competidores. Se regeneran una a una y se diffea el HTML: el validator en verde no basta.</span><span class="t-en">A real competitor set. Regenerated one by one with an HTML diff: a green validator isn't enough.</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>4</b></div><h4><span class="t-es">goldens congelados</span><span class="t-en">frozen goldens</span></h4><p><span class="t-es">Partidos por zona (copy · CSS · footer) y con las URLs normalizadas, para que el diff detecte drift y no ruido.</span><span class="t-en">Split by zone (copy · CSS · footer) with normalised URLs, so the diff catches drift, not noise.</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>8.549</b></div><h4><span class="t-es">líneas del extractor</span><span class="t-en">extractor lines</span></h4><p><span class="t-es">El precio real de la determinación: cada caso raro de cada builder, escrito y cubierto por el set.</span><span class="t-en">The real price of determinism: every builder's weird case, written down and covered by the set.</span></p></div>
+    </div>
+
+    <div class="sb" style="margin-top:44px">
+      <div class="sb-code reveal t-es"><span class="cm"># el gate no avisaba: dejaba pasar</span>
+<span class="cm"># replicar_plantilla.py, durante 11 días</span>
+
+report = validar_landing(output_dir)
+<span class="a">if</span> <span class="a">not</span> report.passed:
+    print(<span class="r">"[WARN] la réplica tiene fallos"</span>)
+    <span class="cm"># "no abortamos un generado</span>
+    <span class="cm">#  imperfecto, solo avisamos"</span>
+
+<span class="cm"># ── después ──────────────────────────</span>
+
+<span class="a">if</span> <span class="a">not</span> report.passed:
+    <span class="a">raise</span> <span class="g">ReplicaValidatorFailed</span>(
+        output_dir, report.failures)
+<span class="cm"># CLI → exit 1 · dashboard → captura la</span>
+<span class="cm"># excepción y expone el HTML para debug</span>
+</div>
+      <div class="sb-code reveal t-en"><span class="cm"># the gate didn't warn: it let things through</span>
+<span class="cm"># replicar_plantilla.py, for 11 days</span>
+
+report = validar_landing(output_dir)
+<span class="a">if</span> <span class="a">not</span> report.passed:
+    print(<span class="r">"[WARN] the replica has failures"</span>)
+    <span class="cm"># "we don't abort an imperfect</span>
+    <span class="cm">#  build, we just warn"</span>
+
+<span class="cm"># ── after ────────────────────────────</span>
+
+<span class="a">if</span> <span class="a">not</span> report.passed:
+    <span class="a">raise</span> <span class="g">ReplicaValidatorFailed</span>(
+        output_dir, report.failures)
+<span class="cm"># CLI → exit 1 · dashboard → catches the</span>
+<span class="cm"># exception and exposes the HTML to debug</span>
+</div>
+      <div class="sb-body reveal t-es">
+        <p>El validator existía desde hacía semanas, con su lista de placeholders prohibidos y sus checks de estructura. Y aun así, <strong>once días de landings con fallos pasaron el gate</strong>, porque el gate solo imprimía un warning.</p>
+        <p><strong>Una defensa que solo avisa entrena a su dueño a ignorarla.</strong> Hoy la regla del repo es explícita: toda defensa nueva tiene que abortar: <span class="mono">exit ≠ 0</span>, <span class="mono">raise</span>, o un fallo detectable aguas abajo. Si hace falta no bloquear en un caso concreto, se hace con un flag visible, no con silencio por defecto.</p>
+        <p>El mismo principio arregló otro fallo más sutil: un <span class="mono">sys.exit()</span> dentro de una librería lanza <span class="mono">SystemExit</span>, que <em>no hereda de Exception</em>, así que atravesaba todos los <span class="mono">except Exception</span> del dashboard y se llevaba por delante la interfaz entera.</p>
+      </div>
+      <div class="sb-body reveal t-en">
+        <p>The validator had existed for weeks, with its forbidden-placeholder list and its structure checks. And still, <strong>eleven days of broken landings sailed through the gate</strong>, because the gate only printed a warning.</p>
+        <p><strong>A defense that merely warns trains its owner to ignore it.</strong> The repo rule is now explicit: every new defense must abort: <span class="mono">exit ≠ 0</span>, <span class="mono">raise</span>, or a failure detectable downstream. If a specific case genuinely shouldn't block, that's done with a visible flag, not with silence by default.</p>
+        <p>The same principle fixed a subtler failure: a <span class="mono">sys.exit()</span> inside a library raises <span class="mono">SystemExit</span>, which <em>doesn't inherit from Exception</em>, so it sailed straight through every <span class="mono">except Exception</span> in the dashboard and took the whole UI down.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- decisiones -->
+<p class="tw-cmd" aria-hidden="true"><span class="u">diego@portfolio</span><span class="d">:~/decisions</span><span class="s">$</span> <b>/decisions</b></p>
+<section id="decisiones">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="t-es">Lo que decidí NO construir</span><span class="t-en">What I decided NOT to build</span></div>
+      <h2 class="t-es">Decisiones medidas, no intuidas</h2>
+      <h2 class="t-en">Measured decisions, not guessed</h2>
+      <p class="t-es">El activo que no se puede fingir no es el código: es el <strong>juicio</strong>. Cada una de estas ideas era razonable y tentadora; todas murieron con un dato concreto delante. Varias iban <strong>en contra de lo que yo quería que fuera verdad</strong>, y por eso están aquí.</p>
+      <p class="t-en">The asset you can't fake isn't the code: it's <strong>judgment</strong>. Every one of these ideas was reasonable and tempting; all of them died with a concrete piece of data in front of them. Several went <strong>against what I wanted to be true</strong>, which is exactly why they're here.</p>
+    </div>
+
+    <table class="stbl reveal">
+      <thead><tr>
+        <th><span class="t-es">Idea</span><span class="t-en">Idea</span></th>
+        <th><span class="t-es">Por qué tentaba</span><span class="t-en">Why it tempted</span></th>
+        <th><span class="t-es">Qué encontré</span><span class="t-en">What I found</span></th>
+        <th><span class="t-es">Veredicto</span><span class="t-en">Verdict</span></th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">CSV de Meta como fuente de coste</span><span class="t-en">Meta CSV as the cost source</span></span><span class="sd"><span class="t-es">un solo archivo con todo el gasto del mes</span><span class="t-en">one file with the whole month's spend</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">un download y listo, sin OCR</span><span class="t-en">one download and done, no OCR</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">sin desglose por campaña ni estado Pagado/Error; los PDFs sí lo traen</span><span class="t-en">no per-campaign breakdown, no Paid/Error state; the PDFs have both</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Descartado como coste</span><span class="t-en">Ruled out as cost</span></span></td>
+        </tr>
+        <tr>
+          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Contar el flete de todos los pedidos</span><span class="t-en">Count shipping on every order</span></span><span class="sd"><span class="t-es">al fin y al cabo es flete que se paga</span><span class="t-en">after all, it's shipping that gets paid</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">parecía más conservador</span><span class="t-en">it looked more conservative</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">la suma por producto dejaba de cuadrar con el total del mes</span><span class="t-en">the per-product sum stopped matching the month total</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Solo 4 estatus finales</span><span class="t-en">Final 4 statuses only</span></span></td>
+        </tr>
+        <tr>
+          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Vision para clonar reseñas</span><span class="t-en">Vision to clone reviews</span></span><span class="sd"><span class="t-es">cada competidor pinta sus reseñas distinto</span><span class="t-en">every competitor renders reviews differently</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">«un modelo lo resuelve todo»</span><span class="t-en">"one model solves everything"</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">9 parsers cubren el set entero; sin parser → sección omitida, no invención</span><span class="t-en">9 parsers cover the whole set; no parser → section omitted, nothing invented</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Fuera del pipe · $0</span><span class="t-en">Out of the pipe · $0</span></span></td>
+        </tr>
+        <tr>
+          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Servidor, n8n, FastAPI, Postgres</span><span class="t-en">Server, n8n, FastAPI, Postgres</span></span><span class="sd"><span class="t-es">la arquitectura «seria»</span><span class="t-en">the "serious" architecture</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">se ve mejor en un diagrama</span><span class="t-en">it looks better on a diagram</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">5–15 tests/semana y un operador → infra sin usuarios y con mantenimiento</span><span class="t-en">5–15 tests/week and one operator → infra with no users and real upkeep</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-marg"><span class="t-es">Local + SQLite</span><span class="t-en">Local + SQLite</span></span></td>
+        </tr>
+        <tr>
+          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Tasa 1.0 para divisa desconocida</span><span class="t-en">1.0 rate for unknown currency</span></span><span class="sd"><span class="t-es">así el importe nunca sale vacío</span><span class="t-en">that way the amount is never empty</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">una tabla sin huecos da confianza</span><span class="t-en">a table with no gaps feels trustworthy</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">subestimaba un coste en USD ~4.200× → podía convertir un perdedor en winner</span><span class="t-en">understated a USD cost ~4,200× → could turn a loser into a winner</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill">None + <span class="t-es">aviso</span><span class="t-en">warning</span></span></td>
+        </tr>
+        <tr>
+          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Borrar la caché de LLM al cambiar un prompt</span><span class="t-en">Wipe the LLM cache on prompt change</span></span><span class="sd"><span class="t-es">«está sucia, mejor empezar limpio»</span><span class="t-en">"it's dirty, better start clean"</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">higiene aparente</span><span class="t-en">apparent hygiene</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">268 entradas borradas = 268 llamadas ya pagadas que hubo que repagar</span><span class="t-en">268 entries deleted = 268 already-paid calls that had to be paid again</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-inc"><span class="t-es">Nunca sin permiso</span><span class="t-en">Never without asking</span></span></td>
+        </tr>
+        <tr>
+          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Forzar COP en la publicidad</span><span class="t-en">Force COP on ad spend</span></span><span class="sd"><span class="t-es">hoy todas las cuentas facturan en pesos</span><span class="t-en">today every account bills in pesos</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">funciona… hasta que deje de hacerlo</span><span class="t-en">it works… until it doesn't</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">la primera cuenta que facture en USD escondería un ×4.200 sin avisar</span><span class="t-en">the first USD-billing account would silently hide a ×4,200</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-inc"><span class="t-es">Riesgo documentado</span><span class="t-en">Documented risk</span></span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="engine-cap reveal t-es" style="margin-top:22px">La última fila no es un fallo mío que se me olvidó: es un <b>footgun conocido, escrito y fechado</b> en el backlog, con la condición exacta que lo disparará. Prefiero un riesgo documentado y visible a un riesgo resuelto a medias en silencio.</p>
+    <p class="engine-cap reveal t-en" style="margin-top:22px">That last row isn't a mistake I forgot about: it's a <b>known footgun, written down and dated</b> in the backlog, with the exact condition that will trigger it. I'd rather have a documented, visible risk than one half-fixed in silence.</p>
+  </div>
+</section>
+
+<!-- arquitectura -->
+<p class="tw-cmd" aria-hidden="true"><span class="u">diego@portfolio</span><span class="d">:~/architecture</span><span class="s">$</span> <b>/architecture</b></p>
+<section id="arquitectura">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="t-es">Arquitectura · WAT</span><span class="t-en">Architecture · WAT</span></div>
+      <h2 class="t-es">La IA razona; el código determinista ejecuta</h2>
+      <h2 class="t-en">The AI reasons; deterministic code executes</h2>
+      <p class="t-es">Todo el repo está montado sobre una idea aritmética muy simple: si cada paso de una cadena es un <strong>90 % fiable</strong>, cinco pasos seguidos te dejan en <strong>59 %</strong>. Por eso la IA no ejecuta: <strong>orquesta</strong>. Las instrucciones viven en workflows en markdown, el juicio lo pone el agente, y el trabajo real lo hacen scripts de Python testeables y repetibles.</p>
+      <p class="t-en">The whole repo rests on one very simple piece of arithmetic: if each step in a chain is <strong>90 % reliable</strong>, five steps in a row leave you at <strong>59 %</strong>. That's why the AI doesn't execute: it <strong>orchestrates</strong>. Instructions live in markdown workflows, judgment comes from the agent, and the real work is done by testable, repeatable Python scripts.</p>
+    </div>
+
+    <div class="layers">
+      <div class="layer reveal"><div class="n grad-text">CAPA 01 · WORKFLOWS</div><h4><span class="t-es">Las instrucciones</span><span class="t-en">The instructions</span></h4><p><span class="t-es">SOPs en markdown: objetivo, entradas necesarias, qué herramienta usar y cómo tratar los casos raros. Escritos como se le explica a una persona del equipo, y actualizados cuando el proceso aprende algo.</span><span class="t-en">Markdown SOPs: objective, required inputs, which tool to use and how to handle edge cases. Written the way you'd brief a teammate, and updated whenever the process learns something.</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">CAPA 02 · AGENTE</div><h4><span class="t-es">La decisión</span><span class="t-en">The decision</span></h4><p><span class="t-es">Lee el workflow, encadena las herramientas en el orden correcto, se recupera de los errores y pregunta cuando falta información. No calcula precios ni conmuta números: <span class="hl">conecta intención con ejecución</span>.</span><span class="t-en">Reads the workflow, chains the tools in the right order, recovers from errors and asks when information is missing. It doesn't compute prices or crunch numbers: it <span class="hl">connects intent to execution</span>.</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">CAPA 03 · HERRAMIENTAS</div><h4><span class="t-es">La ejecución</span><span class="t-en">The execution</span></h4><p><span class="t-es">~34.500 líneas de Python en <span class="mono">ecxm/</span>: scraping, pandas, openpyxl, OCR, generación. Consistentes, rápidas y testeables. Toda llamada a un modelo pasa por <span class="mono">core/llm.py</span>: un único punto que cachea por hash y contabiliza el coste.</span><span class="t-en">~34,500 lines of Python in <span class="mono">ecxm/</span>: scraping, pandas, openpyxl, OCR, generation. Consistent, fast and testable. Every model call goes through <span class="mono">core/llm.py</span>: a single point that caches by hash and accounts for cost.</span></p></div>
+    </div>
+
+    <div class="engine reveal" style="margin-top:44px">
+      <svg viewBox="0 0 1080 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Superficie compartida entre los pipelines del dashboard">
+        <defs>
+          <marker id="cp-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a8a99"/></marker>
+          <linearGradient id="cp-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9b5cff"/><stop offset="1" stop-color="#22d3ff"/></linearGradient>
+        </defs>
+        <style>
+          .cp-rect{fill:rgba(255,255,255,.025)}
+          .cp-title{font:700 12px 'Space Grotesk','Inter',sans-serif;fill:#f1f1f5}
+          .cp-sub{font:400 9.5px 'Inter',sans-serif;fill:#9a9ab0}
+          .cp-el{font:500 10px 'JetBrains Mono',monospace;fill:#8a8a99}
+          .cp-flow{stroke-dasharray:5 9;animation:cpmarch 1.1s linear infinite}
+          @keyframes cpmarch{to{stroke-dashoffset:-14}}
+          .cp-share{stroke-dasharray:2 6;opacity:.42}
+        </style>
+
+        <text x="540" y="20" text-anchor="middle" class="cp-el t-es" style="fill:#bd9bff;font-weight:700">LA CADENA (la salida de cada pipe es la entrada del siguiente</text>
+        <text x="540" y="20" text-anchor="middle" class="cp-el t-en" style="fill:#bd9bff;font-weight:700">THE CHAIN) each pipe's output is the next one's input</text>
+
+        <!-- chain -->
+        <rect class="cp-rect" x="16" y="44" width="152" height="52" rx="11" stroke="#9b5cff" stroke-width="1.7"/>
+        <text x="92" y="66" text-anchor="middle" class="cp-title">SNIPE</text>
+        <text x="92" y="82" text-anchor="middle" class="cp-sub t-es">Ads Library · Playwright</text><text x="92" y="82" text-anchor="middle" class="cp-sub t-en">Ads Library · Playwright</text>
+
+        <rect class="cp-rect" x="196" y="44" width="152" height="52" rx="11" stroke="#8a6dff" stroke-width="1.7"/>
+        <text x="272" y="66" text-anchor="middle" class="cp-title">LAB</text>
+        <text x="272" y="82" text-anchor="middle" class="cp-sub t-es">precios · copy · títulos</text><text x="272" y="82" text-anchor="middle" class="cp-sub t-en">pricing · copy · titles</text>
+
+        <rect class="cp-rect" x="376" y="44" width="152" height="52" rx="11" stroke="#5f9bff" stroke-width="1.7"/>
+        <text x="452" y="66" text-anchor="middle" class="cp-title">REP</text>
+        <text x="452" y="82" text-anchor="middle" class="cp-sub t-es">réplica de landing · $0</text><text x="452" y="82" text-anchor="middle" class="cp-sub t-en">landing replica · $0</text>
+
+        <rect class="cp-rect" x="556" y="44" width="152" height="52" rx="11" stroke="#22d3ff" stroke-width="1.7"/>
+        <text x="632" y="66" text-anchor="middle" class="cp-title">CREATIVE</text>
+        <text x="632" y="82" text-anchor="middle" class="cp-sub t-es">estáticos · vídeo · UGC</text><text x="632" y="82" text-anchor="middle" class="cp-sub t-en">statics · video · UGC</text>
+
+        <rect class="cp-rect" x="736" y="44" width="152" height="52" rx="11" stroke="#37e0ff" stroke-width="1.7"/>
+        <text x="812" y="66" text-anchor="middle" class="cp-title">ANALYTICS</text>
+        <text x="812" y="82" text-anchor="middle" class="cp-sub t-es">reglas · $0 LLM</text><text x="812" y="82" text-anchor="middle" class="cp-sub t-en">rules · $0 LLM</text>
+
+        <rect class="cp-rect" x="916" y="38" width="150" height="64" rx="12" stroke="#ffce6a" stroke-width="2"/>
+        <text x="991" y="63" text-anchor="middle" class="cp-title t-es">FINANZAS</text><text x="991" y="63" text-anchor="middle" class="cp-title t-en">FINANCE</text>
+        <text x="991" y="79" text-anchor="middle" class="cp-sub t-es">irreversible · el cierre</text><text x="991" y="79" text-anchor="middle" class="cp-sub t-en">irreversible · the close</text>
+        <text x="991" y="94" text-anchor="middle" class="cp-el" style="fill:#ffce6a">/eval-finanzas</text>
+
+        <path d="M168,70 L196,70" fill="none" stroke="#8a8a99" stroke-width="1.5" opacity=".6" class="cp-flow" marker-end="url(#cp-arw)"/>
+        <path d="M348,70 L376,70" fill="none" stroke="#8a8a99" stroke-width="1.5" opacity=".6" class="cp-flow" marker-end="url(#cp-arw)"/>
+        <path d="M528,70 L556,70" fill="none" stroke="#8a8a99" stroke-width="1.5" opacity=".6" class="cp-flow" marker-end="url(#cp-arw)"/>
+        <path d="M708,70 L736,70" fill="none" stroke="#8a8a99" stroke-width="1.5" opacity=".6" class="cp-flow" marker-end="url(#cp-arw)"/>
+        <path d="M888,70 L916,70" fill="none" stroke="#ffce6a" stroke-width="1.7" opacity=".65" class="cp-flow" marker-end="url(#cp-arw)"/>
+
+        <!-- shared surface -->
+        <rect x="16" y="238" width="1050" height="86" rx="14" fill="rgba(255,255,255,.02)" stroke="url(#cp-grad)" stroke-width="1.6"/>
+        <text x="541" y="268" text-anchor="middle" class="cp-title t-es">SUPERFICIE COMPARTIDA</text><text x="541" y="268" text-anchor="middle" class="cp-title t-en">SHARED SURFACE</text>
+        <text x="541" y="288" text-anchor="middle" class="cp-sub t-es">un único dashboard de 17.296 líneas · session_state global · CSS y JS globales · constantes y helpers comunes</text>
+        <text x="541" y="288" text-anchor="middle" class="cp-sub t-en">one 17,296-line dashboard · global session_state · global CSS and JS · shared constants and helpers</text>
+        <text x="541" y="308" text-anchor="middle" class="cp-el">COMPES_TRACKER.xlsx · ecxm.db · fb_cookies.json · dashboard_state.json</text>
+
+        <path d="M92,96 L92,238" stroke="#9b5cff" stroke-width="1.3" class="cp-share"/>
+        <path d="M272,96 L272,238" stroke="#8a6dff" stroke-width="1.3" class="cp-share"/>
+        <path d="M452,96 L452,238" stroke="#5f9bff" stroke-width="1.3" class="cp-share"/>
+        <path d="M632,96 L632,238" stroke="#22d3ff" stroke-width="1.3" class="cp-share"/>
+        <path d="M812,96 L812,238" stroke="#37e0ff" stroke-width="1.3" class="cp-share"/>
+        <path d="M991,102 L991,238" stroke="#ffce6a" stroke-width="1.3" class="cp-share"/>
+
+        <text x="541" y="160" text-anchor="middle" class="cp-el t-es" style="fill:#ff8298;font-weight:700">cada línea punteada es una vía por la que un cambio en UNA pestaña puede romper OTRA</text>
+        <text x="541" y="160" text-anchor="middle" class="cp-el t-en" style="fill:#ff8298;font-weight:700">every dotted line is a path by which a change in ONE tab can break ANOTHER</text>
+        <text x="541" y="182" text-anchor="middle" class="cp-el t-es">por eso existe dashboard_map.json: qué hace cada pestaña, con qué se sincroniza y QUÉ SE ROMPE al tocarla</text>
+        <text x="541" y="182" text-anchor="middle" class="cp-el t-en">hence dashboard_map.json: what each tab does, what it syncs with and WHAT BREAKS when you touch it</text>
+        <text x="541" y="204" text-anchor="middle" class="cp-el t-es" style="fill:#bd9bff">se lee ANTES de editar y se actualiza DESPUÉS (es la fuente de verdad, no un diagrama decorativo</text>
+        <text x="541" y="204" text-anchor="middle" class="cp-el t-en" style="fill:#bd9bff">read BEFORE editing and updated AFTER) it's the source of truth, not a decorative diagram</text>
+
+        <text x="541" y="356" text-anchor="middle" class="cp-el t-es">Cross-Pipe Safety · ninguna tarea se cierra sin comprobar que los demás pipes siguen vivos</text>
+        <text x="541" y="356" text-anchor="middle" class="cp-el t-en">Cross-Pipe Safety · no task closes without checking the other pipes are still alive</text>
+        <text x="541" y="378" text-anchor="middle" class="cp-el t-es" style="fill:#9a9ab0">un bug en SNIPE que rompe el pipe de réplicas cuesta más en diagnóstico que el cambio original en desarrollo</text>
+        <text x="541" y="378" text-anchor="middle" class="cp-el t-en" style="fill:#9a9ab0">a bug in SNIPE that breaks the replica pipe costs more to diagnose than the original change cost to build</text>
+      </svg>
+    </div>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle ↔</span><span class="t-en">Pinch to zoom in and read the detail ↔</span></p>
+
+    <div class="sec-head reveal" style="margin-top:56px;margin-bottom:0">
+      <div class="eyebrow"><span class="t-es">Calibrado de ceremonia</span><span class="t-en">Ceremony calibration</span></div>
+      <h2 class="t-es">El riesgo lo marca la superficie, no el tamaño del diff</h2>
+      <h2 class="t-en">Risk is set by the surface, not by the size of the diff</h2>
+      <p class="t-es">Un cambio de dos líneas en el cierre de finanzas es <strong>más peligroso</strong> que refactorizar quinientas de estilos. Por eso el proceso no se calibra por líneas cambiadas sino por <strong>dónde</strong> se toca, y ese conjunto de superficies es inmutable: no lo puede ampliar ni relajar ningún proceso automático.</p>
+      <p class="t-en">A two-line change in the finance close is <strong>more dangerous</strong> than refactoring five hundred lines of styling. So the process is calibrated not by lines changed but by <strong>where</strong> you touch, and that set of surfaces is immutable: no automated process can widen or relax it.</p>
+    </div>
+    <div class="surf">
+      <div class="su irr reveal">
+        <div class="lv"><span class="t-es">Irreversible</span><span class="t-en">Irreversible</span></div>
+        <h4><span class="t-es">El cierre de mes</span><span class="t-en">The month close</span></h4>
+        <p><span class="t-es">Ahí el número se convierte en un pago. También cuenta borrar la caché de LLM ya pagada y romper la convención de nombres de campaña.</span><span class="t-en">That's where the number becomes a payment. Also: deleting already-paid LLM cache, and breaking the campaign naming convention.</span></p>
+        <div class="cer"><span class="t-es">ritual completo + doble pase independiente</span><span class="t-en">full ritual + independent second pass</span></div>
+      </div>
+      <div class="su sen reveal">
+        <div class="lv"><span class="t-es">Sensible · reversible</span><span class="t-en">Sensitive · reversible</span></div>
+        <h4><span class="t-es">Réplicas, pivot, dashboard</span><span class="t-en">Replicas, pivot, dashboard</span></h4>
+        <p><span class="t-es">Duele si se rompe, pero se recupera. Aquí el gate ya existe: validator, golden y set de regresión.</span><span class="t-en">It hurts when it breaks, but it recovers. The gate already exists here: validator, golden and regression set.</span></p>
+        <div class="cer"><span class="t-es">ceremonia media + gate automático</span><span class="t-en">medium ceremony + automated gate</span></div>
+      </div>
+      <div class="su min reveal">
+        <div class="lv"><span class="t-es">No sensible</span><span class="t-en">Not sensitive</span></div>
+        <h4><span class="t-es">Precios, copy de UI, estilos</span><span class="t-en">Pricing, UI copy, styling</span></h4>
+        <p><span class="t-es">Recomputable y visible al instante. Aquí el proceso pesado sería teatro: leer, cambiar, verificar y decirlo.</span><span class="t-en">Recomputable and instantly visible. Heavy process here would be theatre: read, change, verify, say so.</span></p>
+        <div class="cer"><span class="t-es">ceremonia mínima</span><span class="t-en">minimal ceremony</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- método -->
+<p class="tw-cmd" aria-hidden="true"><span class="u">diego@portfolio</span><span class="d">:~/method</span><span class="s">$</span> <b>/method</b></p>
+<section id="metodo">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span></div>
+      <h2 class="t-es">El modo de fallo real no es planificar mal: es reportar sin verificar</h2>
+      <h2 class="t-en">The real failure mode isn't bad planning: it's reporting without verifying</h2>
+      <p class="t-es">Ningún <em>«el subagente reportó OK»</em> cierra nada aquí: el orquestador corre él mismo el gate y <strong>pega la salida real</strong> en el prompt del siguiente paso.</p>
+      <p class="t-en">No <em>"the subagent reported OK"</em> closes anything here: the orchestrator runs the gate itself and <strong>pastes the real output</strong> into the next step's prompt.</p>
+    </div>
+
+    <div class="term reveal" style="margin-top:0">
+      <div class="term-bar"><i></i><i></i><i></i><span><span class="t-es">los otros dos gates · el de finanzas está arriba</span><span class="t-en">the other two gates · the finance one is above</span></span></div>
+      <pre class="t-es"><span class="pr">$</span> python tests/golden_precios/eval_precios.py check
+[check] precios — VEREDICTO: <span class="ok">PASA</span> (7 casos, igualdad exacta)
+
+<span class="pr">$</span> python tests/golden_control_diario/eval_control_diario.py check
+[check] control_diario — VEREDICTO: <span class="ok">PASA</span> (6 casos, igualdad exacta)
+
+<span class="cm"># Los goldens con cifras reales del negocio NO se versionan: el arnés se</span>
+<span class="cm"># comparte, cada máquina captura su propio baseline. Sin baseline el gate</span>
+<span class="cm"># ni aprueba ni bloquea — avisa de que falta. Un gate que aprueba en vacío</span>
+<span class="cm"># es peor que no tener gate.</span></pre>
+      <pre class="t-en"><span class="pr">$</span> python tests/golden_precios/eval_precios.py check
+[check] pricing — VERDICT: <span class="ok">PASS</span> (7 cases, exact equality)
+
+<span class="pr">$</span> python tests/golden_control_diario/eval_control_diario.py check
+[check] control_diario — VERDICT: <span class="ok">PASS</span> (6 cases, exact equality)
+
+<span class="cm"># Goldens holding real business figures are NOT versioned: the harness is</span>
+<span class="cm"># shared, each machine captures its own baseline. With no baseline the gate</span>
+<span class="cm"># neither passes nor blocks — it reports the baseline is missing. A gate that</span>
+<span class="cm"># passes on nothing is worse than no gate at all.</span></pre>
+    </div>
+
+    <div class="mgrid">
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg><span class="t-es">Verificación por ejecución</span><span class="t-en">Verification by execution</span></h4><p><span class="t-es">Verde local ≠ correcto. Que el dashboard arranque <span class="hl">no dice nada</span> sobre si la utilidad neta que calculó el pivot es la real. La única señal con dientes es el gate golden, y lo corro yo antes de cerrar nada.</span><span class="t-en">Green locally ≠ correct. The dashboard booting <span class="hl">says nothing</span> about whether the net profit the pivot computed is the real one. The only signal with teeth is the golden gate, and I run it myself before closing anything.</span></p></div>
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg><span class="t-es">Un bug nunca vive solo</span><span class="t-en">A bug never lives alone</span></h4><p><span class="t-es">Al encontrar un fallo, la pregunta obligatoria es: <span class="hl">¿existe el mismo bug en los caminos análogos?</span> Un invariante como «el flete solo cuenta en los 4 estatus finales» vive en un sitio y lo llaman <b>todas</b> las etapas: ingerir, limpiar, cruzar, pivotar y cerrar.</span><span class="t-en">On finding a defect, the mandatory question is: <span class="hl">does the same bug exist in the analogous paths?</span> An invariant like "shipping only counts on the 4 final statuses" lives in one place and is called by <b>every</b> stage: ingest, clean, cross-match, pivot and close.</span></p></div>
+    </div>
+
+    <div class="open reveal">
+      <h4 class="t-es">Lo que sigue abierto</h4>
+      <h4 class="t-en">What's still open</h4>
+      <p class="intro t-es">El sistema está en producción y se usa todos los días, pero no está «terminado», y decir lo contrario sería el primer número falso de esta página.</p>
+      <p class="intro t-en">The system is in production and used every day, but it isn't "finished", and saying otherwise would be the first false number on this page.</p>
+      <div class="oi"><span class="ok2"><span class="t-es">aplazado a propósito</span><span class="t-en">deliberately deferred</span></span><span class="ov"><span class="t-es"><b>Auditoría integral del dashboard.</b> Con 17.296 líneas en un solo archivo, una auditoría hecha a trozos genera más ruido que señal. Decisión tomada y fechada: esperar y hacer una sola pasada acotada, con tres focos definidos.</span><span class="t-en"><b>Full dashboard audit.</b> At 17,296 lines in a single file, a piecemeal audit generates more noise than signal. Decision made and dated: wait and do a single scoped pass with three defined focuses.</span></span></div>
+      <div class="oi"><span class="ok2"><span class="t-es">riesgo conocido</span><span class="t-en">known risk</span></span><span class="ov"><span class="t-es"><b>Forzado de divisa en publicidad.</b> Hoy inocuo porque todas las cuentas facturan en pesos; se disparará con la primera que facture en dólares. Está escrito, con su condición de disparo, esperando el arreglo correcto en lugar de un parche.</span><span class="t-en"><b>Currency forcing on ad spend.</b> Harmless today because every account bills in pesos; it will fire with the first one billing in dollars. It's written down, with its trigger condition, waiting for the right fix instead of a patch.</span></span></div>
+      <div class="oi"><span class="ok2"><span class="t-es">cobertura parcial</span><span class="t-en">partial coverage</span></span><span class="ov"><span class="t-es"><b>Goldens de landing.</b> 4 congelados de 27 landings del set de regresión. Los tres canónicos cubren los builders más frágiles; el resto se compara por diff, que detecta cambios pero no juzga si son correctos.</span><span class="t-en"><b>Landing goldens.</b> 4 frozen out of the 27 landings in the regression set. The three canonical ones cover the most fragile builders; the rest are compared by diff, which detects changes but doesn't judge whether they're right.</span></span></div>
+    </div>
+
+    <p class="bridge reveal"><span class="t-es">El resto del método —el agente ciego que audita mis planes, el ledger que convierte un fallo en regla— es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method —the blind agent auditing my own plans, the ledger that turns a failure into a rule— is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
+  </div>
+</section>
+
+
+<!-- contacto -->
+<p class="tw-cmd" aria-hidden="true"><span class="u">diego@portfolio</span><span class="d">:~/contact</span><span class="s">$</span> <b>/mail</b></p>
+<section id="contacto">
+  <div class="wrap">
+    <div class="contact reveal">
+      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span></div>
+      <h2 class="t-es">Cojo un negocio entero, lo descompongo en pipelines y orquesto IA para construir cada pieza, sin perder el rigor donde hay dinero.</h2>
+      <h2 class="t-en">I take an entire business, break it into pipelines and orchestrate AI to build every piece, without losing rigor where money is involved.</h2>
+      <p class="t-es">Si buscas a alguien para applied-AI, automatización de operaciones o forward-deployed engineering, que construye sistemas para que la IA no se engañe a sí misma <em>ni a ti</em>, hablemos.</p>
+      <p class="t-en">If you're looking for someone in applied-AI, operations automation or forward-deployed engineering who builds systems so the AI can't fool itself <em>or you</em>, let's talk.</p>
+      <p class="hero-note" style="margin:18px auto 0;text-align:center"><span class="t-es">Todo lo de esta página lo construí <b>en solitario, con IA y sin formación técnica previa</b>.</span><span class="t-en">Everything on this page I built <b>solo, with AI and with no prior technical background</b>.</span></p>
+
+      <div class="cta">
+        <a href="mailto:diegollr98@gmail.com" class="btn btn-primary">diegollr98@gmail.com</a>
+        <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
+        <a href="https://github.com/diegollr98-design" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
+        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <span>ECXM OPS · <span class="hl">Diego</span> · 2026</span>
+  <span><span class="t-es">Sistema en producción · construido con IA</span><span class="t-en">System in production · built with AI</span></span>
+</footer>
+  </div>
+  </div>
+  <div class="tw-con" id="twCon" aria-live="polite"></div>
+  <div class="tw-ac" id="twAc" role="listbox" aria-label="Comandos"></div>
+  <form class="tw-prompt" id="twForm" autocomplete="off">
+    <span class="twp-u" aria-hidden="true">diego@portfolio</span><span class="twp-d" id="twPath" aria-hidden="true">:~</span><span class="twp-s" aria-hidden="true">$</span>
+    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span></label>
+    <input id="twIn" type="text" spellcheck="false" autocapitalize="off"
+           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands">
+    <span class="twp-car" aria-hidden="true">&#9611;</span>
+  </form>
+
+
+<script>
+/* ── language toggle ── */
+function setLang(l){
+  document.documentElement.lang=l;
+  document.documentElement.classList.remove('lang-es','lang-en');
+  document.documentElement.classList.add('lang-'+l);
+  document.body.classList.remove('lang-es','lang-en');
+  document.body.classList.add('lang-'+l);
+  document.querySelectorAll('[data-lang-btn]').forEach(function(b){
+    b.setAttribute('aria-pressed', String(b.dataset.langBtn===l));
+  });
+  try{localStorage.setItem('pf_lang',l)}catch(e){}
+  if(window.__railRender) window.__railRender();
+}
+(function(){
+  var cur=document.documentElement.lang||'es';
+  document.body.classList.remove('lang-es','lang-en');
+  document.body.classList.add('lang-'+cur);
+  document.querySelectorAll('[data-lang-btn]').forEach(function(b){
+    b.setAttribute('aria-pressed', String(b.dataset.langBtn===cur));
+    b.addEventListener('click',function(){setLang(b.dataset.langBtn)});
+  });
+})();
+
+/* ── count-up ── */
+var fmt=function(v,d){return d?v.toFixed(d):Math.round(v).toLocaleString('es-ES');};
+function countUp(el){
+  var to=parseFloat(el.dataset.to), d=parseInt(el.dataset.dec||'0'), pre=el.dataset.pre||'', t0=performance.now(), dur=1200;
+  (function step(now){var p=Math.min((now-t0)/dur,1), e=1-Math.pow(1-p,3);
+    el.textContent=pre+fmt(to*e,d); if(p<1) requestAnimationFrame(step);})(t0);
+}
+document.querySelectorAll('.ct').forEach(function(c){ c.textContent=(c.dataset.pre||'')+(parseInt(c.dataset.dec||'0')?'0.0':'0'); });
+
+
+
+/* ── pipeline rail ── */
+(function(){
+  var P=[
+    {es:{t:'Espiar — PRXDUCT SNIPE',c:'Playwright + cookies',
+         d:'Escanea la biblioteca de anuncios de Meta buscando qué está vendiendo la competencia. Agrupa los hallazgos por producto entre varios competidores, calcula un win-rate y deja el triaje listo para decidir qué merece un test.',
+         m:'6.286 hallazgos indexados · 28 escaneos · 449 grupos cruzados · master list en COMPES_TRACKER.xlsx'},
+     en:{t:'Spy — PRXDUCT SNIPE',c:'Playwright + cookies',
+         d:"Scans Meta's ad library for what competitors are actually selling. Groups findings by product across competitors, computes a win-rate and leaves the triage ready to decide what deserves a test.",
+         m:'6,286 findings indexed · 28 scans · 449 cross-groups · master list in COMPES_TRACKER.xlsx'}},
+    {es:{t:'Analizar — PRXDUCT LAB',c:'~$0,004 / producto',
+         d:'Coge el producto candidato y produce el dossier: precios x1/x2/x3 con su CPA de equilibrio, análisis de las landings de la competencia, comparativa de copies publicitarios y títulos generados. Lo caro (el juicio) lo hace un modelo pequeño; lo exacto (los números) no lo toca.',
+         m:'Modelo barato para texto repetitivo · caché por hash de prompt · el precio lo calcula Python puro'},
+     en:{t:'Analyse — PRXDUCT LAB',c:'~$0.004 / product',
+         d:'Takes the candidate product and produces the dossier: x1/x2/x3 pricing with its break-even CPA, competitor landing analysis, ad-copy comparison and generated titles. The fuzzy part (judgment) goes to a small model; the exact part (the numbers) it never touches.',
+         m:'Cheap model for repetitive text · cache by prompt hash · pricing computed by pure Python'}},
+    {es:{t:'Clonar — CXMPE REP',c:'$0 · determinista',
+         d:'Reconstruye la landing del competidor sobre nuestra plantilla: copy, imágenes, vídeos, FAQs, tablas comparativas, carruseles y reseñas reales. Sin LLM. Cada generación pasa por un validator que aborta si detecta placeholders, fugas del competidor o enlaces rotos.',
+         m:'26 extractores · 9 parsers de reseñas · 5 plataformas · 27 landings en el set de regresión'},
+     en:{t:'Clone — CXMPE REP',c:'$0 · deterministic',
+         d:"Rebuilds the competitor's landing on our template: copy, images, videos, FAQs, comparison tables, carousels and real reviews. No LLM. Every build goes through a validator that aborts on placeholders, competitor leaks or broken links.",
+         m:'26 extractors · 9 review parsers · 5 platforms · 27 landings in the regression set'}},
+    {es:{t:'Crear — CREATIVE',c:'coste declarado por pieza',
+         d:'Del ADN de marca a las piezas: estáticos, animación y UGC. Toda operación por encima de $0,10 aborta con una excepción si no lleva confirmación explícita, con el importe estimado en el mensaje — el gasto nunca ocurre por pulsar un botón sin querer.',
+         m:'Imagen ~$0,04 · animación ~$0,54 · clip UGC ~$0,45 · ADN de marca, ganchos y letra: $0'},
+     en:{t:'Create — CREATIVE',c:'cost declared per piece',
+         d:'From brand DNA to the assets: statics, animation and UGC. Any operation above $0.10 aborts with an exception unless explicitly confirmed, with the estimated amount in the message — spend never happens from an accidental button click.',
+         m:'Image ~$0.04 · animation ~$0.54 · UGC clip ~$0.45 · brand DNA, hooks and lyrics: $0'}},
+    {es:{t:'Vender — CONTROL DIARIO',c:'$0 · hoja viva',
+         d:'El pulso del día: gasto por cuenta publicitaria, pedidos, cancelados y devoluciones por producto. Las columnas calculadas se replican en Python para poder testearlas — y tienen su propio gate golden que bloquea si una fórmula cambia sin querer.',
+         m:'Autosync silencioso al Excel · columnas de cuenta publicitaria dinámicas · 6 casos golden congelados'},
+     en:{t:'Sell — DAILY CONTROL',c:'$0 · living sheet',
+         d:"The day's pulse: spend per ad account, orders, cancellations and returns per product. The computed columns are re-implemented in Python so they can be tested — and they have their own golden gate that blocks if a formula changes by accident.",
+         m:'Silent autosync to Excel · dynamic ad-account columns · 6 frozen golden cases'}},
+    {es:{t:'Cerrar — FINANZAS · MES',c:'$0 · OCR gratuito',
+         d:'Limpia el export de Dropi, cruza los fletes reales del wallet, lee las facturas del mes por OCR y atribuye la publicidad campaña a campaña — bajando a nivel de ad set cuando la campaña es un test multi-producto. El resultado es la utilidad neta por producto.',
+         m:'3.309 pedidos en 6 meses · 136 facturas · 209 campañas extraídas · los cobros fallidos no cuentan'},
+     en:{t:'Close — FINANCE · MONTH',c:'$0 · free-tier OCR',
+         d:'Cleans the Dropi export, cross-matches real shipping costs from the wallet, OCR-reads the month\'s invoices and attributes ad spend campaign by campaign — descending to ad-set level when the campaign is a multi-product test. The output is net profit per product.',
+         m:'3,309 orders across 6 months · 136 invoices · 209 campaigns extracted · failed charges never count'}},
+    {es:{t:'Decidir — ANALYTICS',c:'$0 · motor de reglas',
+         d:'Cruza el histórico de cada producto con benchmarks calibrados para COD Colombia y emite recomendaciones accionables por prioridad: % de entrega bajo es un problema logístico, CPA cerca del equilibrio es un problema creativo, conversión baja es un problema de landing.',
+         m:'Reglas deterministas, sin LLM · categorías creativo / logística / conversión · URGENTE · NORMAL · SUGERIDO'},
+     en:{t:'Decide — ANALYTICS',c:'$0 · rule engine',
+         d:'Crosses each product\'s history with benchmarks calibrated for COD Colombia and emits actionable, prioritised recommendations: low delivery rate is a logistics problem, CPA near break-even is a creative problem, low conversion is a landing problem.',
+         m:'Deterministic rules, no LLM · creative / logistics / conversion categories · URGENT · NORMAL · SUGGESTED'}}
+  ];
+  var track=document.querySelector('.rail-track'), panel=document.getElementById('rail-panel');
+  if(!track||!panel) return;
+  var cur=0;
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function render(){
+    var L=(document.documentElement.lang==='en')?'en':'es', d=P[cur][L];
+    panel.innerHTML='<div class="rp-top"><h4>'+esc(d.t)+'</h4><span class="rp-cost">'+esc(d.c)+'</span></div>'+
+                    '<p>'+esc(d.d)+'</p><div class="rp-meta"><b>·</b> '+esc(d.m)+'</div>';
+  }
+  window.__railRender=render;
+  track.querySelectorAll('.rl').forEach(function(b){
+    b.addEventListener('click',function(){
+      cur=parseInt(b.dataset.i,10);
+      track.querySelectorAll('.rl').forEach(function(x){x.setAttribute('aria-selected',String(x===b));});
+      render();
+    });
+    b.addEventListener('mouseenter',function(){
+      cur=parseInt(b.dataset.i,10);
+      track.querySelectorAll('.rl').forEach(function(x){x.setAttribute('aria-selected',String(x===b));});
+      render();
+    });
+  });
+  render();
+})();
+
+/* ── calculadora de precios ──
+   Port literal de ecxm/predev/precios.py :: calcular().
+   Verificado contra tests/golden_precios/expected.json — 7/7 casos, 9 campos, igualdad exacta.
+   Incluye el redondeo bancario de Python (round-half-to-even) porque JS redondea distinto. */
+(function(){
+  var r=document.getElementById('pp-range'); if(!r) return;
+  var FLETE=17063, ENTREGA=0.75, ADMIN=2909, CPA=15000, UTIL=0.05;
+
+  function pyRound(x){var f=Math.floor(x),d=x-f;if(d>0.5)return f+1;if(d<0.5)return f;return (f%2===0)?f:f+1;}
+  function next900(p){var b=Math.floor(p/1000)*1000,c=b+900;if(c<p)c+=1000;return c;}
+  function calcular(pp,fleteBase,entrega,admin,cpaAds,util,cpaPct){
+    /* mismos defaults que la firma de Python — así esta función ES la que pasa el golden */
+    fleteBase=(fleteBase==null?FLETE:fleteBase); entrega=(entrega==null?ENTREGA:entrega);
+    admin=(admin==null?ADMIN:admin); cpaAds=(cpaAds==null?CPA:cpaAds); util=(util==null?UTIL:util);
+    if(cpaPct==null)cpaPct=entrega-0.20; if(cpaPct<=0)cpaPct=0.10;
+    var fleteDev=entrega>0?fleteBase/entrega:fleteBase*2;
+    var fijos=admin+fleteDev+cpaAds/cpaPct;
+    var pv=function(n){return (pp*n+fijos)/(1-UTIL);};
+    var d26=next900(pv(1)), d27=next900(pv(2)), d28=next900(pv(3));
+    var best=null, bs=Infinity;
+    [45,50,55,60,65,70].forEach(function(e26){
+      var g26=pyRound(d26/(1-e26/100)/10000)*10000;
+      var e27r=100-(100*d27)/(g26*2), e28r=100-(100*d28)/(g26*3);
+      [5,10,15].forEach(function(dl){
+        var h27=e26+dl, h28=e26+2*dl;
+        if(h27>=100||h28>=100) return;
+        if(h27<=e26||h28<=h27) return;
+        var s=Math.abs(h27-e27r)+Math.abs(h28-e28r);
+        if(s<bs){bs=s;best={e26:e26,g26:g26,h27:h27,h28:h28};}
+      });
+    });
+    if(!best) best={e26:60,g26:pyRound(d26/0.4/10000)*10000,h27:70,h28:80};
+    return {p1:d26,p2:d27,p3:d28,e26:best.e26,g26:best.g26,h27:best.h27,h28:best.h28,
+            be:Math.max(0,Math.trunc(d26-fijos-pp))};
+  }
+  var money=function(n){return '$'+Math.round(n).toLocaleString('es-CO').replace(/,/g,'.');};
+  function upd(){
+    var pp=parseInt(r.value,10), c=calcular(pp);
+    document.getElementById('pp-v').textContent=money(pp);
+    document.getElementById('p1').textContent=money(c.p1);
+    document.getElementById('p2').textContent=money(c.p2);
+    document.getElementById('p3').textContent=money(c.p3);
+    document.getElementById('g1v').textContent=money(c.g26);
+    document.getElementById('e26v').textContent=c.e26+'% off';
+    document.getElementById('h27v').textContent=c.h27+'%';
+    document.getElementById('h28v').textContent=c.h28+'%';
+    document.getElementById('be-v').textContent=money(c.be);
+  }
+  r.addEventListener('input',upd); upd();
+})();
+</script>
+<script>
+/* ── system constellation (mapa) ── */
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  var NODES=[
+    {id:'dinero',x:500,y:282,r:38,c:'#9b5cff',href:'#dinero',es:'El dinero',en:'The money',ses:'la cifra que paga',sen:'the figure that pays'},
+    {id:'recorrido',x:212,y:138,r:26,c:'#22d3ff',href:'#recorrido',es:'Recorrido',en:'Walkthrough',ses:'7 etapas encadenadas',sen:'7 chained stages'},
+    {id:'precio',x:788,y:138,r:26,c:'#a273ff',href:'#precio',es:'Precio',en:'Pricing',ses:'aritmética, no IA',sen:'arithmetic, not AI'},
+    {id:'cero',x:836,y:398,r:28,c:'#22d3ff',href:'#cero',es:'Coste 0',en:'Zero cost',ses:'26 extractores · $0',sen:'26 extractors · $0'},
+    {id:'decisiones',x:500,y:480,r:28,c:'#ffce6a',href:'#decisiones',es:'Decisiones',en:'Decisions',ses:'medidas, no intuidas',sen:'measured, not guessed'},
+    {id:'arquitectura',x:164,y:398,r:28,c:'#37e0ff',href:'#arquitectura',es:'Arquitectura',en:'Architecture',ses:'WAT · cross-pipe',sen:'WAT · cross-pipe'},
+    {id:'metodo',x:330,y:560,r:26,c:'#5dff9b',href:'#metodo',es:'Método',en:'Method',ses:'verificar ejecutando',sen:'verify by executing'},
+    {id:'contacto',x:670,y:560,r:24,c:'#ffce6a',href:'#contacto',es:'Contacto',en:'Contact',ses:'disponible',sen:'available'}
+  ];
+  var EDGES=[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,2],[2,3],[3,4],[4,5],[5,1],[4,6],[6,7],[7,4]];
+  var NB={}; NODES.forEach(function(_,i){NB[i]=[];});
+  EDGES.forEach(function(e){NB[e[0]].push(e[1]);NB[e[1]].push(e[0]);});
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function el(n,a){var x=document.createElementNS(NS,n);for(var k in a)x.setAttribute(k,a[k]);return x;}
+  function go(h){var t=document.querySelector(h);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});}
+
+  function build(container,mode){
+    var svg=el('svg',{viewBox:'0 0 1000 640','class':'cn-svg',role:'img'});
+    var defs=el('defs',{});
+    var grad=el('linearGradient',{id:'cn-grad-'+mode,x1:'0',y1:'0',x2:'1',y2:'1'});
+    grad.appendChild(el('stop',{offset:'0','stop-color':'#9b5cff'}));
+    grad.appendChild(el('stop',{offset:'1','stop-color':'#22d3ff'}));
+    defs.appendChild(grad);svg.appendChild(defs);
+    var edgeEls=EDGES.map(function(e){var ln=el('line',{'class':'cn-edge'});ln._e=e;svg.appendChild(ln);return ln;});
+    var nodeEls=NODES.map(function(nd,i){
+      var grp=el('g',{'class':'cn-node',tabindex:'0',role:'link','aria-label':nd.es});grp._i=i;
+      grp.appendChild(el('circle',{'class':'cn-dot',cx:nd.x,cy:nd.y,r:nd.r,stroke:nd.c,style:'color:'+nd.c}));
+      var ly=nd.y+nd.r+18, sy=nd.y+nd.r+33;
+      ['es','en'].forEach(function(L){
+        var t=el('text',{'class':'cn-label t-'+L,x:nd.x,y:ly,'text-anchor':'middle'});t.textContent=nd[L];grp.appendChild(t);
+        var s=el('text',{'class':'cn-sub t-'+L,x:nd.x,y:sy,'text-anchor':'middle'});s.textContent=nd[L==='es'?'ses':'sen'];grp.appendChild(s);
+      });
+      svg.appendChild(grp);return grp;
+    });
+    container.appendChild(svg);
+    function setHot(i,on){
+      svg.classList.toggle('dimming',on);
+      var lit={};if(on){lit[i]=1;NB[i].forEach(function(j){lit[j]=1;});}
+      nodeEls.forEach(function(g,j){g.classList.toggle('hot',!!lit[j]);});
+      edgeEls.forEach(function(ln){var e=ln._e;ln.classList.toggle('on',on&&(e[0]===i||e[1]===i));});
+    }
+    nodeEls.forEach(function(g,i){
+      g.addEventListener('mouseenter',function(){setHot(i,true);});
+      g.addEventListener('mouseleave',function(){setHot(i,false);});
+      g.addEventListener('click',function(ev){ev.stopPropagation();go(NODES[i].href);});
+      g.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();go(NODES[i].href);}});
+    });
+    return {edges:edgeEls,nodes:nodeEls};
+  }
+
+  var insts=[];
+  document.querySelectorAll('[data-constel]').forEach(function(c){insts.push(build(c,c.dataset.constel));});
+  if(!insts.length)return;
+  var t0=performance.now();
+  function frame(now){
+    var t=(now-t0)/1000;
+    var pos=NODES.map(function(nd,i){
+      var ax=reduce?0:(6+(i%3)*2), ay=reduce?0:(5+(i%2)*3);
+      return {x:nd.x+ax*Math.sin(t*0.5+i*1.7), y:nd.y+ay*Math.cos(t*0.42+i*1.1)};
+    });
+    insts.forEach(function(inst){
+      inst.nodes.forEach(function(g,i){g.setAttribute('transform','translate('+(pos[i].x-NODES[i].x).toFixed(2)+','+(pos[i].y-NODES[i].y).toFixed(2)+')');});
+      inst.edges.forEach(function(ln){var e=ln._e;ln.setAttribute('x1',pos[e[0]].x.toFixed(1));ln.setAttribute('y1',pos[e[0]].y.toFixed(1));ln.setAttribute('x2',pos[e[1]].x.toFixed(1));ln.setAttribute('y2',pos[e[1]].y.toFixed(1));});
+    });
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+
+<script>
+/* ══ CHASIS DE TERMINAL · JS portado del indice ══ */
+var SECS=[  {id:'recorrido',ix:'01',es:'Recorrido',en:'Walkthrough',p:'~/tour',c:'/tour'},
+  {id:'dinero',ix:'02',es:'Dinero',en:'Money',p:'~/margin',c:'/margin'},
+  {id:'precio',ix:'03',es:'Precio',en:'Pricing',p:'~/pricing',c:'/pricing'},
+  {id:'cero',ix:'04',es:'Coste 0',en:'Zero cost',p:'~/cost',c:'/cost --zero'},
+  {id:'decisiones',ix:'05',es:'Decisiones',en:'Decisions',p:'~/decisions',c:'/decisions'},
+  {id:'arquitectura',ix:'06',es:'Arquitectura',en:'Architecture',p:'~/architecture',c:'/architecture'},
+  {id:'metodo',ix:'07',es:'Método',en:'Method',p:'~/method',c:'/method'},
+  {id:'contacto',ix:'08',es:'Contacto',en:'Contact',p:'~/contact',c:'/mail'}
+];
+var HOME={p:"~",c:"/ecxm-ops"};
+var spy=function(){};
+
+/* registro de comandos de ESTA pagina — lo consume la linea de
+   escritura (`window.__cmds`). En el maestro vive dentro de la ⌘K,
+   que aqui no se porta: sin el, el prompt no navegaba a nada. */
+var MAIL='mailto:diegollr98@gmail.com?subject=Portafolio%20%C2%B7%20Diego';
+var LI='https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/';
+window.__cmds=[
+  {g:'ir',ic:'§',es:'Recorrido',en:'Walkthrough',c:'/tour',k:'recorrido walkthrough recorrido tour',go:'recorrido'},
+  {g:'ir',ic:'§',es:'Dinero',en:'Money',c:'/margin',k:'dinero money dinero margin',go:'dinero'},
+  {g:'ir',ic:'§',es:'Precio',en:'Pricing',c:'/pricing',k:'precio pricing precio pricing',go:'precio'},
+  {g:'ir',ic:'§',es:'Coste 0',en:'Zero cost',c:'/cost --zero',k:'coste 0 zero cost cero cost --zero',go:'cero'},
+  {g:'ir',ic:'§',es:'Decisiones',en:'Decisions',c:'/decisions',k:'decisiones decisions decisiones decisions',go:'decisiones'},
+  {g:'ir',ic:'§',es:'Arquitectura',en:'Architecture',c:'/architecture',k:'arquitectura architecture arquitectura architecture',go:'arquitectura'},
+  {g:'ir',ic:'§',es:'Método',en:'Method',c:'/method',k:'método method metodo method',go:'metodo'},
+  {g:'ir',ic:'§',es:'Contacto',en:'Contact',c:'/mail',k:'contacto contact contacto mail',go:'contacto'},
+  {g:'abrir',ic:'↗',es:'Índice · los 5 sistemas',en:'Index · the 5 systems',c:'open index',k:'indice index inicio home hub volver back portada',url:'../index.html'},
+  {g:'abrir',ic:'↗',es:'Caso · Quant Research Lab',en:'Case · Quant Research Lab',c:'open quant-lab',k:'quant research lab quant-lab',url:'../pumpfun-bot/PUMPFUN-BOT.html'},
+  {g:'abrir',ic:'↗',es:'Caso · YouTube Pipeline',en:'Case · YouTube Pipeline',c:'open yt-pipeline',k:'youtube pipeline yt-pipeline',url:'../YOUTUBE-PIPELINE/YOUTUBE-PIPELINE.html'},
+  {g:'abrir',ic:'↗',es:'Caso · RESELLERMASTER',en:'Case · RESELLERMASTER',c:'open resellermaster',k:'resellermaster resellermaster',url:'../RESELLERMASTER/RESELLERMASTER.html'},
+  {g:'abrir',ic:'↗',es:'Caso · SEKURA',en:'Case · SEKURA',c:'open sekura',k:'sekura sekura',url:'../SEKURA/SEKURA.html'},
+  {g:'hacer',ic:'✉',es:'Escribirme un email',en:'Write me an email',c:'/mail',k:'email correo mail escribir write contacto contact',url:MAIL},
+  {g:'hacer',ic:'↗',es:'Abrir mi LinkedIn',en:'Open my LinkedIn',c:'open linkedin',k:'linkedin perfil profile red social',url:LI,blank:true},
+  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') setLang(document.documentElement.lang==='en'?'es':'en'); }}
+];
+window.__runCmd=function(c){
+  if(c.fn){ c.fn(); return; }
+  if(c.url){ if(c.blank) window.open(c.url,'_blank','noopener'); else location.href=c.url; return; }
+  if(c.go){ if(window.__goto) window.__goto(c.go);
+    else { var t=document.getElementById(c.go); if(t) t.scrollIntoView({behavior:'smooth'}); } }
+};
+/* ── language toggle ── */
+function setLang(l){
+  document.documentElement.lang=l;
+  document.documentElement.classList.remove('lang-es','lang-en');
+  document.documentElement.classList.add('lang-'+l);
+  document.body.classList.remove('lang-es','lang-en');
+  document.body.classList.add('lang-'+l);
+  /* el desplegable tiene que reflejar el cambio venga de donde venga:
+     tambien lo dispara el comando /lang de la paleta */
+  var cur=document.getElementById('langCur');
+  if(cur) cur.textContent=l.toUpperCase();
+  document.querySelectorAll('#langList li').forEach(function(li){
+    li.setAttribute('aria-selected', String(li.dataset.v===l)); });
+  try{localStorage.setItem('pf_lang',l)}catch(e){}
+}
+(function(){
+  var l=document.documentElement.lang||'es';
+  document.body.classList.remove('lang-es','lang-en');
+  document.body.classList.add('lang-'+l);
+
+  var btn=document.getElementById('langBtn'), list=document.getElementById('langList');
+  if(!btn||!list) return;
+  var cur=document.getElementById('langCur');
+  if(cur) cur.textContent=l.toUpperCase();
+  list.querySelectorAll('li').forEach(function(li){
+    li.setAttribute('aria-selected', String(li.dataset.v===l)); });
+
+  var items=[].slice.call(list.querySelectorAll('li')), sel=0;
+  function marcar(n){ sel=(n+items.length)%items.length;
+    items.forEach(function(li,k){ li.classList.toggle('tw-hi',k===sel); }); }
+  function abrir(){
+    var r=btn.getBoundingClientRect();
+    list.hidden=false;
+    /* se coloca despues de mostrarla: hasta entonces no tiene medidas */
+    var w=list.getBoundingClientRect().width;
+    list.style.left=Math.max(8, Math.min(r.right-w, innerWidth-w-8))+'px';
+    list.style.top=(r.bottom+6)+'px';
+    btn.setAttribute('aria-expanded','true');
+    marcar(Math.max(0, items.findIndex(function(li){ return li.getAttribute('aria-selected')==='true'; })));
+  }
+  function cerrar(){ list.hidden=true; btn.setAttribute('aria-expanded','false'); }
+  function abierto(){ return !list.hidden; }
+
+  btn.addEventListener('click',function(e){ e.stopPropagation(); abierto()?cerrar():abrir(); });
+  items.forEach(function(li,k){
+    li.addEventListener('click',function(e){ e.stopPropagation(); setLang(li.dataset.v); cerrar(); });
+    li.addEventListener('mousemove',function(){ marcar(k); });
+  });
+  document.addEventListener('click',function(){ if(abierto()) cerrar(); });
+  /* la ventana tiene scroll propio: si se mueve, las coordenadas fijas
+     dejan de valer y la lista quedaria flotando en el aire */
+  ['scroll','resize'].forEach(function(ev){
+    window.addEventListener(ev,function(){ if(abierto()) cerrar(); },{passive:true,capture:true}); });
+  btn.addEventListener('keydown',function(e){
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      e.preventDefault(); if(!abierto()) return abrir(); marcar(sel+(e.key==='ArrowDown'?1:-1));
+    } else if(e.key==='Enter'||e.key===' '){
+      if(abierto()){ e.preventDefault(); setLang(items[sel].dataset.v); cerrar(); }
+    } else if(e.key==='Escape'){ if(abierto()){ e.preventDefault(); cerrar(); } }
+  });
+})();
+
+
+/* ══════════════════════════════════════════════════════════════════
+   PROTOTIPO · recableado para scroll dentro de la ventana
+   Con scroll interno, window.scrollY deja de significar nada: el spy,
+   la barra de progreso y los reveals tienen que mirar a #twBody.
+   ══════════════════════════════════════════════════════════════════ */
+var SC=document.getElementById('twBody');
+
+(function(){
+  var prog=document.getElementById('progress');
+  function on(){
+    var y=SC.scrollTop, h=SC.scrollHeight-SC.clientHeight;
+    prog.style.width=(h>0?(y/h*100):0)+'%';
+  }
+  SC.addEventListener('scroll',on,{passive:true}); on();
+})();
+
+/* reveals: el observer necesita root, si no no se disparan nunca */
+(function(){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){
+    e.target.classList.add('in');
+    e.target.querySelectorAll('.ct').forEach(function(c){ if(!c.dataset.done){c.dataset.done='1';countUp(c);} });
+    io.unobserve(e.target);
+  }});},{root:SC,threshold:.14,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+})();
+
+/* spy contra el contenedor + ruta viva (barra de arriba y prompt de abajo) */
+(function(){
+  /* el -68 de antes reservaba sitio para la nav pegajosa. Ya no hay nav:
+     el destino solo necesita un respiro por encima. */
+  var OFFSET=20;
+  /* twPathTop es la ruta de la barra de arriba, que ahora hace de
+     indicador de seccion: sustituye al subrayado del nav y al
+     indicador del drawer, los dos borrados */
+  var twPath=document.getElementById('twPath'), top=document.getElementById('twPathTop');
+  var last=null;
+  function spy2(){
+    var y=SC.scrollTop+150, cur=null;
+    for(var i=0;i<SECS.length;i++){
+      var el=document.getElementById(SECS[i].id);
+      if(el && el.offsetTop<=y) cur=SECS[i];
+    }
+    /* al llegar al fondo, la ultima seccion arranca por debajo del
+       umbral y nunca se marcaba: se leia /contact con el titulo en
+       ~/stack. Si no queda scroll, la seccion es la ultima, y punto. */
+    if(SC.scrollTop >= SC.scrollHeight-SC.clientHeight-4) cur=SECS[SECS.length-1];
+    if(cur===last) return; last=cur;
+    var t=cur||HOME;
+    twPath.textContent=':'+t.p;
+    /* sin los dos puntos: el separador lo pone el CSS, y asi en el
+       inicio (~) la barra queda «/diego» a secas */
+    if(top) top.textContent = cur ? t.p : '';
+    if(window.__onSection) window.__onSection(cur);
+  }
+  SC.addEventListener('scroll',spy2,{passive:true}); spy2();
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var t=document.getElementById(a.getAttribute('href').slice(1));
+      if(!t) return;
+      e.preventDefault();
+      SC.scrollTo({top:t.offsetTop-OFFSET,behavior:'smooth'});
+    });
+  });
+  window.__goto=function(id){
+    var t=document.getElementById(id); if(t) SC.scrollTo({top:t.offsetTop-OFFSET,behavior:'smooth'});
+  };
+})();
+
+
+/* ══════════════════════════════════════════════════════════════════
+   Interprete v2: la respuesta se imprime en una consola pegada encima
+   de la linea de escritura, y hay autocompletado en vivo — asi nunca
+   hace falta acordarse de "help" para saber que se puede escribir.
+   ══════════════════════════════════════════════════════════════════ */
+(function(){
+  var form=document.getElementById('twForm'), inp=document.getElementById('twIn');
+  var con=document.getElementById('twCon'), ac=document.getElementById('twAc');
+  if(!form) return;
+  function lang(){ return document.documentElement.lang==='en'?'en':'es'; }
+  function norm(t){ return (t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
+  inp.placeholder=inp.getAttribute('data-ph-'+lang())||'';
+
+  var hist=[], hi=-1, items=[], sel=0;
+
+  function match(q){
+    var l=lang(), qn=norm(q.trim());
+    return (window.__cmds||[]).filter(function(c){
+      if(!qn) return true;
+      var hay=norm((c.c||'')+' '+c[l]+' '+c.k+' '+c.g);
+      return qn.split(/\s+/).every(function(w){ return hay.indexOf(w)>-1; });
+    });
+  }
+  function drawAc(all){
+    var q=inp.value, hits=match(q);
+    if((!q.trim() && !all) || !hits.length){ ac.classList.remove('on'); ac.innerHTML=''; items=[]; return; }
+    var l=lang();
+    ac.innerHTML=hits.map(function(c,n){
+      return '<div class="it" role="option" aria-selected="'+(n===0)+'" data-i="'+n+'">'+
+             '<span class="c">'+(c.c||'')+'</span><span class="l">'+c[l]+'</span></div>';
+    }).join('')+'<div class="hint">'+(l==='en'
+        ?'tab completes · ↑↓ moves · ↵ runs'
+        :'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
+    items=[].slice.call(ac.querySelectorAll('.it')); sel=0;
+    items.forEach(function(el){
+      el.addEventListener('click',function(){ runHit(hits[+el.dataset.i],false); });
+      el.addEventListener('mousemove',function(){ mark(+el.dataset.i); });
+    });
+    ac.classList.add('on'); ac.__hits=hits;
+  }
+  function mark(i){
+    if(!items.length) return;
+    sel=(i+items.length)%items.length;
+    items.forEach(function(el,n){ el.setAttribute('aria-selected', String(n===sel)); });
+    items[sel].scrollIntoView({block:'nearest'});
+  }
+  /* el historial no puede crecer sin fin: se come la ventana. Maximo 3
+     lineas y cada una caduca sola. El contador se pausa con el raton
+     encima o con el foco dentro, para poder leer un help largo. */
+  var MAXLN=3, TTL=6000, TTL_LONG=15000, paused=false;
+  function alive(){ return [].slice.call(con.children).filter(function(n){return !n.classList.contains('gone');}); }
+  function drop(el,now){
+    if(el.classList.contains('gone')) return;
+    clearTimeout(el.__t); el.classList.add('gone');
+    setTimeout(function(){ if(el.parentNode) el.remove(); }, now?60:280);
+  }
+  function arm(el){
+    clearTimeout(el.__t);
+    if(paused) return;
+    el.__t=setTimeout(function(){ drop(el); }, el.__ttl||TTL);
+  }
+  function line(html,cls,ttl){
+    var d=document.createElement('div'); d.className='ln'+(cls?' '+cls:''); d.innerHTML=html;
+    d.__ttl=ttl||TTL;
+    con.appendChild(d);
+    var a=alive();
+    while(a.length>MAXLN){ drop(a.shift(), true); }
+    arm(d);
+    con.scrollTop=con.scrollHeight;
+    return d;
+  }
+  con.addEventListener('mouseenter',function(){ paused=true;
+    alive().forEach(function(n){ clearTimeout(n.__t); }); });
+  con.addEventListener('mouseleave',function(){ paused=false; alive().forEach(arm); });
+  document.getElementById('twIn').addEventListener('focus',function(){ paused=true;
+    alive().forEach(function(n){ clearTimeout(n.__t); }); });
+  document.getElementById('twIn').addEventListener('blur',function(){
+    if(con.matches(':hover')) return; paused=false; alive().forEach(arm); });
+  function runHit(c,visible){
+    var l=lang();
+    ac.classList.remove('on');
+    /* se completa a la vista antes de ejecutar: si no, parece que Enter
+       no hizo nada porque el campo se vacia de golpe */
+    if(visible && c.c){ inp.value=c.c; }
+    setTimeout(function(){
+      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+c[l]+'</span>','echo');
+      inp.value='';
+      if(window.__runCmd) window.__runCmd(c);
+    }, visible && c.c ? 130 : 0);
+  }
+  function help(){
+    var l=lang(), by={};
+    (window.__cmds||[]).forEach(function(c){ (by[c.g]=by[c.g]||[]).push(c); });
+    var G={ir:{es:'ir a',en:'go to'},abrir:{es:'abrir caso',en:'open case'},hacer:{es:'acciones',en:'actions'}};
+    var html='';
+    Object.keys(by).forEach(function(g){
+      html+='<div class="dim">'+(G[g]?G[g][l]:g)+'</div><table>'+
+        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+c[l]+'</td></tr>'; }).join('')+
+        '</table>';
+    });
+    html+='<div class="dim">'+(l==='en'?'also':'además')+
+      '</div><table><tr><td>help</td><td>'+(l==='en'?'this list':'esta lista')+
+      '</td></tr><tr><td>clear</td><td>'+(l==='en'?'clear the console':'limpia la consola')+
+      '</td></tr></table>';
+    line(html, '', TTL_LONG);
+  }
+
+  inp.addEventListener('input',function(){ hi=-1; drawAc(); });
+  /* ── la lista se abre con un clic ──
+     Estuvo abriendose al ENFOCAR y fue un error: el foco llega solo
+     (al cerrar el arranque, al ejecutar un comando) y la lista se
+     quedaba puesta comiendo 31vh sin que nadie la hubiera pedido. Lo
+     corregi dejandola tras «/» o tab, y eso fue pasarse de frenada:
+     obligaba a saber un atajo para ver que se puede escribir.
+
+     El clic es la respuesta correcta: es deliberado, no ocurre solo, y
+     no hay nada que aprender. Se cierra con Esc, clicando fuera, o al
+     ejecutar. Tab y «/» siguen funcionando para quien teclee. */
+  function abrirPorClic(){ drawAc(true); }
+  inp.addEventListener('click',abrirPorClic);
+  form.addEventListener('click',function(e){
+    /* clic en cualquier punto de la fila del prompt, no solo en el
+       campo: la zona util es toda la linea */
+    if(e.target!==inp){ inp.focus(); abrirPorClic(); }
+  });
+
+  inp.addEventListener('keydown',function(e){
+    var open=ac.classList.contains('on');
+    /* Aqui habia un atajo: «/» con el campo vacio abria la lista entera,
+       diferido con setTimeout(0) porque en keydown el caracter aun no
+       esta en el campo. Era una carrera: si se teclea rapido y se pulsa
+       Enter, ese temporizador cae DESPUES de ejecutar el comando y
+       reabre la lista sobre la salida. Sobra: al teclear «/» el evento
+       input ya dibuja las coincidencias, y para la lista completa estan
+       el clic y el tabulador. */
+    if(e.key==='Tab'){
+      e.preventDefault();
+      if(!open){ drawAc(true); return; }
+      var h=ac.__hits[sel]; if(h && h.c){ inp.value=h.c; drawAc(); }
+      return;
+    }
+    if(!open) {
+      if(e.key==='ArrowUp' && hist.length){ e.preventDefault(); hi=Math.min(hi+1,hist.length-1); inp.value=hist[hi]; return; }
+      if(e.key==='ArrowDown' && hi>=0){ e.preventDefault(); hi--; inp.value=hi<0?'':hist[hi]; return; }
+      return;
+    }
+    if(e.key==='ArrowDown'){ e.preventDefault(); mark(sel+1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); mark(sel-1); }
+    else if(e.key==='Escape'){ e.preventDefault(); ac.classList.remove('on'); }
+  });
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var q=inp.value.trim(); if(!q) return;
+    hist.unshift(q); hi=-1;
+    var l=lang();
+    if(/^(help|ayuda|\?|\/help|\/\?)$/i.test(q)){ line('<b>$</b> '+q,'echo'); help(); inp.value=''; ac.classList.remove('on'); return; }
+    if(/^(clear|cls|limpiar)$/i.test(q)){ con.innerHTML=''; inp.value=''; ac.classList.remove('on'); return; }
+    var hits=ac.classList.contains('on')&&ac.__hits ? ac.__hits : match(q);
+    var hit=hits[ac.classList.contains('on')?sel:0];
+    if(!hit){
+      line('<b>$</b> '+q,'echo');
+      line('<span class="ko">'+(l==='en'?'command not found':'orden no encontrada')+
+           '</span> <span class="dim">· '+(l==='en'?'hit tab to list them':'pulsa tab para verlos')+'</span>');
+      inp.value=''; return;
+    }
+    runHit(hit,true);
+  });
+  document.addEventListener('click',function(e){
+    if(!form.contains(e.target) && !ac.contains(e.target)) ac.classList.remove('on');
+  });
+  window.__con=line;
+})();
+
+
+/* ══════════════════════════════════════════════════════════════════
+   MOTOR DE IMPRESION · v5 · linea a linea
+   ------------------------------------------------------------------
+   Lo que se retira: la cortina de la v4. Era un rectangulo opaco de
+   una pantalla de alto que viajaba por detras del scroll. Tres fallos
+   que se veian en cuanto scrolleabas:
+     · dejaba 400-500 px de negro permanente bajo el pliegue,
+     · cortaba tarjetas y parrafos a media linea,
+     · y no imprimia nada: solo destapaba algo ya pintado.
+
+   Lo que entra: no hay ninguna capa que tape. El texto se parte en sus
+   LINEAS VISUALES reales — Range.getClientRects devuelve un rect por
+   linea, y una busqueda binaria encuentra el caracter donde rompe — y
+   cada linea se enciende cuando le toca al cabezal. De arriba abajo,
+   sin fundido, a ~15 ms por renglon. Eso es lo que hace una tty.
+
+   Dos garantias, que son las que fallaban antes:
+     1 · nada que quede POR ENCIMA del scroll puede seguir sin
+         imprimir. Si bajas de golpe, la cola se vacia entera hasta el
+         borde superior sin gastar tiempo. Nunca hay hueco.
+     2 · el layout no se mueve: la linea sin imprimir ya ocupa su
+         sitio, solo esta a opacidad 0.
+
+   El eco de comando es el otro gesto: se teclea caracter a caracter y
+   la cola espera, porque en una terminal primero escribes la orden y
+   luego sale la salida.
+   ══════════════════════════════════════════════════════════════════ */
+(function(){
+  var doc=document.getElementById('twDoc');
+  if(!doc) return;
+
+  var cmds=[].slice.call(document.querySelectorAll('.tw-cmd'));
+
+  /* El interruptor [fx] de la barra se retira: el efecto va siempre.
+     Existia como diagnostico, porque la pagina se apagaba sola cuando
+     el sistema pedia animacion reducida y no lo decia en ninguna
+     parte. Eso ya no pasa (RM esta forzado), asi que el boton solo era
+     una via de dejar el portfolio en un estado peor por accidente.
+
+     Y hay que LIMPIAR la preferencia guardada: quien tuviera un
+     'pf_fx=0' de las pruebas se habria quedado con el efecto apagado
+     para siempre y sin boton con el que volver a encenderlo. */
+  try{ localStorage.removeItem('pf_fx'); }catch(e){}
+
+  /* el eco arranca vacio desde el primer frame, antes incluso de medir:
+     si no, se ve el comando entero y luego se borra para teclearlo */
+  cmds.forEach(function(u){
+    var b=u.querySelector('b');
+    if(b){ b.dataset.full=b.textContent; b.textContent=''; }
+  });
+
+  /* cromo de la terminal y navegacion: no son documento, no se imprimen */
+  var SKIP='script,style,noscript,svg,title,.progress,.tw-cmd,'+
+           '#proto,#boot,.tw-con,.tw-ac,.tw-prompt,.tw-bar,.cmdk,.pcur';
+  /* cajas cuyo borde y fondo esperan a su primera linea: en la v4 el
+     esqueleto de las tarjetas se pintaba mucho antes que su contenido */
+  var BOXES='.pj,.mc,.cap,.claim,.ldg,.lex,.term,.cx-lines,.ascii-fw,'+
+            '.stat,.fail,.priv,.bridge,.ph,.flow,.blk,.act,.mx,'+
+            /* los chips llevan sus corchetes en ::before/::after, que no
+               se pueden apagar por linea: si no esperan, se ven filas de
+               "[  ]" vacios antes de que llegue su texto */
+            '.role-chip,.pipe>span,.stk-c>span,.fleet>span,.dotm';
+
+  var entries=[], tops=[], i=0, N=0, raf=0, typing=false, ready=false, lastTs=0;
+  var idleSince=0;         /* desde cuando el cabezal no imprime nada   */
+  /* ── velocidad de escritura · RENGLONES POR SEGUNDO ──
+     Hay DOS, porque son dos momentos distintos:
+
+     · LPS_1 · la primera pantalla, la de la llegada. Nadie esta
+       leyendo todavia, asi que el efecto puede permitirse ser teatral.
+     · LPS · a partir del primer scroll. Aqui alguien esta LEYENDO, y
+       cada renglon sin escribir es un renglon que no puede leer.
+
+     El segundo tiene que ir POR ENCIMA de la velocidad a la que el
+     texto entra en pantalla al scrollear: ~21 renglones/s leyendo,
+     ~38 de un tiron. Si va por debajo, el cabezal no llega, se
+     descuelga solo y la franja vacia crece hasta que la frena el
+     suelo. Eso era lo que hacia que LAG diera igual y que la pantalla
+     tardase casi 3 s en ser legible al parar. */
+  var LPS_1 = window.__LPS1 || 20;
+  var LPS   = window.__LPS  || 50;
+  var yaScrolleo = false;   /* ¿paso ya el momento de la llegada? */
+
+  /* ── retraso del cabezal ──
+     Cuanta pantalla queda sin escribir POR DEBAJO del cabezal. Con el
+     ritmo por encima de la llegada, ESTE numero vuelve a mandar de
+     verdad sobre cuanto se ve escribir. */
+  var LAG = window.__LAG || 0.40;      /* franja sin escribir bajo el cabezal */
+  var FLOOR = window.__FLOOR || 0.10;  /* suelo duro: por encima, siempre escrito */
+  var credit = 0;          /* fraccion de renglon arrastrada entre frames */
+
+  /* ── espera al telon de arranque ──
+     Medir SI se puede con el telon puesto (el documento de detras esta
+     maquetado igual, y asi el trabajo caro se hace en tiempo muerto),
+     pero ESCRIBIR no: si no, cuando se levanta ya esta todo escrito y
+     la llegada se ha gastado a puerta cerrada. */
+  var enEspera = !!window.__bootPendiente;
+  window.__printGo = function(){ enEspera=false; kick(); };
+  var CHAR_MS=26;          /* tecleo del eco de comando, ms por letra    */
+  var moving=false, mvT=0; /* ¿se esta scrolleando ahora mismo?          */
+
+  var cursor=document.createElement('span');
+  cursor.className='pcur'; cursor.setAttribute('aria-hidden','true');
+  doc.appendChild(cursor);
+
+  /* ── 1 · donde rompe cada linea ────────────────────────────────────
+     getClientRects sobre el nodo completo da un rect por linea visual.
+     Con los tops de esos rects, una busqueda binaria localiza el
+     caracter exacto en el que empieza cada renglon. ~log(n) medidas
+     por linea, y todas seguidas sin tocar el DOM: el layout esta
+     cacheado, asi que sale barato. ── */
+  function breaksOf(tn){
+    var n=tn.nodeValue.length;
+    if(!n) return null;
+    var r=document.createRange();
+    r.setStart(tn,0); r.setEnd(tn,n);
+    var rl=r.getClientRects(), ts=[], k;
+    for(k=0;k<rl.length;k++){
+      if(!rl[k].height) continue;
+      if(!ts.length || rl[k].top-ts[ts.length-1] > 1) ts.push(rl[k].top);
+    }
+    if(ts.length<2) return [n];
+
+    function lastTop(idx){
+      r.setStart(tn,0); r.setEnd(tn,idx);
+      var q=r.getClientRects();
+      for(var m=q.length-1;m>=0;m--){ if(q[m].height) return q[m].top; }
+      return ts[0];
+    }
+    var out=[], lo, hi, mid, prev=0;
+    for(k=1;k<ts.length;k++){
+      lo=prev; hi=n;
+      while(lo<hi){
+        mid=(lo+hi)>>1;
+        if(lastTop(mid) >= ts[k]-1) hi=mid; else lo=mid+1;
+      }
+      if(lo>prev){ out.push(lo); prev=lo; }
+    }
+    out.push(n);
+    return out;
+  }
+
+  /* ── 2 · envolver cada linea en su propio span ──
+     Los spans son inline y el texto es identico caracter a caracter,
+     asi que el reparto de lineas no cambia: cero salto de layout. ── */
+  function wrap(tn, cuts){
+    var txt=tn.nodeValue, parent=tn.parentNode;
+    if(!parent) return [];
+    var frag=document.createDocumentFragment(), prev=0, out=[], s;
+    for(var k=0;k<cuts.length;k++){
+      if(cuts[k]<=prev) continue;
+      s=document.createElement('span'); s.className='pl';
+      s.appendChild(document.createTextNode(txt.slice(prev,cuts[k])));
+      frag.appendChild(s); out.push(s); prev=cuts[k];
+    }
+    if(prev<txt.length){
+      s=document.createElement('span'); s.className='pl';
+      s.appendChild(document.createTextNode(txt.slice(prev)));
+      frag.appendChild(s); out.push(s);
+    }
+    parent.replaceChild(frag,tn);
+    return out;
+  }
+
+  function split(){
+    var walker=document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, {
+      acceptNode:function(n){
+        if(!n.nodeValue || !/\S/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+        var p=n.parentElement;
+        if(!p || p.closest(SKIP)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var list=[], n;
+    while((n=walker.nextNode())) list.push(n);
+
+    list.forEach(function(tn){
+      var p=tn.parentElement; if(!p) return;
+      var d=getComputedStyle(p).display;
+      /* dentro de un flex/grid cada span seria un item propio y el
+         reparto cambiaria: ahi va un solo span, que equivale a la caja
+         anonima que el navegador ya crea */
+      if(/flex|grid/.test(d)){ wrap(tn,[tn.nodeValue.length]); return; }
+      var cuts=breaksOf(tn);
+      if(cuts) wrap(tn,cuts);
+    });
+  }
+
+  /* ── 3 · la cola, en orden de arriba abajo ── */
+  function build(){
+    doc.querySelectorAll(BOXES).forEach(function(el){
+      if(el.closest(SKIP)) return;
+      el.classList.add('pbox');
+    });
+
+    var raw=[];
+    var all=doc.querySelectorAll('.pl,.pbox,.tw-cmd');
+    var dTop=doc.getBoundingClientRect().top;
+    for(var k=0;k<all.length;k++){
+      var el=all[k], rc=el.getBoundingClientRect();
+      /* sin caja: el idioma inactivo va en display:none. Se deja
+         encendido para que aparezca entero si se cambia de idioma */
+      if(!rc.height && !rc.width){
+        el.classList.add('on');
+        if(el.classList.contains('tw-cmd')){
+          var bb=el.querySelector('b'); if(bb) bb.textContent=bb.dataset.full||'';
+        }
+        continue;
+      }
+      raw.push({ el:el, top:rc.top-dTop,
+                 kind: el.classList.contains('tw-cmd') ? 'cmd'
+                     : el.classList.contains('pbox')   ? 'box' : 'line' });
+    }
+    /* ordenar por altura, estable: con dos columnas el orden del DOM
+       puede saltar de la derecha a la izquierda y la cola se atascaria
+       esperando a una linea que esta mas abajo */
+    raw.forEach(function(e,n){ e.n=n; });
+    raw.sort(function(a,b){ return (a.top-b.top) || (a.n-b.n); });
+
+    entries=raw; N=raw.length; tops=raw.map(function(e){ return e.top; });
+  }
+
+  /* ── 4 · imprimir ── */
+  function print(e, instant){
+    if(e.kind!=='cmd'){ e.el.classList.add('on'); return true; }
+
+    var b=e.el.querySelector('b');
+    if(!b){ e.el.classList.add('on'); return true; }
+    var full=b.dataset.full||'';
+
+    if(instant || !full){
+      if(e.tm){ clearTimeout(e.tm); e.tm=0; }
+      b.textContent=full; e.el.classList.remove('typing'); e.el.classList.add('on');
+      if(e.started) typing=false;
+      e.done=true; return true;
+    }
+    if(e.done) return true;
+    if(e.started) return false;          /* tecleando: la cola espera */
+
+    e.started=true; typing=true;
+    e.el.classList.add('on','typing');
+    var c=0;
+    (function tick(){
+      b.textContent=full.slice(0,++c);
+      if(c>=full.length){
+        e.el.classList.remove('typing');
+        e.done=true; typing=false; e.tm=0; kick(); return;
+      }
+      e.tm=setTimeout(tick,CHAR_MS);
+    })();
+    return false;
+  }
+
+  function moveCursor(dTop,dLeft){
+    if(i<=0 || i>=N){ cursor.classList.remove('on'); return; }
+    var el=entries[i-1].el, rl=el.getClientRects(), rc=rl[rl.length-1];
+    if(!rc || !rc.height){ cursor.classList.remove('on'); return; }
+    var y=rc.top-dTop;
+    /* si el cabezal ha quedado fuera de pantalla (scroll de golpe), el
+       cursor no pinta nada util */
+    if(y < SC.scrollTop-40 || y > SC.scrollTop+SC.clientHeight){
+      cursor.classList.remove('on'); return;
+    }
+    cursor.style.left=(rc.right-dLeft)+'px';
+    cursor.style.top=y+'px';
+    cursor.style.height=rc.height+'px';
+    cursor.classList.add('on');
+  }
+
+  /* primer indice de la cola cuya altura ya cae por debajo de y.
+     tops esta ordenado, asi que basta una busqueda binaria: contar el
+     backlog en cada frame recorriendo la cola costaria mas que
+     imprimirla. */
+  function upTo(y){
+    var lo=i, hi=N, mid;
+    while(lo<hi){ mid=(lo+hi)>>1; if(tops[mid]<y) lo=mid+1; else hi=mid; }
+    return lo;
+  }
+
+  function pump(ts){
+    raf=0;
+    if(!ready || enEspera) return;
+    if(i>=N){ cursor.classList.remove('on'); return; }
+
+    var top=SC.scrollTop, bottom=top+SC.clientHeight;
+    var dr=doc.getBoundingClientRect(), dTop=dr.top;
+
+    /* ── donde va el cabezal ──
+       Aqui estaba el fallo de la primera v5: imprimir justo en el borde
+       inferior significa que la linea ya esta escrita cuando entra en
+       pantalla. El efecto corria, pero era invisible — indistinguible
+       de scrollear una pagina normal.
+
+       Mientras se scrollea el cabezal se queda una banda POR ENCIMA del
+       borde: hay una franja de pantalla, abajo, que se esta escribiendo
+       delante de ti. Cuando paras, el cabezal termina de llenarla. Asi
+       se ve escribir sin que nada quede a medias al detenerse. */
+    var BAND=SC.clientHeight*LAG;
+    var limit=moving ? bottom-BAND : bottom;
+
+    /* garantia 1: la parte alta de la pantalla SIEMPRE esta escrita,
+       cueste lo que cueste. Es el suelo duro contra el hueco de la v4:
+       por rapido que tires, lo que ya has pasado esta impreso.
+
+       Estaba al 30 %, y eso le comia sitio al ritmo: un renglon solo
+       tenia del 68 % al 30 % de pantalla para escribirse antes de que
+       el suelo lo imprimiera a la fuerza. Al 18 % la franja pausada
+       pasa de ocupar el 38 % de la pantalla al 50 %, que es donde LPS
+       tiene margen para notarse. */
+    var floorY=top+SC.clientHeight*FLOOR, i0=i;
+    while(i<N && tops[i] < floorY){ print(entries[i],true); i++; }
+
+    /* ── garantia 2: el ritmo ──
+       Antes esto era «llenar la pantalla en FILL_MS»:
+
+           budget = Math.max(1, Math.ceil(backlog * dt / FILL_MS))
+
+       y era MENTIRA. Con una pantalla pendiente (~30 renglones), dt de
+       16 ms y FILL_MS de 1700, el calculo da 0,28 → el Math.max(1,…)
+       lo sube a 1 renglon por frame, o sea ~60 por segundo. FILL_MS
+       solo llegaba a mandar con mas de 100 renglones pendientes, mas
+       de una pantalla entera: nunca. Medido, cambiar FILL_MS de 620 a
+       3000 movia el ritmo real de 35,4 a 40,5 renglones por segundo —
+       es decir, nada, y encima al reves.
+
+       Ahora el control es lo que deberia haber sido desde el principio:
+       RENGLONES POR SEGUNDO, con credito fraccionario acumulado entre
+       frames para poder ir por debajo de uno por frame. */
+    if(!typing){
+      var end=upTo(limit), backlog=end-i;
+      var dt=Math.min(120, Math.max(8, ts-lastTs)); lastTs=ts;
+      if(backlog<=0){
+        credit=0;                    /* sin cola, no se acumula polvora */
+      } else {
+        /* ritmo constante; si la cola visible se dispara (carga
+           inicial, salto de scroll, una seccion muy densa) acelera de
+           forma proporcional para no eternizarse */
+        var rate=(yaScrolleo?LPS:LPS_1) + Math.max(0, backlog-40)*1.2;
+        credit += dt/1000*rate;
+        var n=Math.floor(credit);
+        if(n>0){
+          credit-=n;
+          if(n>150) n=150;
+          while(i<end && n>0){
+            if(!print(entries[i],false)) break;   /* eco tecleando: espera */
+            i++; n--;
+          }
+        }
+      }
+    }
+    moveCursor(dTop,dr.left);
+
+    /* ── solido mientras escribe, parpadeando cuando para ──
+       Es la diferencia entre un cursor y una marca: en una tty el
+       bloque se queda fijo mientras sale texto y empieza a parpadear
+       en cuanto la salida termina. */
+    if(i>i0 || typing){
+      idleSince=0; cursor.classList.remove('blink');
+    } else {
+      if(!idleSince) idleSince=ts;
+      if(ts-idleSince>140) cursor.classList.add('blink');
+    }
+
+    /* mientras haya banda pendiente hay que seguir latiendo aunque
+       nadie scrollee: si no, al parar el cabezal se quedaria clavado.
+       Pero una vez quieto de verdad, el bucle se detiene: dejar un
+       requestAnimationFrame corriendo para siempre en una pagina que
+       ya no imprime nada es gastar bateria por nada. El scroll, el
+       resize y el cambio de idioma lo vuelven a arrancar. */
+    if(i<N && !(idleSince && ts-idleSince>600 && !moving && !typing)) kick();
+  }
+
+  function kick(){ if(!raf) raf=requestAnimationFrame(pump); }
+
+  function flushAll(){
+    while(i<N){ print(entries[i],true); i++; }
+    cursor.classList.remove('on');
+  }
+
+  /* ── arranque ──
+     Hay que medir con las fuentes ya cargadas: si se mide con la
+     fuente de sistema y luego entra JetBrains Mono, el texto se
+     redistribuye y los cortes de linea dejan de coincidir. ── */
+  function init(){
+    try{
+      split(); build();
+      ready=true;
+      kick();
+    }catch(err){
+      /* si algo falla, el documento se ve entero: el efecto es de
+         adorno, el contenido no */
+      doc.querySelectorAll('.pl,.pbox').forEach(function(el){ el.classList.add('on'); });
+      cmds.forEach(function(u){ var b=u.querySelector('b'); if(b) b.textContent=b.dataset.full||''; });
+      if(window.console) console.warn('print engine off:',err);
+    }
+  }
+
+  /* el estado del motor deja de vivir en un panel y pasa a la consola
+     del navegador: window.__print() cuando haga falta mirarlo */
+  window.__print=function(){
+    return ready ? {lineas:N, impresas:i, cola:N-i, tecleando:typing}
+                 : {estado:'midiendo'};
+  };
+
+  /* ── arranque ──
+     ESTE es el fallo que dejaba la pagina completamente estatica.
+
+     Habia que esperar a document.fonts.ready antes de medir, porque si
+     mides con la fuente de sistema y luego entra JetBrains Mono el
+     texto se redistribuye y los cortes de linea dejan de valer. Hasta
+     ahi, correcto. El error fue esperarla SIN LIMITE.
+
+     Las fuentes vienen de fonts.googleapis.com. Si esa peticion va
+     lenta o esta bloqueada, fonts.ready se queda pendiente — y con
+     ella, TODO el motor: no se parte una sola linea, no se teclea un
+     solo eco, la pagina entera se queda quieta. Aqui nunca lo vi
+     porque en mi entorno la peticion falla en milisegundos y la
+     promesa resuelve enseguida.
+
+     Ahora la espera tiene tope. A los 1200 ms se arranca igual: es
+     preferible un corte de linea un pixel desalineado a una pagina
+     muerta. Y si las fuentes llegan despues, el ResizeObserver ya
+     remide la cola por su cuenta. */
+  var started=false;
+  function boot(){ if(started) return; started=true; init(); }
+  var fonts=(document.fonts && document.fonts.ready) ? document.fonts.ready : null;
+  if(fonts){ fonts.then(boot).catch(boot); }
+  setTimeout(boot, fonts ? 1200 : 0);
+
+  /* ── red de seguridad ──
+     ESTE era el fallo que hacia que el efecto "no existiera" fuera de
+     mis pruebas. Antes habia un flushAll() incondicional a los 25 s:
+     abres la pagina, lees la portada medio minuto, y para cuando
+     empiezas a scrollear el documento ENTERO ya esta impreso. El
+     motor funcionaba; simplemente habia terminado sin ti. En mis
+     pruebas nunca salto porque siempre scrolleaba a los 3 s.
+
+     La red no puede ser un temporizador: tiene que mirar si la cola
+     esta atascada de verdad. Si hay contenido visible sin imprimir y
+     el indice no avanza en dos rondas seguidas, se destapa SOLO lo
+     visible y el resto del documento sigue con su efecto intacto. */
+  var wdLast=-1, wdStuck=0;
+  setInterval(function(){
+    /* enEspera cuenta como «parado a proposito»: sin esto, la red de
+       seguridad veia la cola sin avanzar durante el telon y destapaba
+       la pantalla entera justo lo que se queria evitar */
+    if(!ready || enEspera || i>=N || typing) { wdStuck=0; wdLast=i; return; }
+    var pend = tops[i] < SC.scrollTop+SC.clientHeight;   /* ¿hay algo visible sin imprimir? */
+    if(!pend){ wdStuck=0; wdLast=i; return; }
+    if(i===wdLast){
+      if(++wdStuck>=2){
+        var end=upTo(SC.scrollTop+SC.clientHeight);
+        while(i<end){ print(entries[i],true); i++; }
+        wdStuck=0;
+      }
+    } else wdStuck=0;
+    wdLast=i;
+  },1500);
+
+  /* el cabezal solo se retrasa mientras hay movimiento; 200 ms despues
+     del ultimo evento de scroll se considera parado y termina la banda */
+  SC.addEventListener('scroll',function(){
+    yaScrolleo=true;      /* se acabo la llegada: a partir de aqui se lee */
+    moving=true; clearTimeout(mvT);
+    mvT=setTimeout(function(){ moving=false; kick(); },200);
+    kick();
+  },{passive:true});
+
+  /* ── remedida ──
+     La cola se ordena por altura, asi que si el documento cambia de
+     alto las alturas guardadas mienten y la cola se queda colgada:
+     eso pasaba al cambiar de idioma (ES y EN no ocupan lo mismo) y
+     dejaba 215 lineas y 70 cajas sin imprimir para siempre.
+
+     No hace falta volver a partir el texto — carisimo —: basta con
+     remedir lo que queda y reordenarlo. Se engancha a un
+     ResizeObserver sobre el documento, que cubre de una vez el cambio
+     de idioma, el resize de ventana, la carga tardia de fuentes y el
+     plegado del ciclo. */
+  function remeasure(){
+    if(!ready || i>=N) return;
+    var dTop=doc.getBoundingClientRect().top, k;
+    for(k=i;k<N;k++){ entries[k].top=entries[k].el.getBoundingClientRect().top-dTop; }
+    var rest=entries.slice(i);
+    rest.sort(function(a,b){ return (a.top-b.top) || (a.n-b.n); });
+    for(k=0;k<rest.length;k++){ entries[i+k]=rest[k]; tops[i+k]=rest[k].top; }
+    kick();
+  }
+
+  var rz=0, lastH=0;
+  function onGeom(){ clearTimeout(rz); rz=setTimeout(remeasure,200); }
+
+  window.addEventListener('resize',onGeom,{passive:true});
+  if(window.ResizeObserver){
+    new ResizeObserver(function(){
+      /* solo importa el alto: imprimir cambia opacidad, no geometria,
+         asi que sin este filtro el observer se dispararia en balde */
+      var h=doc.scrollHeight;
+      if(Math.abs(h-lastH)<2) return;
+      lastH=h; onGeom();
+    }).observe(doc);
+  }
+
+  window.__printFlush=flushAll;
+  window.__printRemeasure=remeasure;
+})();
+
+(function(){ var orig=window.setLang; if(typeof orig!=="function") return;
+  window.setLang=function(l){ orig(l); spy(true);
+    var L=document.documentElement.lang==="en"?"en":"es";
+    var t=document.getElementById("twIn");
+    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||"";
+    var c=document.getElementById("langCur"); if(c) c.textContent=L.toUpperCase();
+    var li=document.getElementById("langList");
+    if(li) li.querySelectorAll("li").forEach(function(o){
+      o.setAttribute("aria-selected", String(o.dataset.v===L)); });
+    if(window.__printRemeasure) setTimeout(window.__printRemeasure,60);
+  }; })();
+
+/* ══════════════════════════════════════════════════════════════════
+   REPRODUCTOR · vista previa al pasar el raton, pieza larga al clic
+   UN SOLO bloque para las 4 paginas con video: lee el marcado y se
+   adapta, en vez de tener una variante por proyecto.
+     · data-tour distinto del hero  -> el clic CAMBIA de fichero
+       (ECXM 6:18 · PUMPFUN 5:19 · RESELLERMASTER 1:55)
+     · sin data-tour                -> el clic reproduce el MISMO desde 0
+       con controles (SEKURA: solo hay una pieza, de 1:28)
+     · con #vpChaps                 -> botones de salto por capitulo
+       (solo ECXM y PUMPFUN: los otros dos renders no llevan tarjetas)
+   Es codigo duplicado en 4 ficheros a proposito (no hay build step):
+   cualquier arreglo aqui se copia a las 4 EN LA MISMA PASADA.
+   NO se consulta prefers-reduced-motion: Windows con «Efectos de
+   animacion» apagado lo reporta como `reduce` y la vista previa no
+   arrancaba en la maquina de Diego — [INC-MOTION-01] / [INC-MOTION-02].
+   Ademas no es movimiento ambiental: lo dispara el lector con el raton
+   y se para al quitarlo.
+   ══════════════════════════════════════════════════════════════════ */
+(function(){
+  var box=document.getElementById('vpBox'); if(!box) return;
+  var v=document.getElementById('vpVideo'), ov=document.getElementById('vpBtn'),
+      chaps=document.getElementById('vpChaps');
+  var HERO=box.dataset.hero||'', TOUR=box.dataset.tour||'', modo='hero';
+  var otroFichero=!!TOUR && TOUR!==HERO;
+  var fino=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+  function enTour(t){
+    if(modo!=='tour'){
+      modo='tour';
+      box.classList.remove('is-preview'); box.classList.add('is-tour');
+      v.loop=false; v.controls=true; v.preload='auto';
+      if(otroFichero){ v.src=TOUR; v.load(); }
+    }
+    /* currentTime antes de tener metadatos se pierde en silencio */
+    var ir=function(){ v.currentTime=t||0; var p=v.play(); if(p&&p.catch) p.catch(function(){}); };
+    if(v.readyState>=1) ir(); else v.addEventListener('loadedmetadata',ir,{once:true});
+    marcar(t||0);
+  }
+  function marcar(t){
+    if(!chaps) return;
+    var bs=[].slice.call(chaps.querySelectorAll('.vc')), act=null;
+    bs.forEach(function(b){ if(parseFloat(b.dataset.t)<=t+0.05) act=b; });
+    bs.forEach(function(b){ b.setAttribute('aria-current', String(b===act)); });
+  }
+
+  ov.addEventListener('click',function(){ enTour(0); });
+  if(chaps) chaps.querySelectorAll('.vc').forEach(function(b){
+    b.addEventListener('click',function(){ enTour(parseFloat(b.dataset.t)); });
+  });
+  v.addEventListener('timeupdate',function(){ if(modo==='tour') marcar(v.currentTime); });
+
+  if(fino){
+    box.addEventListener('mouseenter',function(){
+      if(modo!=='hero') return;
+      box.classList.add('is-preview');
+      var p=v.play(); if(p&&p.catch) p.catch(function(){});
+    });
+    box.addEventListener('mouseleave',function(){
+      if(modo!=='hero') return;
+      box.classList.remove('is-preview'); v.pause(); v.currentTime=0;
+    });
+  }
+
+  /* fuera de pantalla no se reproduce nada: ni la vista previa ni el tour.
+     root:#twBody a proposito — sin root el observer no dispara nunca dentro
+     de la ventana de terminal, que es el fallo n.1 de este chasis */
+  var SCC=document.getElementById('twBody');
+  if(window.IntersectionObserver){
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(!e.isIntersecting && !v.paused){
+        v.pause(); if(modo==='hero'){ box.classList.remove('is-preview'); v.currentTime=0; }
+      }});
+    },{root:SCC||null,threshold:0}).observe(box);
+  }
+})();
+</script>
+</body>
+</html>
