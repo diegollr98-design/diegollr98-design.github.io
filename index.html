@@ -210,6 +210,20 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .pj-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .pj h3{font-family:'Space Grotesk';font-weight:600;font-size:clamp(1.22rem,2.3vw,1.62rem);letter-spacing:-.025em;line-height:1.15}
 .pj .kind{font-family:'JetBrains Mono';font-size:.7rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+/* ── badge de repo público: la tarjeta ya es un <a>, así que NO puede llevar otro
+   <a> dentro (HTML inválido). Es un <span role="link"> con guardia de click, el
+   mismo patrón que .pj-vid. ── */
+.pj-repo{font-family:'JetBrains Mono';font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--g2);border:1px solid color-mix(in srgb,var(--g2) 42%,transparent);border-radius:999px;
+  padding:3px 10px;white-space:nowrap;cursor:pointer;transition:background .18s,color .18s;
+  display:inline-flex;align-items:center;gap:6px;min-height:24px}
+.pj-repo:hover,.pj-repo:focus-visible{background:color-mix(in srgb,var(--g2) 15%,transparent);color:var(--text)}
+.pj-repo svg{width:11px;height:11px;flex:0 0 auto}
+/* el badge mide 26px de alto: se conserva el tamano visual y se agranda solo el
+   AREA TACTIL hasta 44px, que es el minimo con el que se verifico el CTA. */
+.pj-repo{position:relative}
+.pj-repo::after{content:'';position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  height:44px;min-width:44px}
 .pj .thesis{color:var(--muted2);font-size:.96rem;line-height:1.72;margin-top:12px;max-width:64ch}
 .pj .thesis strong{color:var(--text);font-weight:500}
 
@@ -1325,7 +1339,7 @@ body{overflow:hidden}
   </div>
 
   <div class="cgrid">
-    <div class="cap reveal" tabindex="0" role="button" data-mt="eval harness · guardrails" data-mid="dg-evals" data-mc="<p><span class='t-es'>Gates que <b>bloquean</b> cuando la salida empeora contra un baseline, en vez de avisar. Un <code>/eval</code> en rojo no deja cerrar el cambio. Y sin baseline el gate no aprueba en vacío: sale con error avisando de que falta, que es el fallo que más veces se cuela.</span><span class='t-en'>Gates that <b>block</b> when output degrades against a baseline, instead of warning. A red <code>/eval</code> won't let the change close. And with no baseline the gate doesn't rubber-stamp: it exits with an error saying the baseline is missing: the failure that slips through most often.</span></p><div class='ev'><span class='t-es'>se prueba en</span><span class='t-en'>proven in</span> <b>YT PIPELINE · ECXM OPS</b><br>audit_run.py:542 «NO PUBLICABLE» → return 1 · eval_precios.py:107 → return 1 · eval_ingesta.py:237 sale con 2 si no hay baseline</div>">
+    <div class="cap reveal" tabindex="0" role="button" data-mt="eval harness · guardrails" data-mid="dg-evals" data-mc="<p><span class='t-es'>Gates que <b>bloquean</b> cuando la salida empeora contra un baseline, en vez de avisar. Un <code>/eval</code> en rojo no deja cerrar el cambio. Y sin baseline el gate no aprueba en vacío: sale con error avisando de que falta, que es el fallo que más veces se cuela.</span><span class='t-en'>Gates that <b>block</b> when output degrades against a baseline, instead of warning. A red <code>/eval</code> won't let the change close. And with no baseline the gate doesn't rubber-stamp: it exits with an error saying the baseline is missing: the failure that slips through most often.</span></p><div class='ev'><span class='t-es'>se prueba en</span><span class='t-en'>proven in</span> <b>YT PIPELINE · ECXM OPS</b><br>audit_run.py:1374 «NO PUBLICABLE» → return 1 · eval_precios.py:111 → return 1 · eval_ingesta.py:237 sale con 2 si no hay baseline</div>">
       <span class="lx">eval harness · guardrails</span>
       <p><span class="t-es">Gates que <b>bloquean</b> cuando la salida empeora contra un baseline, en vez de avisar.</span><span class="t-en">Gates that <b>block</b> when output degrades against a baseline, instead of warning.</span></p>
       <div class="cap-more"><span class="t-es">ver cómo funciona</span><span class="t-en">see how it works</span> +</div>
@@ -1462,6 +1476,7 @@ body{overflow:hidden}
         <div class="pj-top">
           <h3>YouTube Pipeline</h3>
           <span class="kind"><span class="t-es">media pipeline · Python + FFmpeg + LLM</span><span class="t-en">media pipeline · Python + FFmpeg + LLM</span></span>
+          <span class="pj-repo" role="link" tabindex="0" data-href="https://github.com/diegollr98-design/video-pipeline" title="github.com/diegollr98-design/video-pipeline"><span class="t-es">ver código</span><span class="t-en">view code</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </div>
         <p class="thesis"><span class="t-es">Coge una grabación de <strong>13 GB</strong> y devuelve un vídeo de 30 minutos listo para subir: historia escrita por un LLM, narrada con voz elegida según el protagonista, <strong>subtítulos clavados palabra por palabra</strong>, intro animada, miniatura y decenas de shorts verticales. Sin que nadie toque nada.</span><span class="t-en">It takes a <strong>13 GB</strong> recording and returns a 30-minute video ready to upload: an LLM-written story, narrated with the voice picked from the protagonist, <strong>subtitles locked word by word</strong>, animated intro, thumbnail and dozens of vertical shorts. With nobody touching anything.</span></p>
         <div class="pipe"><span>gameplay 13 GB</span><i>→</i><span>guion LLM</span><i>→</i><span>voz TTS</span><i>→</i><span>forced alignment</span><i>→</i><span>FFmpeg</span><i>→</i><span>miniatura</span><i>→</i><span>shorts</span><i>⊣</i><span class="gate">/eval vs baseline</span></div>
@@ -1498,6 +1513,7 @@ body{overflow:hidden}
         <div class="pj-top">
           <h3>RESELLERMASTER</h3>
           <span class="kind"><span class="t-es">visión + LLM · reventa C2C</span><span class="t-en">vision + LLM · C2C reselling</span></span>
+          <span class="pj-repo" role="link" tabindex="0" data-href="https://github.com/diegollr98-design/resellermaster" title="github.com/diegollr98-design/resellermaster"><span class="t-es">ver código</span><span class="t-en">view code</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </div>
         <p class="thesis"><span class="t-es">Coge un lote de fotos mezcladas de segunda mano, <strong>las agrupa por producto</strong> y produce la ficha lista para copiar-pegar en Wallapop y Vinted (título, marca, talla, estado, precio) <strong>sin afirmar ni un atributo que no sea legible en una foto</strong>.</span><span class="t-en">It takes a batch of mixed second-hand photos, <strong>groups them by product</strong> and produces the listing ready to copy-paste into Wallapop and Vinted, title, brand, size, condition, price, <strong>without asserting a single attribute that isn't legible in a photo</strong>.</span></p>
         <div class="pipe"><span>agrupar</span><i>→</i><span>extraer</span><i>→</i><span>export</span><i>→</i><span>precio</span><i>→</i><span>finanzas</span><i>⊣</i><span class="gate">listing-audit vs foto</span></div>
@@ -1590,7 +1606,7 @@ body{overflow:hidden}
       <div class="hc" data-go="SEKURA/SEKURA.html">SEKURA</div>
       <div class="hc">META<br>ADS</div>
 
-      <div class="rl" data-ev-es="eval_precios.py:107 <code>return 1</code> · audit_run.py:542 «NO PUBLICABLE» · export_botrider_engine.py:87 <code>SystemExit</code> si el tree-walk no reproduce sklearn · ci-seguridad.yml:63 en cada push" data-ev-en="eval_precios.py:107 <code>return 1</code> · audit_run.py:542 “NOT PUBLISHABLE” · export_botrider_engine.py:87 <code>SystemExit</code> if the tree-walk fails to match sklearn · ci-seguridad.yml:63 on every push"><span class="t-es">Evals y gates que bloquean</span><span class="t-en">Evals and gates that block</span></div>
+      <div class="rl" data-ev-es="eval_precios.py:111 <code>return 1</code> · audit_run.py:1374 «NO PUBLICABLE» · export_botrider_engine.py:87 <code>SystemExit</code> si el tree-walk no reproduce sklearn · ci-seguridad.yml:28 en cada push" data-ev-en="eval_precios.py:111 <code>return 1</code> · audit_run.py:1374 “NOT PUBLISHABLE” · export_botrider_engine.py:87 <code>SystemExit</code> if the tree-walk fails to match sklearn · ci-seguridad.yml:28 on every push"><span class="t-es">Evals y gates que bloquean</span><span class="t-en">Evals and gates that block</span></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
@@ -1618,7 +1634,7 @@ body{overflow:hidden}
       <div class="cell"><i class="dotm"></i></div>
       <div class="cell"><i class="dotm"></i></div>
       <div class="cell"><i class="dotm"></i></div>
-      <div class="rl" data-ev-es="orchestrator.py:63 siete etapas + estado en state.py:37 · main.py:210 siete etapas encadenadas por artefacto · positionManager.ts:37 máquina de posiciones · actions.ts:58 <code>TRANSICIONES</code>" data-ev-en="orchestrator.py:63 seven stages + state in state.py:37 · main.py:210 seven stages chained by artifact · positionManager.ts:37 position machine · actions.ts:58 <code>TRANSICIONES</code>"><span class="t-es">Orquestación multi-etapa con estado</span><span class="t-en">Multi-stage orchestration with state</span></div>
+      <div class="rl" data-ev-es="orchestrator.py:63 siete etapas + estado en state.py:37 · main.py:252-314 siete etapas encadenadas por artefacto · positionManager.ts:37 máquina de posiciones · actions.ts:58 <code>TRANSICIONES</code>" data-ev-en="orchestrator.py:63 seven stages + state in state.py:37 · main.py:252-314 seven stages chained by artifact · positionManager.ts:37 position machine · actions.ts:58 <code>TRANSICIONES</code>"><span class="t-es">Orquestación multi-etapa con estado</span><span class="t-en">Multi-stage orchestration with state</span></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
@@ -2117,7 +2133,7 @@ body{overflow:hidden}
       </div>
       <div class="cx-l">
         <span class="cx-k"><span class="t-es">código</span><span class="t-en">code</span></span>
-        <span class="cx-v"><span class="t-es">2 repos públicos · el resto bajo petición</span><span class="t-en">2 public repos · the rest on request</span></span>
+        <span class="cx-v"><span class="t-es"><a href="https://github.com/diegollr98-design/video-pipeline" target="_blank" rel="noopener">video-pipeline</a> · <a href="https://github.com/diegollr98-design/resellermaster" target="_blank" rel="noopener">resellermaster</a> · el resto bajo petición</span><span class="t-en"><a href="https://github.com/diegollr98-design/video-pipeline" target="_blank" rel="noopener">video-pipeline</a> · <a href="https://github.com/diegollr98-design/resellermaster" target="_blank" rel="noopener">resellermaster</a> · the rest on request</span></span>
       </div>
     </div>
 
@@ -2253,6 +2269,18 @@ function setLang(l){
   function cerrar(){ list.hidden=true; btn.setAttribute('aria-expanded','false'); }
   function abierto(){ return !list.hidden; }
 
+(function(){
+  /* Badge "ver código" de las tarjetas con repo público. La tarjeta entera es un
+     <a>: sin stopPropagation + preventDefault, pulsar el badge se lleva al lector
+     al case-study en vez de a GitHub. Mismo guardia que .pj-vid. */
+  var badges=document.querySelectorAll('.pj-repo[data-href]');
+  Array.prototype.forEach.call(badges,function(b){
+    function ir(e){ e.preventDefault(); e.stopPropagation();
+      window.open(b.getAttribute('data-href'),'_blank','noopener'); }
+    b.addEventListener('click',ir);
+    b.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' ') ir(e); });
+  });
+})();
   btn.addEventListener('click',function(e){ e.stopPropagation(); abierto()?cerrar():abrir(); });
   items.forEach(function(li,k){
     li.addEventListener('click',function(e){ e.stopPropagation(); setLang(li.dataset.v); cerrar(); });

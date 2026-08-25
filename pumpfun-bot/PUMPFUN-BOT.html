@@ -96,6 +96,10 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .btn-primary{background:var(--grad);color:#08080d;font-weight:600;box-shadow:0 6px 26px rgba(155,92,255,.28)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(34,211,255,.38)}
 .btn-ghost{border-color:var(--line2);color:var(--text);background:rgba(255,255,255,.015)}
+/* ── copiar el email: un mailto: no hace nada en un escritorio sin cliente de
+   correo configurado. Portado del índice, que es el maestro. ── */
+.cp-mail{font-family:inherit}
+.cp-mail.done{border-color:rgba(93,255,155,.5);color:var(--live)}
 .btn-ghost:hover{border-color:var(--accent-line);background:var(--accent-soft);transform:translateY(-2px)}
 .btn svg{width:14px;height:14px}
 
@@ -1409,6 +1413,7 @@ $ /seed-review <span class="b">handoff.md</span>
       <p class="t-en">If you're looking for someone in applied-AI, automation or forward-deployed engineering who doesn't fool themselves with their own results, let's talk.</p>
       <div class="cta">
         <a href="mailto:diegollr98@gmail.com" class="btn btn-primary">diegollr98@gmail.com</a>
+        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span></button>
         <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
         <a href="https://github.com/diegollr98-design" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
         <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span></a>
@@ -2507,6 +2512,27 @@ var SC=document.getElementById('twBody');
       }});
     },{root:SCC||null,threshold:0}).observe(box);
   }
+})();
+</script>
+
+<script>
+/* ── contacto: copiar el email. Un mailto: no hace nada sin cliente de correo ── */
+(function(){
+  var T={ok:{es:'copiado',en:'copied'},base:{es:'copiar',en:'copy'}};
+  function paint(b,k){ b.innerHTML='<span class="t-es">'+T[k].es+'</span><span class="t-en">'+T[k].en+'</span>'; }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'),function(b){
+    b.addEventListener('click',function(){
+      var v=b.dataset.copy, done=function(){ b.classList.add('done'); paint(b,'ok');
+        setTimeout(function(){ b.classList.remove('done'); paint(b,'base'); },1900); };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(v).then(done,function(){});
+      } else {
+        var t=document.createElement('textarea'); t.value=v; t.setAttribute('readonly','');
+        t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t);
+        t.select(); try{document.execCommand('copy'); done();}catch(e){} document.body.removeChild(t);
+      }
+    });
+  });
 })();
 </script>
 </body>
