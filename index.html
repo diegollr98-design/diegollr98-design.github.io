@@ -8,7 +8,7 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#06060a">
 <meta property="og:title" content="Diego · AI Engineer · sistemas de IA que no pueden mentir">
-<meta property="og:description" content="Evals, guardrails y grounding: construyo la capa que impide que un sistema de IA afirme algo falso. 5 sistemas en uso real, con gates que bloquean: 3.309 pedidos conciliados, 257 tests en verde.">
+<meta property="og:description" content="Evals, guardrails y grounding: construyo la capa que impide que un sistema de IA afirme algo falso. 5 sistemas en uso real, con gates que bloquean: 11.806 pedidos en la tienda, 257 tests en verde.">
 <meta property="og:url" content="https://diegotomasllopis.com/">
 <meta property="og:image" content="https://diegotomasllopis.com/assets/og-index.png">
 <meta property="og:image:width" content="1200">
@@ -1313,7 +1313,7 @@ body{overflow:hidden}
       <!-- El "a 13-08" NO es adorno: esta cifra decae a diario (YOUTUBE
            commiteo 7 veces solo hoy) y sin fecha se convierte en falsa
            sola en 48 h. Con fecha es una foto, que es lo que es. -->
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="1329"></span></div><div class="l"><span class="t-es">commits en 5 repos a 13-08 · ~5 meses y sin formación previa</span><span class="t-en">commits across 5 repos as of 13-08 · ~5 months, no prior training</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="1424"></span></div><div class="l"><span class="t-es">commits en 5 repos a 25-08 · ~5 meses y sin formación previa</span><span class="t-en">commits across 5 repos as of 25-08 · ~5 months, no prior training</span></div></div>
       <!-- Decia "20 skills propias REUTILIZADAS" y era falso por implicatura:
            solo 4 viven en mas de un repo (run x3, optimize x3, eval x2,
            daily-run x2); las otras 16 estan en uno solo. Un ingeniero lo ve
@@ -1407,7 +1407,7 @@ body{overflow:hidden}
           <span class="t-en">Not Streamlit crashing: it's fluently asserting a false net profit. That figure decides whether a product is a "winner", which shifts the contract split from 50/50 to 40/60. One misattributed decimal is somebody else's pay.</span>
         </div>
         <div class="pj-nums">
-          <span><b>3.309</b> <span class="t-es">pedidos conciliados</span><span class="t-en">orders reconciled</span></span>
+          <span><b>11.806</b> <span class="t-es">pedidos en la tienda</span><span class="t-en">orders in the store</span></span>
           <span><b>6.286</b> <span class="t-es">anuncios indexados</span><span class="t-en">ads indexed</span></span>
           <span><b>3/3</b> <span class="t-es">gates golden en verde</span><span class="t-en">golden gates green</span></span>
         </div>
@@ -1881,8 +1881,8 @@ body{overflow:hidden}
       <div class="pipe"><span>ad testing</span><i>→</i><span>adset testing</span><i>→</i><span>scaling ABO</span><i>→</i><span>scaling ADV</span><i>⊣</i><span class="gate">utilidad neta conciliada</span></div>
       <div class="fail">
         <b><span class="t-es">modo de fallo</span><span class="t-en">failure mode</span></b>
-        <span class="t-es">En COD el ROAS de plataforma <strong>no es el dinero que cobras</strong>: no descuenta la no-entrega ni la devolución. Por eso la cifra con la que decidía no era esta: era la utilidad neta conciliada que calcula ECXM sobre 3.309 pedidos, con gate de igualdad exacta. El número bonito está aquí arriba; el número real pasa por un gate.</span>
-        <span class="t-en">In COD, platform ROAS <strong>isn't the money you collect</strong>: it doesn't net out failed deliveries or returns. So the figure I decided on wasn't this one: it was the reconciled net profit ECXM computes over 3,309 orders, behind an exact-equality gate. The pretty number is up here; the real one goes through a gate.</span>
+        <span class="t-es">En COD el ROAS de plataforma <strong>no es el dinero que cobras</strong>: no descuenta la no-entrega ni la devolución. Por eso la cifra con la que decidía no era esta: era la utilidad neta conciliada que calcula ECXM sobre los pedidos cerrados de cada mes, con gate de igualdad exacta. El número bonito está aquí arriba; el número real pasa por un gate.</span>
+        <span class="t-en">In COD, platform ROAS <strong>isn't the money you collect</strong>: it doesn't net out failed deliveries or returns. So the figure I decided on wasn't this one: it was the reconciled net profit ECXM computes over each month's closed orders, behind an exact-equality gate. The pretty number is up here; the real one goes through a gate.</span>
       </div>
       <div class="pj-nums">
         <span><b>~37.500 €</b> <span class="t-es">gestionados en 15 meses</span><span class="t-en">managed over 15 months</span></span>
@@ -2849,7 +2849,7 @@ var SC=document.getElementById('twBody');
   var LINES=[
     ['booting portfolio.diego · v2 · 13-08', 40],
     ['load  identity ................. <span class="ok">ok</span>', 260],
-    ['mount 5 repos · 1329 commits ... <span class="ok">ok</span>', 200],
+    ['mount 5 repos · 1424 commits ... <span class="ok">ok</span>', 200],
     /* Estas dos dicen lo mismo que decian, con el verbo delante del
        numero. "109 incidents" a secas se lee como 109 fallos mios; lo
        que prueban es que los 109 estan REGISTRADOS, que es justo lo

@@ -73,6 +73,14 @@ html.lang-en .t-es{display:none!important}
   font-family:'JetBrains Mono',monospace;color:var(--hl)}
 .eyebrow .grad-text{font-weight:600}
 .eyebrow::before{content:'';width:26px;height:1px;background:var(--grad);opacity:.9}
+/* ── url del repo publico en el hero: la prueba mas barata que existe, porque
+   el lector la puede abrir y contrastar. Solo en las 2 paginas con repo abierto. ── */
+.hero-repo{display:inline-flex;align-items:center;gap:7px;margin-top:14px;font-family:'JetBrains Mono';
+  font-size:.76rem;color:var(--g2);text-decoration:none;border-bottom:1px solid transparent;
+  transition:color .18s,border-color .18s;min-height:44px}
+.hero-repo:hover,.hero-repo:focus-visible{color:var(--text);border-bottom-color:var(--g2)}
+.hero-repo svg{width:12px;height:12px;flex:0 0 auto}
+@media(max-width:560px){.hero-repo{font-size:.7rem;overflow-wrap:anywhere}}
 
 /* ── ambient layers: aurora + grain ── */
 .aurora{position:fixed;inset:-20% -10% auto -10%;height:120vh;z-index:-2;pointer-events:none;filter:blur(70px);opacity:.5}
@@ -797,6 +805,8 @@ body{overflow:hidden}
   <!-- hero -->
   <header class="hero">
     <div class="eyebrow"><span class="t-es">AI Engineer · visión + LLM · reventa de segunda mano</span><span class="t-en">AI Engineer · vision + LLM · second-hand reselling</span></div>
+
+    <a class="hero-repo" href="https://github.com/diegollr98-design/resellermaster" target="_blank" rel="noopener">github.com/diegollr98-design/resellermaster<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
 
     <h1 class="t-es display">Construí el <span class="grad-text">sistema</span> que impide a una IA mentir sobre un producto.</h1>
     <h1 class="t-en display">I built the <span class="grad-text">system</span> that stops an AI from lying about a product.</h1>
