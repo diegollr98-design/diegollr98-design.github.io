@@ -89,7 +89,15 @@ html.lang-en .t-es{display:none!important}
 @media(max-width:560px){.ficha{font-size:.68rem;margin:7px 0 -17px}}
 
 /* ── ambient layers: aurora + grain ── */
-.aurora{position:fixed;inset:-20% -10% auto -10%;height:120vh;z-index:-2;pointer-events:none;filter:blur(70px);opacity:.5}
+.aurora{position:fixed;inset:-20% -10% auto -10%;height:120vh;z-index:-2;pointer-events:none;opacity:.5}
+/* sin filter:blur(70px): era una capa fixed de 120vh cuyos 3 hijos animan
+   transform para siempre, asi que el desenfoque se reconvolucionaba en CADA
+   frame y no se podia cachear (el will-change esta en el hijo, el filter en
+   el padre). Medido en las 6: 34,8-40,5 fps -> 54,3-59,0 (x1,42-1,62).
+   Coste visual medido Y MIRADO: 0,04 % de pixeles a 390, 0,44 % a 1440 — los
+   blobs ya son radial-gradient con caida suave, el blur difuminaba algo ya
+   difuminado. NO usar display:none (2,57 % a 1440) ni prefers-reduced-motion
+   ([INC-MOTION-01], 3 incidencias). */
 .aurora b{position:absolute;border-radius:50%;mix-blend-mode:screen;will-change:transform}
 .aurora .b1{width:46vw;height:46vw;left:-6vw;top:-8vh;background:radial-gradient(circle at 30% 30%,rgba(155,92,255,.5),transparent 62%);animation:drift1 26s ease-in-out infinite}
 .aurora .b2{width:42vw;height:42vw;right:-4vw;top:4vh;background:radial-gradient(circle at 60% 40%,rgba(34,211,255,.42),transparent 62%);animation:drift2 32s ease-in-out infinite}
@@ -2895,8 +2903,16 @@ var SC=document.getElementById('twBody');
      hacia nada.
 
      Ahora los tres gestos — clic, tecla, scroll — lanzan el arranque, y
-     una vez lanzado NO se puede interrumpir: sigue hasta el final
-     aunque se siga scrolleando. Son ~1,5 s; no hace falta escape. */
+     si YA esta lanzado lo SALTAN al final.
+
+     ⚠️ Antes no se podia interrumpir, con el argumento de que "son ~1,5 s
+     y no hace falta escape". Eso se decidio en un portatil. En un Android
+     de gama media son 1.880 ms con el scroll CLAVADO (`fijar`), y Diego
+     lo reporto el 25-08 como su primera queja, con estas palabras: "vas
+     bajando y se queda parado, no te deja avanzar". Medido antes del
+     arreglo: telon=SI -> scrollTop +0, +0, +0; primer scroll que responde
+     a los 8.175 ms. Un gesto es el lector diciendo "dejame pasar", y la
+     llegada no vale lo que cuesta ignorarlo. */
   function arrancar(){
     if(done || corriendo) return;
     corriendo=true;
@@ -2911,10 +2927,21 @@ var SC=document.getElementById('twBody');
     });
   }
 
+  /* ── un gesto siempre significa "dejame pasar" ──
+     Si aun no ha arrancado, arranca (comportamiento de siempre). Si ya
+     esta corriendo, salta al final: cierra el telon, suelta el pestillo
+     del scroll y da paso al motor de impresion, que es lo que hace
+     `finish()`. Sin esto, el lector empuja contra una pagina clavada. */
+  function gesto(){
+    if(done) return;
+    if(!corriendo){ arrancar(); return; }
+    finish();
+  }
+
   /* pointerdown cubre el clic (en el boton y fuera) y el toque en
      movil; wheel y touchmove cubren el scroll. */
   var EVS=['keydown','wheel','touchmove','pointerdown'];
-  function quitar(){ EVS.forEach(function(ev){ document.removeEventListener(ev,arrancar); }); }
+  function quitar(){ EVS.forEach(function(ev){ document.removeEventListener(ev,gesto); }); }
 
   /* ── el arranque NO se cobra dos veces ──
      Es una llegada, y una llegada solo ocurre una vez. Quien vuelve al
@@ -2930,7 +2957,7 @@ var SC=document.getElementById('twBody');
   boot.hidden=false; boot.classList.remove('running'); log.innerHTML='';
   lockY=SC.scrollTop;
   SC.addEventListener('scroll',fijar,{passive:true});
-  EVS.forEach(function(ev){ document.addEventListener(ev,arrancar,{passive:true}); });
+  EVS.forEach(function(ev){ document.addEventListener(ev,gesto,{passive:true}); });
 
   /* ── y arranca SOLO ──
      Antes esperaba un gesto para empezar siquiera. Quien llega de
@@ -3307,16 +3334,32 @@ var SC=document.getElementById('twBody');
     var list=[], n;
     while((n=walker.nextNode())) list.push(n);
 
+    /* ── DOS FASES: primero LEER, despues ESCRIBIR ──
+       Este bucle hacia `breaksOf(tn)` (lee layout) y acto seguido
+       `wrap(tn,cuts)` (escribe DOM) para cada nodo, alternandose ~1.200
+       veces. Cada wrap invalida el layout, asi que el breaksOf siguiente
+       lo forzaba entero otra vez: layout thrashing, y el comentario de
+       arriba —"todas seguidas sin tocar el DOM, el layout esta cacheado"—
+       describia una intencion que el bucle no cumplia.
+       Medido en el perfil: breaksOf = 1.039 ms de tiempo propio, la
+       funcion mas cara del portafolio, y con el hilo bloqueado el lector
+       no puede scrollear (reporte de Diego, 25-08). Separar las fases no
+       cambia QUE se hace, solo CUANDO: mismos cortes, mismos spans.
+       Si algun dia wrap() llegara a mover el layout, los cortes
+       calculados antes quedarian obsoletos — lo vigila shot_port.py, que
+       compara docH y el texto renderizado a 390/880/1440. */
+    var cortes=[];
     list.forEach(function(tn){
       var p=tn.parentElement; if(!p) return;
       var d=getComputedStyle(p).display;
       /* dentro de un flex/grid cada span seria un item propio y el
          reparto cambiaria: ahi va un solo span, que equivale a la caja
          anonima que el navegador ya crea */
-      if(/flex|grid/.test(d)){ wrap(tn,[tn.nodeValue.length]); return; }
+      if(/flex|grid/.test(d)){ cortes.push([tn,[tn.nodeValue.length]]); return; }
       var cuts=breaksOf(tn);
-      if(cuts) wrap(tn,cuts);
+      if(cuts) cortes.push([tn,cuts]);
     });
+    for(var c=0;c<cortes.length;c++) wrap(cortes[c][0],cortes[c][1]);
   }
 
   /* ── 3 · la cola, en orden de arriba abajo ── */
