@@ -448,6 +448,12 @@ body{overflow:hidden}
   color:var(--muted2);background:transparent;border:1px solid var(--line2);
   border-radius:7px;padding:4px 8px;cursor:pointer;
   transition:border-color .18s,color .18s,background .18s}
+/* el boton medía 43x29: por debajo del 44x44 que exige el proyecto. Se agranda
+   el AREA TACTIL con un pseudo-elemento, sin tocar su aspecto ni el alto de la
+   barra. `inset` asimetrico a proposito: en horizontal el hueco con el CTA de
+   correo es de 6-8 px a <=560 y no se puede invadir. (27-08) */
+.tw-lang>button{position:relative}
+.tw-lang>button::after{content:'';position:absolute;inset:-10px -4px}
 .tw-lang>button:hover,.tw-lang>button[aria-expanded="true"]{
   border-color:var(--accent-line);color:var(--text);background:var(--accent-soft)}
 .tw-lang>button i{width:0;height:0;border-left:3.5px solid transparent;
@@ -1468,7 +1474,7 @@ $ /seed-review <span class="b">handoff.md</span>
       <p class="t-en">The agentic lenses share the same priors: they kill <b>false positives</b>, but not the <b>false negative</b> of a bad measurement or a missing requirement, no number of agents sees that. I narrow it like this: the <b>human gate</b> (I test every phase in the browser) and turning each blind spot into a <b>reusable lens</b>. That's why the incident ledger exists: every failure is promoted to a hard rule the next session applies on its own, with a single writer and an immutable set no auto-process touches. Irreducible: the first time a new bias appears, it still takes a human.</p>
     </div>
 
-    <p class="bridge reveal"><span class="t-es">El resto del método —la refutación en lentes disjuntas, el invariante que vive en un solo sitio— es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method —refutation through disjoint lenses, the invariant that lives in one single place— is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
+    <p class="bridge reveal"><span class="t-es">El resto del método (la refutación en lentes disjuntas, el invariante que vive en un solo sitio) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (refutation through disjoint lenses, the invariant that lives in one single place) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
   </div>
 </section>
 

@@ -500,6 +500,12 @@ body{overflow:hidden}
   color:var(--muted2);background:transparent;border:1px solid var(--line2);
   border-radius:7px;padding:4px 8px;cursor:pointer;
   transition:border-color .18s,color .18s,background .18s}
+/* el boton medía 43x29: por debajo del 44x44 que exige el proyecto. Se agranda
+   el AREA TACTIL con un pseudo-elemento, sin tocar su aspecto ni el alto de la
+   barra. `inset` asimetrico a proposito: en horizontal el hueco con el CTA de
+   correo es de 6-8 px a <=560 y no se puede invadir. (27-08) */
+.tw-lang>button{position:relative}
+.tw-lang>button::after{content:'';position:absolute;inset:-10px -4px}
 .tw-lang>button:hover,.tw-lang>button[aria-expanded="true"]{
   border-color:var(--accent-line);color:var(--text);background:var(--accent-soft)}
 .tw-lang>button i{width:0;height:0;border-left:3.5px solid transparent;
@@ -1277,7 +1283,7 @@ $ /seed-review <span class="b">closing-ultra-review.md</span>
     <p class="engine-cap reveal t-es" style="margin-top:16px">El panel cazó que mi propio plan de cierre probaba un <b>proxy</b>: auditar código verde en vez de medir la métrica primaria del proyecto. Reordené, medir primero, y el número que corona el proyecto (~210 s) apareció ahí, junto a un bug que 904 tests verdes no veían. <b>El rigor es cuestionar tu propio plan, no defenderlo.</b></p>
     <p class="engine-cap reveal t-en" style="margin-top:16px">The panel caught that my own closing plan was testing a <b>proxy</b>: auditing green code instead of measuring the project's primary metric. I reordered, measure first, and the number that crowns the project (~210 s) showed up there, next to a bug 904 green tests couldn't see. <b>Rigor is questioning your own plan, not defending it.</b></p>
 
-    <p class="bridge reveal"><span class="t-es">El resto del método —la refutación asimétrica, el agente ciego que audita mis planes, el ledger que convierte un fallo en regla— es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method —asymmetric refutation, the blind agent auditing my own plans, the ledger that turns a failure into a rule— is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
+    <p class="bridge reveal"><span class="t-es">El resto del método (la refutación asimétrica, el agente ciego que audita mis planes, el ledger que convierte un fallo en regla) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (asymmetric refutation, the blind agent auditing my own plans, the ledger that turns a failure into a rule) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
   </div>
 </section>
 

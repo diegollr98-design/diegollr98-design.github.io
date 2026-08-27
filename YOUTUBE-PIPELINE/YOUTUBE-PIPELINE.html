@@ -573,6 +573,12 @@ body{overflow:hidden}
   color:var(--muted2);background:transparent;border:1px solid var(--line2);
   border-radius:7px;padding:4px 8px;cursor:pointer;
   transition:border-color .18s,color .18s,background .18s}
+/* el boton medía 43x29: por debajo del 44x44 que exige el proyecto. Se agranda
+   el AREA TACTIL con un pseudo-elemento, sin tocar su aspecto ni el alto de la
+   barra. `inset` asimetrico a proposito: en horizontal el hueco con el CTA de
+   correo es de 6-8 px a <=560 y no se puede invadir. (27-08) */
+.tw-lang>button{position:relative}
+.tw-lang>button::after{content:'';position:absolute;inset:-10px -4px}
 .tw-lang>button:hover,.tw-lang>button[aria-expanded="true"]{
   border-color:var(--accent-line);color:var(--text);background:var(--accent-soft)}
 .tw-lang>button i{width:0;height:0;border-left:3.5px solid transparent;
@@ -896,7 +902,7 @@ body{overflow:hidden}
       <strong>Nobody watches 30 minutes of output.</strong> I started not knowing how to code; I built it solo, with AI.
     </p>
 
-    <p class="hero-note"><span class="t-es"><b>Límite honesto:</b> el uploader está construido —OAuth, subida reanudable y miniatura, con su pestaña en el dashboard— pero <b>no se ha ejecutado nunca</b>: necesita unas credenciales de Google Cloud propias que no están creadas. Por diseño sube <b>en privado</b>, solo el vídeo largo, y se dispara a mano desde una cola con el veredicto del auditor delante; nunca automáticamente al terminar una corrida. Lo digo aquí antes de que lo preguntes.</span><span class="t-en"><b>Honest limit:</b> the uploader is built —OAuth, resumable upload and thumbnail, with its own dashboard tab— but <b>it has never been run</b>: it needs its own Google Cloud credentials, which don't exist yet. By design it uploads <b>privately</b>, long-form video only, and is fired by hand from a queue with the auditor's verdict in front of you; never automatically at the end of a run. Saying it up front.</span></p>
+    <p class="hero-note"><span class="t-es"><b>Límite honesto:</b> el uploader está construido (OAuth, subida reanudable y miniatura, con su pestaña en el dashboard) pero <b>no se ha ejecutado nunca</b>: necesita unas credenciales de Google Cloud propias que no están creadas. Por diseño sube <b>en privado</b>, solo el vídeo largo, y se dispara a mano desde una cola con el veredicto del auditor delante; nunca automáticamente al terminar una corrida. Lo digo aquí antes de que lo preguntes.</span><span class="t-en"><b>Honest limit:</b> the uploader is built (OAuth, resumable upload and thumbnail, with its own dashboard tab) but <b>it has never been run</b>: it needs its own Google Cloud credentials, which don't exist yet. By design it uploads <b>privately</b>, long-form video only, and is fired by hand from a queue with the auditor's verdict in front of you; never automatically at the end of a run. Saying it up front.</span></p>
 
     <div class="cta">
       <a href="#recorrido" class="btn btn-primary">
@@ -1442,7 +1448,7 @@ body{overflow:hidden}
       <span>OpenRouter</span><span>YouTube Data API v3</span><span>Streamlit</span><span>Pillow</span><span>ASS / SRT</span><span>NVENC</span>
     </div>
 
-    <p class="bridge reveal"><span class="t-es">El resto del método —la refutación asimétrica, el ledger que solo asciende a regla con freno— es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method —asymmetric refutation, the ledger that only promotes to a rule with a brake— is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
+    <p class="bridge reveal"><span class="t-es">El resto del método (la refutación asimétrica, el ledger que solo asciende a regla con freno) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (asymmetric refutation, the ledger that only promotes to a rule with a brake) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
   </div>
 </section>
 
@@ -1688,8 +1694,8 @@ document.querySelectorAll('.ct').forEach(function(c){ c.textContent=(c.dataset.p
       els.perday.textContent='0';
     } else {
       els.verdict.innerHTML=en
-        ?'One video with all its shorts eats <b>'+total+' of the '+CAP+'</b> daily requests, so <b>'+perday+' fit</b>. The quota stopped being what bites — but this is the same count that tells you, before launching, whether a run dies halfway.'
-        :'Un vídeo con todos sus shorts se come <b>'+total+' de las '+CAP+'</b> peticiones del día, así que <b>caben '+perday+'</b>. La cuota dejó de ser lo que muerde — pero es la misma cuenta que te dice, antes de lanzar, si una corrida muere a mitad.';
+        ?'One video with all its shorts eats <b>'+total+' of the '+CAP+'</b> daily requests, so <b>'+perday+' fit</b>. The quota stopped being what bites, but this is the same count that tells you, before launching, whether a run dies halfway.'
+        :'Un vídeo con todos sus shorts se come <b>'+total+' de las '+CAP+'</b> peticiones del día, así que <b>caben '+perday+'</b>. La cuota dejó de ser lo que muerde, pero es la misma cuenta que te dice, antes de lanzar, si una corrida muere a mitad.';
     }
   }
   r.addEventListener('input',upd); upd();

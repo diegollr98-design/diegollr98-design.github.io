@@ -176,7 +176,18 @@ h1{font-family:'Space Grotesk';font-weight:600;font-size:clamp(2.5rem,6.6vw,4.9r
      contra la caja del retrato en las dos lenguas y a cuatro anchos.
      Debajo de 1180 no se aplica: ahi el h1 ya llega donde estaria el
      retrato y no hay hueco que aprovechar. */
-  .hero-fig{width:min(360px,27vw)}   /* la subida la calcula el JS: ver encajar() */
+  /* ⬇ 360 → 265 px el 2026-08-27, decision de Diego, y NO es cosmetico: es el
+     ANCHO MAXIMO al que el retrato cabe CENTRADO. El h1 va fuera de la rejilla,
+     asi que sus lineas invaden esta columna — 19 px en espanol y 67 en ingles —
+     y con 360 px no habia hueco vertical: centrarlo habria tapado el titular, que
+     es el riesgo que este bloque lleva documentado desde el principio.
+     Medido a 1180/1440/1920 en las dos lenguas:
+        360 px → descentrado +259 (ES) y +165 (EN)
+        300 px → centrado en ES, +136 en EN   ← el ingles vuelve a chocar
+        265 px → −4 px en las SEIS combinaciones
+     ⛔ Subirlo por encima de 265 descentra el ingles otra vez. Si algun dia se
+     quiere mas grande, lo que hay que mover es el h1, no esto. */
+  .hero-fig{width:min(265px,20vw)}   /* la subida la calcula el JS: ver encajar() */
 }
 
 
@@ -190,24 +201,10 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .sec-head p strong{color:var(--text);font-weight:500}
 
 /* ── project rail ── */
-.rail{display:flex;flex-direction:column;gap:18px}
 
-/* ── bloques del raíl ── */
-.blk{display:flex;align-items:baseline;gap:16px;margin:6px 0 2px}
-.blk:not(:first-child){margin-top:24px}
-.blk-t{font-family:'JetBrains Mono';font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
-  font-weight:600;white-space:nowrap;background:var(--grad3);-webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:transparent}
-.blk-l{flex:1;height:1px;background:linear-gradient(90deg,var(--line2),transparent)}
-.blk-c{font-size:.79rem;color:var(--muted);font-family:'JetBrains Mono';white-space:nowrap}
 .bridge{border-left:2px solid;border-image:linear-gradient(180deg,var(--g1),var(--g3)) 1;
   padding:4px 0 4px 18px;margin:26px 0 6px;font-size:.94rem;color:var(--muted2);line-height:1.72;max-width:62ch}
 .bridge strong{color:var(--text);font-weight:500}
-@media(max-width:640px){
-  .blk{flex-wrap:wrap;gap:8px}
-  .blk-l{display:none}
-  .blk-c{white-space:normal}
-}
 .pj{display:grid;grid-template-columns:64px 1fr;gap:0 26px;background:var(--surface);border:1px solid var(--line);border-radius:18px;
   padding:30px clamp(22px,3.2vw,34px);transition:border-color .28s,transform .28s,box-shadow .28s;position:relative;overflow:hidden}
 .pj::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--grad3);opacity:0;transition:opacity .28s}
@@ -323,12 +320,11 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .ev-ads figcaption{font-family:'JetBrains Mono';font-size:.63rem;line-height:1.6;color:var(--muted);padding:9px 11px;border-top:1px solid var(--line)}
 .ev-ads b{color:var(--hl);font-weight:500}
 .ev-ads i,.ev-cap i{font-style:normal;opacity:.72}
-.hist-i.con-ad{grid-template-columns:104px 1fr 152px}
-.hist-ad{width:100%;margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface2);align-self:start}
-.hist-ad img{width:100%;height:auto;display:block}
-.hist-ad figcaption{font-family:'JetBrains Mono';font-size:.6rem;line-height:1.55;color:var(--muted);padding:7px 9px;border-top:1px solid var(--line)}
-@media(max-width:640px){.hist-i.con-ad{grid-template-columns:1fr}.hist-ad{max-width:210px;margin-top:4px}}
-.mx{display:grid;grid-template-columns:minmax(210px,1.5fr) repeat(6,minmax(84px,1fr));min-width:700px}
+/* 5 columnas desde el 2026-08-26: META ADS salio de la matriz. Sus 6 celdas
+   estaban las 6 vacias, o sea que no probaba ni una capacidad; y ademas era
+   la unica cabecera sin `data-go`, asi que «haz clic en una columna» fallaba
+   justo en ella. El negocio se cuenta en #negocio, con sus capturas. */
+.mx{display:grid;grid-template-columns:minmax(210px,1.5fr) repeat(5,minmax(84px,1fr));min-width:620px}
 .mx .hc{padding:16px 8px 14px;text-align:center;font-family:'JetBrains Mono';font-size:.63rem;letter-spacing:.06em;
   color:var(--muted);border-bottom:1px solid var(--line);line-height:1.35;transition:color .2s,background .2s;cursor:pointer}
 .mx .hc:hover,.mx .hc.hot{color:var(--text);background:rgba(255,255,255,.028)}
@@ -342,6 +338,124 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .dotm{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.09);transition:transform .25s,box-shadow .25s,background .25s}
 .dotm.si{background:var(--grad);box-shadow:0 0 0 0 rgba(155,92,255,.35)}
 .row-hot .dotm.si{transform:scale(1.55);box-shadow:0 0 16px rgba(34,211,255,.55)}
+/* ══ .tl · el arco del negocio en 3 puntos (2026-08-26) ══════════════════
+   La linea y los puntos se colocan en PORCENTAJE sobre la misma caja, no en
+   px, para que el <svg> estirado (`preserveAspectRatio=none`) y los botones
+   HTML caigan SIEMPRE en el mismo sitio a cualquier anchura. El trazo lleva
+   `vector-effect:non-scaling-stroke` porque, estirado, un stroke normal sale
+   grueso en vertical y fino en horizontal.
+   A <=700 la diagonal se abandona: escalada a 390 los rotulos caian a ~6 px,
+   que es el defecto ya registrado de servir una prueba ilegible. Ahi pasa a
+   lista vertical con la linea como filete lateral, y el texto a tamano real. */
+.tl{position:relative;height:clamp(272px,23vw,310px);margin:30px 0 34px}
+.tl-line{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+/* el boton se ancla por su BORDE INFERIOR, que es donde vive el punto: asi el
+   punto se apoya en la curva y el texto se apila ENCIMA. Anclarlo por el centro
+   (1a pasada, 26-08) hacia que la curva cruzara los rotulos y que el 3er nodo
+   se saliera por arriba de la caja. */
+.tl-n{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,calc(-100% + 10px));
+  width:min(31%,232px);background:transparent;border:0;padding:9px 11px 3px;border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;
+  cursor:pointer;transition:background .2s,transform .2s;color:inherit;font:inherit}
+.tl-n:hover,.tl-n:focus-visible{background:var(--accent-soft);transform:translate(-50%,calc(-100% + 10px)) scale(1.03)}
+.tl-dot{display:block;width:13px;height:13px;border-radius:50%;background:var(--surface);
+  border:2px solid var(--g2);box-shadow:0 0 0 5px rgba(34,211,255,.10);margin-top:9px;flex:0 0 auto}
+.tl-n:hover .tl-dot,.tl-n:focus-visible .tl-dot{background:var(--g2);box-shadow:0 0 0 7px rgba(34,211,255,.18)}
+.tl-y{font-family:'JetBrains Mono';font-size:.68rem;letter-spacing:.14em;font-weight:600;
+  background:var(--grad3);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent}
+.tl-h{font-family:'Space Grotesk';font-weight:500;font-size:.95rem;color:var(--text);line-height:1.25}
+.tl-k{font-family:'JetBrains Mono';font-size:.66rem;color:var(--muted);line-height:1.5}
+.tl-h::after{content:' +';font-family:'JetBrains Mono';font-size:.72rem;color:var(--muted);
+  opacity:.6;transition:color .2s,opacity .2s}
+.tl-n:hover .tl-h::after,.tl-n:focus-visible .tl-h::after{color:var(--hl);opacity:1}
+@media(max-width:700px){
+  .tl{height:auto;padding-left:22px}
+  .tl-line{display:none}
+  .tl::before{content:'';position:absolute;left:5px;top:14px;bottom:14px;width:2px;border-radius:2px;
+    background:linear-gradient(180deg,rgba(155,92,255,.30),rgba(34,211,255,.75),rgba(155,255,87,.95))}
+  .tl-n{position:static;transform:none;width:100%;align-items:flex-start;text-align:left;
+    padding:12px 12px 12px 4px;gap:2px}
+  .tl-n:hover,.tl-n:focus-visible{transform:none}
+  .tl-dot{position:absolute;left:-1px;margin:0;transform:translateY(4px);order:-1}
+}
+/* la foto del anuncio vive ahora DENTRO del modal */
+.mdl-box .mfig{margin:18px auto 0;max-width:230px;border:1px solid var(--line);border-radius:10px;
+  overflow:hidden;background:var(--surface2)}
+.mdl-box .mfig img{width:100%;height:auto;display:block}
+.mdl-box .mfig figcaption{font-family:'JetBrains Mono';font-size:.6rem;line-height:1.55;
+  color:var(--muted);padding:7px 9px;border-top:1px solid var(--line)}
+/* ══ .deck · los 5 proyectos en horizontal (PRUEBA, 2026-08-26) ═══════════
+   Scroller nativo con scroll-snap: el swipe de movil sale gratis y NO se
+   secuestra el scroll vertical. `overscroll-behavior-x:contain` evita que el
+   gesto horizontal dispare el «atras» del navegador. */
+.deck{margin-top:26px}
+.deck-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 14px}
+.deck-tabs::-webkit-scrollbar{display:none}
+.deck-tab{flex:1 1 0;min-width:0;background:var(--surface);border:1px solid var(--line);
+  border-radius:11px;padding:10px 13px;display:flex;flex-direction:column;gap:3px;
+  align-items:flex-start;text-align:left;cursor:pointer;font:inherit;color:inherit;
+  transition:border-color .2s,background .2s}
+.deck-tab b{font-family:'JetBrains Mono';font-size:.65rem;letter-spacing:.13em;color:var(--muted)}
+.deck-tab .deck-nm{font-family:'Space Grotesk';font-size:.82rem;color:var(--muted2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.deck-tab:hover{border-color:var(--line2)}
+.deck-tab.on{border-color:var(--accent-line);background:var(--accent-soft)}
+.deck-tab.on b{background:var(--grad3);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent}
+.deck-tab.on .deck-nm{color:var(--text)}
+.deck-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;
+  scrollbar-width:none;overscroll-behavior-x:contain;scroll-behavior:smooth}
+.deck-track::-webkit-scrollbar{display:none}
+/* ⚠ `align-content:start` NO es cosmetico. El carrusel iguala el alto de las 5
+   tarjetas (flex, stretch), y una rejilla con filas `auto` REPARTE ese sobrante
+   entre sus propias filas: la fila del numero pasaba de 31,75 px en la 01 a
+   115,27 px en la 02, o sea 84 px de hueco entre el numero y el primer texto,
+   distinto en cada tarjeta segun cuanto contenido le faltara. Lo vio Diego en
+   movil. Con `start` las filas se quedan a su tamano y el sobrante se va al
+   final de la tarjeta, que es donde no molesta. */
+.deck-track>.pj{flex:0 0 100%;scroll-snap-align:center;margin:0;align-content:start}
+.pj-grp{font-family:'JetBrains Mono';font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px}
+/* el puente vive DENTRO de la tarjeta 01 desde el 27-08: suelto en el track se
+   convertia en un item flex del carrusel, aplastado y sin encenderse nunca */
+.pj-bridge{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+/* la pista va ANTES del carrusel: debajo llegaba una pantalla entera despues
+   del componente que explica, o sea cuando ya no hacia falta */
+.deck-hint{text-align:center;font-family:'JetBrains Mono';font-size:.69rem;color:var(--muted);margin:-4px 0 12px}
+@media(max-width:560px){
+  /* ⛔ NO vuelvas a esconder `.deck-nm` en movil. Estuvo escondido unas horas el
+     27-08 para que cupieran las 5 pestanas, y `recruiter-sim` lo marco ALTO: sin
+     nombres, las pestanas dicen «pagina 1 de 5», no «cinco sistemas», y la
+     amplitud —que es el activo— pasa de verse a AFIRMARSE. Las 5 ya no caben a
+     la vez: el strip se desliza, y se ven ~2,5 con su nombre, que comunica
+     infinitamente mas que 5 numeros. */
+  .deck-tab{flex:0 0 auto;padding:9px 13px}
+  .deck-tab .deck-nm{font-size:.78rem}
+  /* y la tarjeta deja asomar la siguiente: sin esto, a ancho completo, no habia
+     NI UNA pista visual de que existieran mas */
+  .deck-track>.pj{flex:0 0 88%}
+  /* ⚠ El 88 % de arriba tiene un efecto que no es obvio: `.pj .kind` va con
+     `white-space:nowrap` (linea ~206) y al estrechar la tarjeta el rotulo se
+     salia de su caja — y `.pj` tiene `overflow:hidden`, asi que se veia CORTADO
+     A MEDIA PALABRA. Medido: 4 de las 10 combinaciones tarjeta x idioma, hasta
+     +49 px (YOUTUBE en las dos lenguas, SEKURA en las dos). Lo cazo `design-qa`;
+     ninguna medicion estructural lo veia porque no hay desborde de PAGINA: el
+     texto se recorta dentro de la tarjeta. Aqui envuelve, como el <h1>. */
+  .deck-track>.pj .kind{white-space:normal}
+}
+/* ⛔ A <=560 las 5 columnas CABEN sin deslizar, y tienen que caber: la matriz es
+   la unica lista completa de los cinco sistemas que le queda al lector de movil
+   desde que los proyectos son un carrusel. Antes: scrollW 630 / clientW 322, o
+   sea 1 columna entera de 5 a la vista. Coste: las etiquetas de fila envuelven
+   mas. Es el intercambio correcto — una tabla que hay que descubrir deslizando
+   no compensa nada. (27-08, hallazgo ALTO de recruiter-sim) */
+@media(max-width:560px){
+  .mx{grid-template-columns:minmax(92px,1.15fr) repeat(5,minmax(36px,1fr));min-width:0}
+  .mx .corner{padding:11px 9px;font-size:.55rem;letter-spacing:.08em}
+  .mx .hc{padding:11px 2px 9px;font-size:.53rem;letter-spacing:.02em}
+  .mx .rl{padding:12px 9px;font-size:.74rem;line-height:1.35}
+}
 .mx-note{margin-top:14px;font-size:.78rem;color:var(--muted);font-family:'JetBrains Mono';line-height:1.6}
 
 /* ── espina de capacidades (2.º pliegue) ── */
@@ -366,16 +480,6 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .mc .hl{color:var(--hl)}
 
 /* ── negocio: el arco del ecommerce (2019 → hoy). Tres actos, no un muro ── */
-.hist{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden;margin:26px 0 30px}
-.hist-i{display:grid;grid-template-columns:104px 1fr;gap:20px;padding:21px 24px;border-top:1px solid var(--line)}
-.hist-i:first-child{border-top:none}
-.hist-y{font-family:'JetBrains Mono';font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
-  white-space:nowrap;padding-top:3px;background:var(--grad3);-webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:transparent}
-.hist-i h4{font-family:'Space Grotesk';font-weight:500;font-size:1rem;margin-bottom:7px}
-.hist-i p{font-size:.86rem;color:var(--muted);line-height:1.66}
-.hist-i b{color:var(--muted2);font-weight:500}
-@media(max-width:640px){.hist-i{grid-template-columns:1fr;gap:8px;padding:19px 19px}}
 
 /* ── ciclo agéntico ── */
 .flow{position:relative;margin-top:8px}
@@ -396,21 +500,6 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .ph .why{margin-top:8px;font-size:.79rem;color:var(--muted);line-height:1.6;max-width:64ch;font-family:'JetBrains Mono'}
 .ph .why::before{content:'↳ ';color:var(--hl);opacity:.7}
 /* ── flywheel del ciclo: vertical para que se lea en el movil ── */
-.fw{display:block;width:100%;max-width:430px;margin:26px auto 4px;overflow:visible}
-.fw-box{fill:var(--bg2);stroke:var(--line2);stroke-width:1}
-.fw-ask{stroke-dasharray:4 3}
-.fw-last{stroke:url(#fwg)}
-.fw-t{font-family:'Space Grotesk';font-size:13px;font-weight:500;fill:var(--text)}
-.fw-s{font-family:'JetBrains Mono';font-size:10px;fill:var(--muted)}
-.fw-r{font-family:'JetBrains Mono';font-size:9.5px;fill:var(--muted);letter-spacing:.08em}
-.fw-l,.fw-loop,.fw-up{fill:none;stroke:var(--line2);stroke-width:1}
-.fw-loop{stroke-dasharray:3 3}
-.fw-up{stroke:var(--hl);opacity:.55}
-.fw-inner{fill:var(--cyan-soft);stroke:var(--line2);stroke-dasharray:4 3}
-.fw-k{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.14em;fill:var(--g2)}
-.fw-hl{fill:var(--hl);opacity:.85}
-.fw-head{fill:var(--line2)}
-.fw-dot{fill:var(--bg2);stroke:var(--hl);stroke-width:1.5}
 /* ── el ciclo, plegado: manda la frase; el detalle va a un clic ── */
 details.ph{display:block;padding:0;border-top:1px solid var(--line2)}
 details.ph:first-of-type{border-top:none}
@@ -463,24 +552,23 @@ details.ph>.ph-body .why{margin-top:9px}
 .claim{border:1px solid var(--accent-line);border-radius:20px;padding:clamp(26px,4vw,42px);
   background:linear-gradient(140deg,rgba(155,92,255,.09),rgba(34,211,255,.03) 60%,transparent);margin-bottom:36px}
 .claim p{font-family:'Space Grotesk';font-weight:500;font-size:clamp(1.14rem,2.2vw,1.6rem);
-  line-height:1.35;letter-spacing:-.02em;color:var(--text);max-width:30ch}
+  line-height:1.35;letter-spacing:-.02em;color:var(--text);max-width:34ch;text-wrap:balance}
 .claim small{display:block;margin-top:16px;font-family:'JetBrains Mono';font-size:.77rem;color:var(--muted);line-height:1.65;max-width:58ch}
 
 /* ── ledger de decisiones ── */
-.ldg{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface)}
-.ldg-row{display:grid;grid-template-columns:1.3fr 1fr;border-top:1px solid var(--line);transition:background .2s}
-.ldg-row:first-child{border-top:0}
-.ldg-row:hover{background:rgba(155,92,255,.05)}
-.ldg-row.hd{background:rgba(255,255,255,.022)}
-.ldg-row.hd:hover{background:rgba(255,255,255,.022)}
-.ldg-row.hd .d,.ldg-row.hd .c{font-family:'JetBrains Mono';font-size:.63rem;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--muted);padding-top:13px;padding-bottom:13px}
-.ldg .d{padding:16px 20px;font-size:.87rem;color:var(--muted2);line-height:1.6}
-.ldg .d b{color:var(--text);font-weight:500}
-.ldg .c{padding:16px 20px;font-family:'JetBrains Mono';font-size:.78rem;color:var(--text);
-  border-left:1px solid var(--line);display:flex;align-items:center;gap:9px;line-height:1.55}
-.ldg .c .ar{color:var(--g3);flex:0 0 auto}
-.ldg-note{margin-top:14px;font-size:.79rem;color:var(--muted);font-family:'JetBrains Mono';line-height:1.6}
+/* ── «escrito a mano en vez de» / «no lo he construido» (26-08) ──
+   Deliberadamente FUERA de .stack: alli un <span> sin .prod significa «lo he
+   usado en algun proyecto», y poner LangChain ahi seria afirmar lo contrario
+   de lo que la linea dice. Mentir por yuxtaposicion es el modo de fallo que
+   truth-loop persigue. ── */
+.nots{margin-top:30px;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.nots-r{display:flex;gap:18px;align-items:baseline;padding:15px 20px;border-top:1px solid var(--line);flex-wrap:wrap}
+.nots-r:first-child{border-top:0}
+.nots-k{font-family:'JetBrains Mono';font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);flex:0 0 190px}
+.nots-k.nots-no{color:var(--kill)}
+.nots-v{font-family:'JetBrains Mono';font-size:.78rem;color:var(--muted2);line-height:1.65;flex:1 1 260px;min-width:0}
+@media(max-width:640px){.nots-k{flex:0 0 100%}.nots-r{gap:6px}}
 
 /* ── léxico: término → implementación ── */
 .lex{margin-top:30px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
@@ -532,9 +620,6 @@ footer .hl{color:var(--muted2)}
   .lex-r{grid-template-columns:1fr}
   .lex .im{border-left:0;border-top:1px dashed var(--line)}
   .pj-idx{padding-top:0;margin-bottom:10px}
-  .ldg-row{grid-template-columns:1fr}
-  .ldg .c{border-left:0;border-top:1px dashed var(--line)}
-  .ldg-row.hd{display:none}
   .ph{gap:0 18px}
 }
 @media(max-width:520px){
@@ -613,8 +698,10 @@ body.locked .progress{padding-right:var(--sbw,0px)}
 .cx-l:hover{background:rgba(155,92,255,.05)}
 .cx-k{font-family:'JetBrains Mono';font-size:.63rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
   flex:0 0 88px}
+/* sin `nowrap`+ellipsis: la fila «código» se cortaba en «el resto bajo…»
+   y es la sección de contacto, o sea superficie de conversión (26-08) */
 .cx-v{font-family:'JetBrains Mono';font-size:.82rem;color:var(--text);flex:1 1 auto;min-width:0;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  white-space:normal;overflow-wrap:anywhere}
 .cx-v a:hover{color:var(--g2)}
 .cx-v .dot{width:7px;height:7px;border-radius:50%;background:var(--live);display:inline-block;margin-right:8px;
   box-shadow:0 0 0 0 rgba(93,255,155,.5);animation:pulse 2.6s infinite}
@@ -814,6 +901,12 @@ body{overflow:hidden}
   color:var(--muted2);background:transparent;border:1px solid var(--line2);
   border-radius:7px;padding:4px 8px;cursor:pointer;
   transition:border-color .18s,color .18s,background .18s}
+/* el boton medía 43x29: por debajo del 44x44 que exige el proyecto. Se agranda
+   el AREA TACTIL con un pseudo-elemento, sin tocar su aspecto ni el alto de la
+   barra. `inset` asimetrico a proposito: en horizontal el hueco con el CTA de
+   correo es de 6-8 px a <=560 y no se puede invadir. (27-08) */
+.tw-lang>button{position:relative}
+.tw-lang>button::after{content:'';position:absolute;inset:-10px -4px}
 .tw-lang>button:hover,.tw-lang>button[aria-expanded="true"]{
   border-color:var(--accent-line);color:var(--text);background:var(--accent-soft)}
 .tw-lang>button i{width:0;height:0;border-left:3.5px solid transparent;
@@ -978,8 +1071,7 @@ body{overflow:hidden}
 /* ── el parpadeo que se veia en el video: con el raton quieto, el
    contenido se desliza por debajo y :hover entra y sale solo. Mientras
    se scrollea se desactivan los estados de puntero. ── */
-.scrolling .pj,.scrolling .mc,.scrolling .cap,.scrolling .claim,
-.scrolling .ldg-row,.scrolling .lex-r,.scrolling .cx-l,
+.scrolling .pj,.scrolling .mc,.scrolling .cap,.scrolling .claim,.scrolling .lex-r,.scrolling .cx-l,
 .scrolling .spot{pointer-events:none!important}
 .scrolling .spot::after{opacity:0!important}
 
@@ -1039,7 +1131,30 @@ body{overflow:hidden}
   /* ni el ticker ni la aurora se apagan aqui: Windows con «Efectos de
      animacion» desactivado reporta reduced-motion, y esta pagina ya
      decidio que el movimiento es el diseño y va forzado (var RM=false).
-     Dentro del @media quedaban congelados sin que nada lo dijera. */
+     Dentro del @media quedaban congelados sin que nada lo dijera.
+
+     ⛔ Y LA RUEDA DEL METODO (.fwl-ring / .fwl-b) TAMPOCO SE PARA AQUI.
+     Decision explicita de Diego, 27-08, despues de que `design-qa` la marcara
+     como pendiente: se comportaba asi por OMISION y ahora esta escrito.
+     Es la misma excepcion que ya declara QuantLab para su cockpit
+     (`pumpfun-bot/PUMPFUN-BOT.html:357`): «the flywheel … are core to the
+     concept, so they keep animating regardless of the OS reduce-motion
+     setting. We only make reveals instant.» El giro NO es movimiento
+     ambiental: es lo que dice que el metodo es un CICLO, y parado la figura
+     deja de significar lo que significa. Ademas se para sola al pasar el raton
+     —que es cuando alguien va a leerla— y se congela fuera de pantalla.
+     Anadir `.fwl-ring{animation:none}` aqui seria [INC-MOTION-01] otra vez:
+     Windows con «Efectos de animacion» apagado reporta `reduce`, o sea la
+     maquina de Diego.
+
+     ⛔ SEGUNDA CONFIRMACION, 27-08: «que gire siempre sin excepcion».
+     `design-qa` propuso una concesion acotada — parar SOLO donde no hay hover y
+     el usuario pidio menos movimiento, `@media (prefers-reduced-motion:reduce)
+     and (hover:none)` — porque en movil no hay raton, o sea que la unica pausa
+     que existe no esta disponible y quien activo ese ajuste se queda sin ningun
+     control. Diego lo rechazo sabiendolo. COSTE ACEPTADO Y REGISTRADO, no
+     ignorado: en movil, con «reducir movimiento» activado, la rueda no se puede
+     parar. Si algun dia se reabre, el cambio es esa media query y nada mas. */
   .kin,.kin-i{opacity:1;transform:none;filter:none;animation:none}
   .cx-v .dot{animation:none}
   .spot::after{display:none}
@@ -1125,25 +1240,70 @@ body{overflow:hidden}
 
 /* ══ 2 · vista rápida del diagrama al pasar el ratón ═══════════════
    Un modal que salta con el hover sería insufrible: esto es un
-   popover flotante, sin capa que tape ni scroll bloqueado. El clic
-   sigue abriendo el modal completo (diagrama + explicación).
-   En táctil no hay hover, así que ahí sólo queda el clic. ══ */
-.dgpop{position:fixed;z-index:120;pointer-events:none;opacity:0;transform:translateY(5px);
-  transition:opacity .16s ease,transform .16s ease;
-  width:min(370px,88vw);background:var(--surface2);border:1px solid var(--line2);
-  border-radius:14px;padding:13px 15px 9px;box-shadow:0 26px 64px rgba(0,0,0,.62)}
-.dgpop.on{opacity:1;transform:none}
-.dgpop-t{font-family:'JetBrains Mono';font-size:.66rem;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--g2);margin-bottom:4px}
-.dgpop .dg{margin:6px auto 0}
-@media (hover:none),(pointer:coarse){.dgpop{display:none}}
+   El clic abre el modal completo (diagrama + explicación). Desde el
+   2026-08-26 es la UNICA via: el popover de hover se retiró. ══ */
 
 /* ══ 3 · cada fase del ciclo abre su propio diagrama ══ */
-.fw-hit{fill:transparent;cursor:pointer;transition:fill .18s}
-.fw-hit:hover{fill:rgba(155,92,255,.10)}
-.fw-hit:focus{outline:none;fill:rgba(34,211,255,.12)}
-.dgpop-x{margin-top:9px;font-size:.79rem;line-height:1.6;color:var(--muted2)}
-.dgpop-x p{margin:0}
+/* ══ .fwl · la rueda del metodo (2026-08-26) ═══════════════════════════════
+   Portada del cockpit de Quant. Gira con DOS transformaciones opuestas: el
+   anillo rota y cada burbuja contra-rota a la misma velocidad, que es lo que
+   mantiene los rotulos rectos. `container-type:inline-size` hace que el radio
+   (--r) escale con la caja, asi que las estaciones caen sobre la orbita a
+   cualquier anchura sin un solo px clavado.
+   ⚠ Se PARA al pasar el raton o al entrar el foco: aqui las estaciones son
+   botones, no adorno, y perseguir un objetivo en movimiento es hostil.
+   ⚠ Y NO lleva la orbita de degradado conico animado que si tiene Quant: es
+   una mascara re-convolucionada cada frame, de la misma familia que el
+   blur(70px) que costo 20 fps ([INC-PERF-01]). El anillo estatico + las dos
+   rotaciones son transformaciones puras, que van al compositor. */
+.fwl{margin:26px 0 6px}
+.fwl-stage{position:relative;width:100%;max-width:clamp(320px,46vw,470px);aspect-ratio:1;
+  margin:0 auto;container-type:inline-size;--r:39cqw}
+.fwl-orbit{position:absolute;inset:9%;border:1px dashed var(--line2);border-radius:50%}
+.fwl-hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:38%;height:38%;border-radius:50%;z-index:3;text-align:center;
+  background:radial-gradient(circle,var(--surface2),var(--surface));border:1px solid var(--accent-line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 0 56px rgba(155,92,255,.20),inset 0 0 30px rgba(34,211,255,.06)}
+.fwl-hub b{font-family:'JetBrains Mono';font-size:clamp(.86rem,2.7cqw,1.08rem)}
+.fwl-hub span{font-family:'JetBrains Mono';font-size:clamp(.58rem,1.9cqw,.7rem);
+  color:var(--muted);margin-top:5px;line-height:1.45}
+.fwl-ring{position:absolute;inset:0;animation:fwlspin 46s linear infinite}
+@keyframes fwlspin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes fwlrev{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+.fwl-nd{position:absolute;top:50%;left:50%;width:23%;height:23%;margin:-11.5% 0 0 -11.5%;
+  background:transparent;border:0;padding:0;cursor:pointer;color:inherit;font:inherit;
+  transform:rotate(var(--a)) translateX(var(--r)) rotate(calc(-1 * var(--a)))}
+.fwl-b{width:100%;height:100%;border-radius:50%;background:var(--surface);border:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  animation:fwlrev 46s linear infinite;transition:border-color .25s,background .25s,box-shadow .25s}
+.fwl-nd:hover .fwl-b,.fwl-nd:focus-visible .fwl-b{border-color:var(--accent-line);
+  background:var(--surface2);box-shadow:0 0 30px rgba(155,92,255,.30)}
+.fwl-nd:focus-visible{outline:none}
+.fwl-n{font-family:'JetBrains Mono';font-weight:700;font-size:clamp(.8rem,2.6cqw,1.15rem);line-height:1}
+/* el minimo del clamp manda: a 1,5cqw los rotulos caian a 7,4 px en las DOS
+   anchuras — ilegible, que es el defecto ya registrado de servir una prueba
+   que no se puede leer. Suelo en 9,9 px. */
+.fwl-m{font-family:'JetBrains Mono';font-size:clamp(.62rem,2.2cqw,.78rem);color:var(--muted2);margin-top:3px;
+  letter-spacing:.02em;line-height:1.2}
+/* la rueda se para SOLO con el raton encima, y por un motivo concreto: acertar
+   a un objetivo que se mueve. Con teclado se tabula y se pulsa Enter, asi que
+   el giro es irrelevante y NO hace falta pausa.
+   ⛔ No volver a atarlo al FOCO. Se probo con `:focus-within` y con
+   `:has(:focus-visible)` y las dos dejaban la rueda PARADA PARA SIEMPRE tras un
+   clic: al cerrar, el modal devuelve el foco a la estacion que lo abrio
+   (`ultimo.focus()`), y si se cerro con Escape el navegador marca ese foco como
+   «de teclado». Lo reporto Diego el 26-08 y lo reprodujo `.tmp/qa_fwl_clic.py`
+   paso 3. El foco devuelto es correcto para accesibilidad: lo que sobraba era
+   la regla. */
+.fwl-stage:hover .fwl-ring,.fwl-stage:hover .fwl-b{animation-play-state:paused}
+.fwl-note{text-align:center;font-family:'JetBrains Mono';font-size:.71rem;color:var(--muted);margin-top:16px}
+/* fuera de pantalla no gira: la rueda cruza el viewport en una fraccion del
+   scroll y animar el resto del tiempo costaba 3,1 fps medidos (CPU x4, 390) */
+.fwl-off .fwl-ring,.fwl-off .fwl-b{animation-play-state:paused!important}
+.fwl-ring,.fwl-b{will-change:transform}
+.fwl-off .fwl-ring,.fwl-off .fwl-b{will-change:auto}
+
 
 /* ══ el ancho del texto de las tarjetas lo gobierna la tarjeta, no un tope
       propio: con la columna «side» retirada, un max-width dejaba el parrafo
@@ -1171,7 +1331,21 @@ body{overflow:hidden}
      `Escribeme` y cortaba /video-pipeline en la unica pagina donde la suma
      apretaba. Quien tiene que ceder es el hueco elastico, no el unico
      indicador de posicion que queda sin nav. */
-  .tw-id{flex:0 0 auto}
+  /* ✏️ 27-08 · el prefijo cede AQUI TAMBIEN. La decision del 14-08 ya lo decia,
+     pero se implemento solo en las 5 paginas de caso, que lo envuelven en
+     `.tw-who`; el indice usa un <b>, asi que su regla `.tw-who{display:none}`
+     no casaba con nada. Resultado medido: la barra se iba a 407 px dentro de un
+     marco de 371 con `overflow:hidden`, y del boton de idioma solo era
+     alcanzable el 18 % en ingles. Un control expulsado no es un defecto
+     estetico: no existe. */
+  .tw-id b{display:none}
+  .tw-id .tw-path:not(:empty)::before{content:none}
+  /* ⛔ y NO se vuelve a `flex:0 0 auto`. Se puso para que la ruta no encogiera
+     —es el unico indicador de posicion sin nav— pero lo que hacia era empujar
+     lo de al lado fuera del marco. Con `0 1 auto` la ruta se recorta con sus
+     puntos suspensivos, que ya estan declarados en `.tw-id`. Recortada sigue
+     orientando; el boton expulsado, no. */
+  .tw-id{flex:0 1 auto;min-width:0}
 }
 </style>
 <!-- Person schema: solo hechos que ya estan en la pagina.
@@ -1282,8 +1456,8 @@ body{overflow:hidden}
     </figure>
     <div class="hero-main">
     <p class="lede reveal">
-      <span class="t-es">Cinco sistemas en uso real, en cinco dominios distintos. Lo que tienen en común no es el stack: es que en todos <strong>el modo de fallo real no es que el código pete</strong>: es que el sistema afirme algo falso con total fluidez y nadie lo vea. Un decimal mal atribuido, un atributo inventado, un MP4 que parece terminado. <strong>Construir lo que lo impide es el trabajo</strong>: evals que bloquean, grounding contra la fuente, y una flota de agentes con el mandato de refutarme.</span>
-      <span class="t-en">Five systems in real use, across five different domains. What they share isn't the stack: it's that in every one of them <strong>the real failure mode isn't the code crashing</strong>: it's the system fluently asserting something false that nobody catches. One misattributed decimal, one invented attribute, an MP4 that looks finished. <strong>Building what prevents that is the job</strong>: evals that block, grounding against the source, and a fleet of agents mandated to refute me.</span>
+      <span class="t-es"><strong>El modo de fallo real no es que el código pete</strong>, es que el sistema afirme algo falso con total fluidez y nadie lo vea. Contra eso: evals que bloquean, grounding contra la fuente y una flota de agentes con el mandato de refutarme.</span>
+      <span class="t-en"><strong>The real failure mode isn't the code crashing</strong>, it's the system fluently asserting something false that nobody catches. Against that: evals that block, grounding against the source and a fleet of agents mandated to refute me.</span>
     </p>
 
     
@@ -1343,7 +1517,7 @@ body{overflow:hidden}
   <div class="sec-head reveal">
     <p class="eyebrow"><span class="t-es">Qué hago</span><span class="t-en">What I do</span></p>
     <h2><span class="t-es">Cuatro capacidades.<br>Cinco sistemas donde probarlas.</span><span class="t-en">Four capabilities.<br>Five systems to prove them in.</span></h2>
-    <p><span class="t-es">Los proyectos de abajo son dominios que no tienen nada que ver entre sí: memecoins en Solana, dropshipping contra reembolso, reventa de segunda mano, seguridad privada regulada. <strong>Lo que se repite en los cinco es esto</strong>, y cada línea apunta a un gate que se puede abrir y correr.</span><span class="t-en">The projects below are domains with nothing in common: Solana memecoins, cash-on-delivery dropshipping, second-hand reselling, regulated private security. <strong>What repeats across all five is this</strong>, and every line points at a gate you can open and run.</span></p>
+    <p><span class="t-es">Memecoins en Solana, dropshipping contra reembolso, pipeline de vídeo, reventa de segunda mano, seguridad privada regulada. <strong>Esto es lo que se repite en los cinco.</strong></span><span class="t-en">Solana memecoins, cash-on-delivery dropshipping, video pipeline, second-hand reselling, regulated private security. <strong>This is what repeats across all five.</strong></span></p>
   </div>
 
   <div class="cgrid">
@@ -1382,21 +1556,35 @@ body{overflow:hidden}
   <div class="sec-head reveal">
     <p class="eyebrow"><span class="t-es">El trabajo</span><span class="t-en">The work</span></p>
     <h2><span class="t-es">Cinco sistemas.<br>Cuatro dominios que no eran míos.</span><span class="t-en">Five systems.<br>Four domains that weren't mine.</span></h2>
-    <p><span class="t-es">Ordenados por lo que demuestran, no por fecha. Cada tarjeta lleva a su caso completo: cómo está construido, qué decisiones se tomaron y <strong>qué límites tiene</strong>.</span><span class="t-en">Ordered by what they demonstrate, not by date. Each card leads to its full case: how it's built, what decisions were made and <strong>what its limits are</strong>.</span></p>
+    <p><span class="t-es">Cada tarjeta abre su caso: cómo está construido, qué decidí y <strong>qué límites tiene</strong>.</span><span class="t-en">Each card opens its case: how it's built, what I decided and <strong>what its limits are</strong>.</span></p>
   </div>
 
-  <div class="rail">
-
-    <div class="blk reveal">
-      <span class="blk-t"><span class="t-es">El negocio</span><span class="t-en">The business</span></span>
-      <span class="blk-l"></span>
-      <span class="blk-c"><span class="t-es">de donde salió el criterio</span><span class="t-en">where the judgment came from</span></span>
+  <!-- ⛔ Los 5 paneles son <a>, y NO llevan `role="tabpanel"` ni `aria-labelledby`.
+       Los llevaron unas horas el 27-08 y un rol ARIA explicito SUSTITUYE al implicito:
+       un lector de pantalla oia «01 ECXM OPS, panel de pestaña» y las 5 tarjetas
+       desaparecian de la lista de enlaces — que es LA navegacion al caso completo.
+       Las pestañas siguen apuntandolos con `aria-controls`, que basta. -->
+  <div class="deck">
+    <div class="deck-tabs" role="tablist" aria-label="Proyectos">
+      <button class="deck-tab on" type="button" role="tab" aria-selected="true" aria-controls="deck-p0" id="deck-t0" tabindex="0"><b>01</b><span class="deck-nm">ECXM OPS</span></button>
+      <button class="deck-tab" type="button" role="tab" aria-selected="false" aria-controls="deck-p1" id="deck-t1" tabindex="-1"><b>02</b><span class="deck-nm">Quant Lab</span></button>
+      <button class="deck-tab" type="button" role="tab" aria-selected="false" aria-controls="deck-p2" id="deck-t2" tabindex="-1"><b>03</b><span class="deck-nm">YT Pipeline</span></button>
+      <button class="deck-tab" type="button" role="tab" aria-selected="false" aria-controls="deck-p3" id="deck-t3" tabindex="-1"><b>04</b><span class="deck-nm">RESELLERMASTER</span></button>
+      <button class="deck-tab" type="button" role="tab" aria-selected="false" aria-controls="deck-p4" id="deck-t4" tabindex="-1"><b>05</b><span class="deck-nm">SEKURA</span></button>
     </div>
+    <p class="deck-hint">
+      <span class="t-es">Desliza, o toca un número. Cada tarjeta abre su caso completo.</span>
+      <span class="t-en">Swipe, or tap a number. Each card opens its full case.</span>
+    </p>
+    <div class="deck-track" id="deckTrack">
+
+
 
     <!-- 01 ECXM OPS -->
-    <a class="pj reveal" href="ecxm-ops/ECXM-OPS.html">
+    <a class="pj" id="deck-p0" href="ecxm-ops/ECXM-OPS.html">
       <div class="pj-idx">01</div>
       <div class="pj-body">
+        <p class="pj-grp"><span class="t-es">El negocio · de donde salió el criterio</span><span class="t-en">The business · where the judgment came from</span></p>
         <div class="pj-top">
           <h3>ECXM OPS</h3>
           <span class="kind"><span class="t-es">operaciones · e-commerce COD</span><span class="t-en">operations · COD e-commerce</span></span>
@@ -1427,24 +1615,20 @@ body{overflow:hidden}
           </div>
           <span class="open"><span class="t-es">Abrir el caso</span><span class="t-en">Open the case</span> <span class="arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
         </div>
+        <p class="bridge pj-bridge reveal">
+          <span class="t-es">El método salió de aquí: de un negocio donde cada número era mi dinero. <strong>Lo que viene ahora es la prueba de que funciona fuera de él</strong>: cuatro dominios que no eran míos, sin ser del sector en ninguno.</span>
+          <span class="t-en">The method came from here: a business where every number was my own money. <strong>What follows is the proof that it works outside it</strong>: four domains that weren't mine, without being from the industry in any of them.</span>
+        </p>
       </div>
     </a>
 
-    <p class="bridge reveal">
-      <span class="t-es">El método salió de aquí: de un negocio donde cada número era mi dinero. <strong>Lo que viene ahora es la prueba de que funciona fuera de él</strong>: cuatro dominios que no eran míos, sin ser del sector en ninguno.</span>
-      <span class="t-en">The method came from here: a business where every number was my own money. <strong>What follows is the proof that it works outside it</strong>: four domains that weren't mine, without being from the industry in any of them.</span>
-    </p>
 
-    <div class="blk reveal">
-      <span class="blk-t"><span class="t-es">Lo que generalizó</span><span class="t-en">What generalized</span></span>
-      <span class="blk-l"></span>
-      <span class="blk-c"><span class="t-es">4 dominios ajenos · mismo método</span><span class="t-en">4 foreign domains · same method</span></span>
-    </div>
 
     <!-- 02 QUANT LAB -->
-    <a class="pj reveal" href="pumpfun-bot/PUMPFUN-BOT.html">
+    <a class="pj" id="deck-p1" href="pumpfun-bot/PUMPFUN-BOT.html">
       <div class="pj-idx">02</div>
       <div class="pj-body">
+        <p class="pj-grp"><span class="t-es">Lo que generalizó · 4 dominios ajenos · mismo método</span><span class="t-en">What generalized · 4 foreign domains · same method</span></p>
         <div class="pj-top">
           <h3><span class="t-es">Quant Research Lab</span><span class="t-en">Quant Research Lab</span></h3>
           <span class="kind"><span class="t-es">research cuantitativo · Solana</span><span class="t-en">quantitative research · Solana</span></span>
@@ -1478,9 +1662,10 @@ body{overflow:hidden}
     </a>
 
     <!-- 03 YOUTUBE PIPELINE -->
-    <a class="pj reveal" href="YOUTUBE-PIPELINE/YOUTUBE-PIPELINE.html">
+    <a class="pj" id="deck-p2" href="YOUTUBE-PIPELINE/YOUTUBE-PIPELINE.html">
       <div class="pj-idx">03</div>
       <div class="pj-body">
+        <p class="pj-grp"><span class="t-es">Lo que generalizó · 4 dominios ajenos · mismo método</span><span class="t-en">What generalized · 4 foreign domains · same method</span></p>
         <div class="pj-top">
           <h3>YouTube Pipeline</h3>
           <span class="kind"><span class="t-es">media pipeline · Python + FFmpeg + LLM</span><span class="t-en">media pipeline · Python + FFmpeg + LLM</span></span>
@@ -1515,9 +1700,10 @@ body{overflow:hidden}
     </a>
 
     <!-- 04 RESELLERMASTER -->
-    <a class="pj reveal" href="RESELLERMASTER/RESELLERMASTER.html">
+    <a class="pj" id="deck-p3" href="RESELLERMASTER/RESELLERMASTER.html">
       <div class="pj-idx">04</div>
       <div class="pj-body">
+        <p class="pj-grp"><span class="t-es">Lo que generalizó · 4 dominios ajenos · mismo método</span><span class="t-en">What generalized · 4 foreign domains · same method</span></p>
         <div class="pj-top">
           <h3>RESELLERMASTER</h3>
           <span class="kind"><span class="t-es">visión + LLM · reventa C2C</span><span class="t-en">vision + LLM · C2C reselling</span></span>
@@ -1552,9 +1738,10 @@ body{overflow:hidden}
     </a>
 
     <!-- 05 SEKURA -->
-    <a class="pj reveal" href="SEKURA/SEKURA.html">
+    <a class="pj" id="deck-p4" href="SEKURA/SEKURA.html">
       <div class="pj-idx">05</div>
       <div class="pj-body">
+        <p class="pj-grp"><span class="t-es">Lo que generalizó · 4 dominios ajenos · mismo método</span><span class="t-en">What generalized · 4 foreign domains · same method</span></p>
         <div class="pj-top">
           <h3>SEKURA</h3>
           <span class="kind"><span class="t-es">startup en desarrollo · código privado</span><span class="t-en">startup in progress · private code</span></span>
@@ -1591,6 +1778,7 @@ body{overflow:hidden}
       </div>
     </a>
 
+    </div>
   </div>
 
 </section>
@@ -1601,7 +1789,7 @@ body{overflow:hidden}
   <div class="sec-head reveal">
     <p class="eyebrow"><span class="t-es">Capacidad × evidencia</span><span class="t-en">Capability × evidence</span></p>
     <h2><span class="t-es">Qué prueba cada proyecto,<br>y qué no.</span><span class="t-en">What each project proves,<br>and what it doesn't.</span></h2>
-    <p><span class="t-es">Cinco capacidades, seis piezas de trabajo. Cada punto se derivó abriendo el repo, no de memoria. La matriz está <strong>vacía donde tiene que estarlo</strong>: si no encontré el mecanismo en el código, no lleva punto: <strong>diez de las treinta celdas están vacías</strong>. Pasa el ratón por una fila para ver qué la sostiene.</span><span class="t-en">Five capabilities, six pieces of work. Every dot was derived by opening the repo, not from memory. The matrix is <strong>empty where it should be</strong>: if I couldn't find the mechanism in the code, it gets no dot: <strong>ten of the thirty cells are empty</strong>. Hover a row to see what backs it.</span></p>
+    <p><span class="t-es">Cada punto se derivó abriendo el repo, no de memoria. <strong>Cinco de las veinticinco celdas están vacías</strong>: si no encontré el mecanismo en el código, no lleva punto.</span><span class="t-en">Every dot was derived by opening the repo, not from memory. <strong>Five of the twenty-five cells are empty</strong>: if I couldn't find the mechanism in the code, it gets no dot.</span></p>
   </div>
 
   <div class="mx-scroll reveal">
@@ -1612,7 +1800,6 @@ body{overflow:hidden}
       <div class="hc" data-go="YOUTUBE-PIPELINE/YOUTUBE-PIPELINE.html">YT<br>PIPELINE</div>
       <div class="hc" data-go="RESELLERMASTER/RESELLERMASTER.html">RESELLER<br>MASTER</div>
       <div class="hc" data-go="SEKURA/SEKURA.html">SEKURA</div>
-      <div class="hc">META<br>ADS</div>
 
       <div class="rl" data-ev-es="eval_precios.py:111 <code>return 1</code> · audit_run.py:1374 «NO PUBLICABLE» · export_botrider_engine.py:87 <code>SystemExit</code> si el tree-walk no reproduce sklearn · ci-seguridad.yml:28 en cada push" data-ev-en="eval_precios.py:111 <code>return 1</code> · audit_run.py:1374 “NOT PUBLISHABLE” · export_botrider_engine.py:87 <code>SystemExit</code> if the tree-walk fails to match sklearn · ci-seguridad.yml:28 on every push"><span class="t-es">Evals y gates que bloquean</span><span class="t-en">Evals and gates that block</span></div>
       <div class="cell"><i class="dotm si"></i></div>
@@ -1620,25 +1807,21 @@ body{overflow:hidden}
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
-      <div class="cell"><i class="dotm"></i></div>
       <div class="rl" data-ev-es="validar.py:580 juez LLM que pone <code>passed=False</code> · audit_*_adversarial.py re-derivan cada claim desde NDJSON crudo · listing-audit forzó la corrección de truth.json · 19 commits cierran hallazgos bloqueantes" data-ev-en="validar.py:580 LLM judge setting <code>passed=False</code> · audit_*_adversarial.py re-derive every claim from raw NDJSON · listing-audit forced the truth.json correction · 19 commits closing blocking findings"><span class="t-es">Verificación multi-agente</span><span class="t-en">Multi-agent verification</span></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
-      <div class="cell"><i class="dotm"></i></div>
       <div class="rl" data-ev-es="landing_replica.py:123 si el precio no está literal en el HTML, se descarta · schema.py:124 <code>ValueError</code> si un campo cita la foto sin evidencia · eval_sync.py:9 referí = transcripción independiente · executor.ts:1598 relee la cadena" data-ev-en="landing_replica.py:123 drops a price absent from the literal HTML · schema.py:124 <code>ValueError</code> if a field cites the photo without evidence · eval_sync.py:9 referee = independent transcript · executor.ts:1598 re-reads the chain"><span class="t-es">Grounding contra la fuente</span><span class="t-en">Grounding against the source</span></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
-      <div class="cell"><i class="dotm"></i></div>
       <div class="rl" data-ev-es="engine_unified.py:257 split temporal por día · gauntlet.py:29 walk-forward cross-day + permutation null · stats.py:71 bootstrap por día · overfit.py:34 <code>deflate()</code> descuenta el nº de combos probados" data-ev-en="engine_unified.py:257 day-wise temporal split · gauntlet.py:29 cross-day walk-forward + permutation null · stats.py:71 per-day bootstrap · overfit.py:34 <code>deflate()</code> discounts the number of combos tried"><span class="t-es">Validación fuera de muestra</span><span class="t-en">Out-of-sample validation</span></div>
       <div class="cell"><i class="dotm"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
-      <div class="cell"><i class="dotm"></i></div>
       <div class="cell"><i class="dotm"></i></div>
       <div class="cell"><i class="dotm"></i></div>
       <div class="cell"><i class="dotm"></i></div>
@@ -1648,7 +1831,6 @@ body{overflow:hidden}
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
       <div class="cell"><i class="dotm si"></i></div>
-      <div class="cell"><i class="dotm"></i></div>
 </div>
   </div>
   <p class="mx-ev" id="mxev" aria-live="polite">
@@ -1666,96 +1848,56 @@ body{overflow:hidden}
   <div class="sec-head reveal">
     <p class="eyebrow"><span class="t-es">Cómo trabajo</span><span class="t-en">How I work</span></p>
     <h2><span class="t-es">De cero a producción,<br>con una flota que intenta tumbarme.</span><span class="t-en">From zero to production,<br>with a fleet trying to take me down.</span></h2>
-    <p><span class="t-es">No le pido a la IA una respuesta. <strong>Orquesto agentes que se auditan entre sí</strong> y verifico ejecutando, nunca por informe. El mismo ciclo en los cinco proyectos.</span><span class="t-en">I don't ask AI for an answer. <strong>I orchestrate agents that audit each other</strong> and verify by executing, never by report. The same cycle across all five projects.</span></p>
+    <p><span class="t-es">No le pido a la IA una respuesta. <strong>Verifico ejecutando, nunca por informe.</strong> El mismo ciclo en los cinco.</span><span class="t-en">I don't ask AI for an answer. <strong>I verify by executing, never by report.</strong> The same cycle across all five.</span></p>
   </div>
 
 
   <!-- terminal real -->
-    <svg class="fw" viewBox="0 0 420 800" role="img" aria-labelledby="fw-ti">
-    <title id="fw-ti">Dos bucles: el de entrega (idea, harness, plan, ejecución, gate, seed) y el de mejora (el fallo se registra, reincide, se vuelve mecanismo y mejora el harness)</title>
-    <defs>
-      <marker id="fwa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M0,0 L10,5 L0,10 z" class="fw-head"/>
-      </marker>
-      <linearGradient id="fwg" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="var(--g1)"/><stop offset="100%" stop-color="var(--g3)"/>
-      </linearGradient>
-    </defs>
-
-    <path class="fw-loop" d="M76,732 H30 Q18,732 18,720 V58 Q18,46 30,46 H70" marker-end="url(#fwa)"/>
-    <text class="fw-r t-es" x="9" y="390" transform="rotate(-90 9 390)" text-anchor="middle">y vuelve a empezar</text>
-    <text class="fw-r t-en" x="9" y="390" transform="rotate(-90 9 390)" text-anchor="middle">and it starts again</text>
-
-    <path class="fw-up" d="M344,674 H378 Q390,674 390,662 V164 Q390,152 378,152 H350" marker-end="url(#fwa)"/>
-    <text class="fw-r fw-hl t-es" x="405" y="384" transform="rotate(-90 405 384)" text-anchor="middle">el harness sale mejor de lo que entró</text>
-    <text class="fw-r fw-hl t-en" x="405" y="384" transform="rotate(-90 405 384)" text-anchor="middle">the harness comes out better than it went in</text>
-
-    <rect class="fw-box" x="76" y="20" width="268" height="52" rx="10"/>
-    <text class="fw-t t-es" x="94" y="42">Digo qué quiero</text>
-    <text class="fw-t t-en" x="94" y="42">I say what I want</text>
-    <text class="fw-s t-es" x="94" y="60">y qué no vale como respuesta</text>
-    <text class="fw-s t-en" x="94" y="60">and what won't count as an answer</text>
-    <line class="fw-l" x1="210" y1="72" x2="210" y2="120" marker-end="url(#fwa)"/>
-
-    <rect class="fw-box" x="76" y="126" width="268" height="52" rx="10"/>
-    <text class="fw-t t-es" x="94" y="148">Monto el harness de esa idea</text>
-    <text class="fw-t t-en" x="94" y="148">I build the harness for that idea</text>
-    <text class="fw-s t-es" x="94" y="166">reutilizo mis skills · no reinvento</text>
-    <text class="fw-s t-en" x="94" y="166">I reuse my own skills · no reinventing</text>
-    <line class="fw-l" x1="210" y1="178" x2="210" y2="226" marker-end="url(#fwa)"/>
-
-    <rect class="fw-box" x="76" y="232" width="268" height="52" rx="10"/>
-    <text class="fw-t t-es" x="94" y="254">Un panel ataca el plan</text>
-    <text class="fw-t t-en" x="94" y="254">A panel attacks the plan</text>
-    <text class="fw-s t-es" x="94" y="272">críticos en paralelo, por fases</text>
-    <text class="fw-s t-en" x="94" y="272">critics in parallel, phase by phase</text>
-    <line class="fw-l" x1="210" y1="284" x2="210" y2="332" marker-end="url(#fwa)"/>
-
-    <rect class="fw-box" x="76" y="338" width="268" height="52" rx="10"/>
-    <text class="fw-t t-es" x="94" y="360">Sesión fresca ejecuta</text>
-    <text class="fw-t t-en" x="94" y="360">A fresh session executes</text>
-    <text class="fw-s t-es" x="94" y="378">Opus orquesta · Sonnet ejecuta</text>
-    <text class="fw-s t-en" x="94" y="378">Opus orchestrates · Sonnet executes</text>
-    <line class="fw-l" x1="210" y1="390" x2="210" y2="438" marker-end="url(#fwa)"/>
-
-    <rect class="fw-box fw-last" x="76" y="444" width="268" height="52" rx="10"/>
-    <text class="fw-t t-es" x="94" y="466">El gate bloquea, no avisa</text>
-    <text class="fw-t t-en" x="94" y="466">The gate blocks, it doesn't warn</text>
-    <text class="fw-s t-es" x="94" y="484">y lo que no puede decidir, lo decido yo</text>
-    <text class="fw-s t-en" x="94" y="484">and what it can't decide, I decide</text>
-    <line class="fw-l" x1="210" y1="496" x2="210" y2="542" marker-end="url(#fwa)"/>
-
-    <rect class="fw-inner" x="98" y="548" width="246" height="132" rx="10"/>
-    <text class="fw-k t-es" x="112" y="572">CUANDO ALGO FALLA</text>
-    <text class="fw-k t-en" x="112" y="572">WHEN SOMETHING FAILS</text>
-    <text class="fw-s t-es" x="112" y="596">se registra como hecho, no como regla</text>
-    <text class="fw-s t-en" x="112" y="596">it's logged as a fact, not as a rule</text>
-    <text class="fw-s t-es" x="112" y="618">si reincide, se promueve a regla</text>
-    <text class="fw-s t-en" x="112" y="618">if it recurs, it becomes a rule</text>
-    <text class="fw-s t-es" x="112" y="640">y la regla se convierte en mecanismo</text>
-    <text class="fw-s t-en" x="112" y="640">and the rule turns into a mechanism</text>
-    <text class="fw-s t-es" x="112" y="662">un texto no dispara; un gate sí</text>
-    <text class="fw-s t-en" x="112" y="662">text doesn't fire; a gate does</text>
-    <line class="fw-l" x1="210" y1="680" x2="210" y2="700" marker-end="url(#fwa)"/>
-
-    <rect class="fw-box" x="76" y="706" width="268" height="52" rx="10"/>
-    <text class="fw-t t-es" x="94" y="728">SEED a la sesión siguiente</text>
-    <text class="fw-t t-en" x="94" y="728">SEED for the next session</text>
-    <text class="fw-s t-es" x="94" y="746">un agente ciego lo revisa antes de nada</text>
-    <text class="fw-s t-en" x="94" y="746">a blind agent reviews it first</text>
-
-    <circle class="fw-dot" cx="76" cy="46" r="4"/>
-    <circle class="fw-dot" cx="76" cy="732" r="4"/>
-
-    <!-- zonas sensibles: van al final para quedar por encima de las cajas -->
-    <rect class="fw-hit" x="76" y="20" width="268" height="52" rx="10" tabindex="0" role="button" data-mid="dg-f1" data-mt="<span class=&quot;t-es&quot;>Digo qué quiero</span><span class=&quot;t-en&quot;>I say what I want</span>" data-mc="<p><span class=&quot;t-es&quot;>Antes de escribir nada: cuál es la cifra o la afirmación de la que depende todo, y qué pasa exactamente si miente. Ese número es el que después llevará gate.</span><span class=&quot;t-en&quot;>Before writing anything: which figure or claim everything depends on, and what happens exactly if it lies. That number is the one that gets a gate later.</span></p>"/>
-    <rect class="fw-hit" x="76" y="126" width="268" height="52" rx="10" tabindex="0" role="button" data-mid="dg-f2" data-mt="<span class=&quot;t-es&quot;>Monto el harness de esa idea</span><span class=&quot;t-en&quot;>I build the harness for that idea</span>" data-mc="<p><span class=&quot;t-es&quot;>Los criterios de decisión se escriben antes de ver los datos: elimina racionalizar el resultado a posteriori, la trampa más común y la más fácil de no ver en uno mismo. El harness reutiliza skills que ya existen, no se reinventa.</span><span class=&quot;t-en&quot;>Decision criteria are written before seeing the data: it removes rationalizing the result after the fact, the most common trap and the hardest to spot in yourself. The harness reuses skills that already exist instead of reinventing them.</span></p>"/>
-    <rect class="fw-hit" x="76" y="232" width="268" height="52" rx="10" tabindex="0" role="button" data-mid="dg-multi" data-mt="<span class=&quot;t-es&quot;>Un panel ataca el plan</span><span class=&quot;t-en&quot;>A panel attacks the plan</span>" data-mc="<p><span class=&quot;t-es&quot;>De 2 a 4 críticos en paralelo, con lentes disjuntas y un solo mandato: refutar. Un arbitraje decide. El veredicto normal no es «adelante»: es ejecutar con ediciones, y se corrige antes de tocar una línea.</span><span class=&quot;t-en&quot;>Two to four critics in parallel, with disjoint lenses and a single mandate: refute. An arbitration decides. The usual verdict is not go-ahead: it is execute with edits, corrected before a line is touched.</span></p>"/>
-    <rect class="fw-hit" x="76" y="338" width="268" height="52" rx="10" tabindex="0" role="button" data-mid="dg-f4" data-mt="<span class=&quot;t-es&quot;>Sesión fresca ejecuta</span><span class=&quot;t-en&quot;>A fresh session executes</span>" data-mc="<p><span class=&quot;t-es&quot;>Un orquestador reparte la implementación entre agentes en paralelo, con rol fijo y sin contexto previo, porque un agente que ya sabe la respuesta esperada la encuentra siempre.</span><span class=&quot;t-en&quot;>An orchestrator splits the implementation across parallel agents with fixed roles and no prior context, because an agent that already knows the expected answer always finds it.</span></p>"/>
-    <rect class="fw-hit" x="76" y="444" width="268" height="52" rx="10" tabindex="0" role="button" data-mid="dg-evals" data-mt="<span class=&quot;t-es&quot;>El gate bloquea, no avisa</span><span class=&quot;t-en&quot;>The gate blocks, it does not warn</span>" data-mc="<p><span class=&quot;t-es&quot;>No avisa: bloquea, por igualdad exacta contra un baseline. Y ningún «el subagente reportó OK» cierra nada: corro yo el gate y pego la salida real en el paso siguiente.</span><span class=&quot;t-en&quot;>It does not warn: it blocks, on exact equality against a baseline. And no the-subagent-reported-OK closes anything: I run the gate myself and paste the real output into the next step.</span></p>"/>
-    <rect class="fw-hit" x="98" y="548" width="246" height="132" rx="10" tabindex="0" role="button" data-mid="dg-f6" data-mt="<span class=&quot;t-es&quot;>Cuando algo falla</span><span class=&quot;t-en&quot;>When something fails</span>" data-mc="<p><span class=&quot;t-es&quot;>Cada fallo se registra como hecho en un ledger append-only. Solo se promueve a regla con ≥2 incidencias independientes o 1 de clase irreversible, y la regla acaba siendo un mecanismo: un texto no dispara, un gate sí. La pregunta obligatoria: ¿está el mismo bug en los caminos análogos?</span><span class=&quot;t-en&quot;>Every failure is logged as a fact in an append-only ledger. It becomes a rule only with ≥2 independent occurrences or 1 of irreversible class, and the rule ends up as a mechanism: text does not fire, a gate does. The mandatory question: is the same bug in the analogous paths?</span></p>"/>
-    <rect class="fw-hit" x="76" y="706" width="268" height="52" rx="10" tabindex="0" role="button" data-mid="dg-f7" data-mt="<span class=&quot;t-es&quot;>SEED a la sesión siguiente</span><span class=&quot;t-en&quot;>SEED for the next session</span>" data-mc="<p><span class=&quot;t-es&quot;>Antes de ejecutar un plan, propio o heredado de otra sesión, se lanza un agente que no ve el plan y deriva el objetivo desde la fuente más upstream. Donde los dos divergen está lo que el plan dio por sentado: ahí viven los errores caros.</span><span class=&quot;t-en&quot;>Before executing a plan ( my own or inherited from another session ) an agent is spawned that never sees the plan and derives the goal from the most upstream source. Where the two diverge is what the plan took for granted: that is where the expensive errors live.</span></p>"/>
-  </svg>
+  <!-- ══ el ciclo, como rueda ═══════════════════════════════════════════
+       Hasta el 2026-08-26 esto era un diagrama vertical de 420x800: ~819 px de
+       alto fijos, centrados en una columna de 828, con medio ancho vacio.
+       Diego pidió el flywheel giratorio de Quant. El contenido YA era un ciclo,
+       así que la rueda es la forma que le toca, no un adorno.
+       Los 7 payloads (`data-mid`/`data-mt`/`data-mc`) están copiados VERBATIM
+       del diagrama anterior: se abren con el mismo modal, con clic y con Enter.
+       Los DOS bucles del diagrama viejo sobreviven: el de entrega es el anillo;
+       el de mejora es el núcleo, con la frase que ya estaba publicada. ══ -->
+  <div class="fwl reveal">
+    <div class="fwl-stage">
+      <div class="fwl-orbit" aria-hidden="true"></div>
+      <div class="fwl-hub">
+        <b class="grad-text">harness</b>
+        <span><span class="t-es">sale mejor<br>de lo que entró</span><span class="t-en">comes out better<br>than it went in</span></span>
+      </div>
+      <div class="fwl-ring" role="list">
+      <button class="fwl-nd" type="button" style="--a:0.0deg" data-mid="dg-f1" data-mt="<span class=&quot;t-es&quot;>Digo qué quiero</span><span class=&quot;t-en&quot;>I say what I want</span>" data-mc="<p><span class=&quot;t-es&quot;>Antes de escribir nada: cuál es la cifra o la afirmación de la que depende todo, y qué pasa exactamente si miente. Ese número es el que después llevará gate.</span><span class=&quot;t-en&quot;>Before writing anything: which figure or claim everything depends on, and what happens exactly if it lies. That number is the one that gets a gate later.</span></p>">
+        <span class="fwl-b"><span class="fwl-n grad-text">1</span><span class="fwl-m"><span class="t-es">Encargo</span><span class="t-en">Brief</span></span></span>
+      </button>
+      <button class="fwl-nd" type="button" style="--a:51.43deg" data-mid="dg-f2" data-mt="<span class=&quot;t-es&quot;>Monto el harness de esa idea</span><span class=&quot;t-en&quot;>I build the harness for that idea</span>" data-mc="<p><span class=&quot;t-es&quot;>Los criterios de decisión se escriben antes de ver los datos: elimina racionalizar el resultado a posteriori, la trampa más común y la más fácil de no ver en uno mismo. El harness reutiliza skills que ya existen, no se reinventa.</span><span class=&quot;t-en&quot;>Decision criteria are written before seeing the data: it removes rationalizing the result after the fact, the most common trap and the hardest to spot in yourself. The harness reuses skills that already exist instead of reinventing them.</span></p>">
+        <span class="fwl-b"><span class="fwl-n grad-text">2</span><span class="fwl-m"><span class="t-es">Harness</span><span class="t-en">Harness</span></span></span>
+      </button>
+      <button class="fwl-nd" type="button" style="--a:102.86deg" data-mid="dg-multi" data-mt="<span class=&quot;t-es&quot;>Un panel ataca el plan</span><span class=&quot;t-en&quot;>A panel attacks the plan</span>" data-mc="<p><span class=&quot;t-es&quot;>De 2 a 4 críticos en paralelo, con lentes disjuntas y un solo mandato: refutar. Un arbitraje decide. El veredicto normal no es «adelante»: es ejecutar con ediciones, y se corrige antes de tocar una línea.</span><span class=&quot;t-en&quot;>Two to four critics in parallel, with disjoint lenses and a single mandate: refute. An arbitration decides. The usual verdict is not go-ahead: it is execute with edits, corrected before a line is touched.</span></p>">
+        <span class="fwl-b"><span class="fwl-n grad-text">3</span><span class="fwl-m"><span class="t-es">Panel</span><span class="t-en">Panel</span></span></span>
+      </button>
+      <button class="fwl-nd" type="button" style="--a:154.29deg" data-mid="dg-f4" data-mt="<span class=&quot;t-es&quot;>Sesión fresca ejecuta</span><span class=&quot;t-en&quot;>A fresh session executes</span>" data-mc="<p><span class=&quot;t-es&quot;>Un orquestador reparte la implementación entre agentes en paralelo, con rol fijo y sin contexto previo, porque un agente que ya sabe la respuesta esperada la encuentra siempre.</span><span class=&quot;t-en&quot;>An orchestrator splits the implementation across parallel agents with fixed roles and no prior context, because an agent that already knows the expected answer always finds it.</span></p>">
+        <span class="fwl-b"><span class="fwl-n grad-text">4</span><span class="fwl-m"><span class="t-es">Ejecutar</span><span class="t-en">Execute</span></span></span>
+      </button>
+      <button class="fwl-nd" type="button" style="--a:205.71deg" data-mid="dg-evals" data-mt="<span class=&quot;t-es&quot;>El gate bloquea, no avisa</span><span class=&quot;t-en&quot;>The gate blocks, it does not warn</span>" data-mc="<p><span class=&quot;t-es&quot;>No avisa: bloquea, por igualdad exacta contra un baseline. Y ningún «el subagente reportó OK» cierra nada: corro yo el gate y pego la salida real en el paso siguiente.</span><span class=&quot;t-en&quot;>It does not warn: it blocks, on exact equality against a baseline. And no the-subagent-reported-OK closes anything: I run the gate myself and paste the real output into the next step.</span></p>">
+        <span class="fwl-b"><span class="fwl-n grad-text">5</span><span class="fwl-m"><span class="t-es">Gate</span><span class="t-en">Gate</span></span></span>
+      </button>
+      <button class="fwl-nd" type="button" style="--a:257.14deg" data-mid="dg-f6" data-mt="<span class=&quot;t-es&quot;>Cuando algo falla</span><span class=&quot;t-en&quot;>When something fails</span>" data-mc="<p><span class=&quot;t-es&quot;>Cada fallo se registra como hecho en un ledger append-only. Solo se promueve a regla con ≥2 incidencias independientes o 1 de clase irreversible, y la regla acaba siendo un mecanismo: un texto no dispara, un gate sí. La pregunta obligatoria: ¿está el mismo bug en los caminos análogos?</span><span class=&quot;t-en&quot;>Every failure is logged as a fact in an append-only ledger. It becomes a rule only with ≥2 independent occurrences or 1 of irreversible class, and the rule ends up as a mechanism: text does not fire, a gate does. The mandatory question: is the same bug in the analogous paths?</span></p>">
+        <span class="fwl-b"><span class="fwl-n grad-text">6</span><span class="fwl-m"><span class="t-es">Ledger</span><span class="t-en">Ledger</span></span></span>
+      </button>
+      <button class="fwl-nd" type="button" style="--a:308.57deg" data-mid="dg-f7" data-mt="<span class=&quot;t-es&quot;>SEED a la sesión siguiente</span><span class=&quot;t-en&quot;>SEED for the next session</span>" data-mc="<p><span class=&quot;t-es&quot;>Antes de ejecutar un plan, propio o heredado de otra sesión, se lanza un agente que no ve el plan y deriva el objetivo desde la fuente más upstream. Donde los dos divergen está lo que el plan dio por sentado: ahí viven los errores caros.</span><span class=&quot;t-en&quot;>Before executing a plan ( my own or inherited from another session ) an agent is spawned that never sees the plan and derives the goal from the most upstream source. Where the two diverge is what the plan took for granted: that is where the expensive errors live.</span></p>">
+        <span class="fwl-b"><span class="fwl-n grad-text">7</span><span class="fwl-m"><span class="t-es">SEED</span><span class="t-en">SEED</span></span></span>
+      </button>
+      </div>
+    </div>
+    <p class="fwl-note">
+      <span class="t-es">Siete estaciones que giran y vuelven al encargo. Toca una para ver qué pasa dentro.</span>
+      <span class="t-en">Seven stations that turn and come back to the brief. Tap one to see what happens inside.</span>
+    </p>
+  </div>
 
   <details class="fold reveal">
     <summary><span class="t-es">Una sesión real: el panel tumbando mi propio plan</span><span class="t-en">A real session: the panel knocking down my own plan</span></summary>
@@ -1829,7 +1971,7 @@ body{overflow:hidden}
   <div class="sec-head reveal">
     <p class="eyebrow"><span class="t-es">Por qué yo</span><span class="t-en">Why me</span></p>
     <h2><span class="t-es">El rigor lo aprendí con IA.<br>El criterio, pagando facturas.</span><span class="t-en">I learned the rigor with AI.<br>The judgment, paying invoices.</span></h2>
-    <p><span class="t-es">Llevo <strong>desde 2019</strong> montando ecommerce. El último, dropshipping COD, donde <strong>cada número era mi dinero</strong>: el CPA, el margen, el flete, la devolución. Eso cambia lo que se considera «terminado». Un sistema que funciona pero cuesta mantenerlo no está terminado: <strong>está aplazado</strong>.</span><span class="t-en">I&#8217;ve been building ecommerce <strong>since 2019</strong>. The latest one, COD dropshipping, where <strong>every number was my own money</strong>: CPA, margin, shipping, returns. That changes what counts as "finished". A system that works but costs a lot to maintain isn't finished: <strong>it's deferred</strong>.</span></p>
+    <p><span class="t-es"><strong>Desde 2019</strong> montando ecommerce. En el último, dropshipping COD, <strong>cada número era mi dinero</strong>, y eso cambia lo que se considera «terminado».</span><span class="t-en">Building ecommerce <strong>since 2019</strong>. In the latest one, COD dropshipping, <strong>every number was my own money</strong>, and that changes what counts as "finished".</span></p>
   </div>
 
   <!-- ARCO 2019→hoy · anadido el 2026-08-18. Las tres cifras del acto 2 (~70.000 EUR
@@ -1841,33 +1983,54 @@ body{overflow:hidden}
        fuente=negocio puro. El importe va SIEMPRE con su final (breakeven + retencion +
        proveedor): suelto seria el «numero bonito» que la tarjeta META critica mas
        abajo, y la contradiccion la ve el primer lector tecnico que lea las dos. -->
-  <div class="hist reveal">
-    <div class="hist-i">
-      <span class="hist-y">2019</span>
-      <div>
-        <h4><span class="t-es">La primera venta</span><span class="t-en">The first sale</span></h4>
-        <p><span class="t-es">Unos auriculares gaming. <b>No fui rentable.</b> Aprendí el ciclo completo — producto, anuncio, pedido, proveedor — pagándolo de mi bolsillo.</span><span class="t-en">A gaming headset. <b>I didn&#8217;t turn a profit.</b> I learned the whole loop — product, ad, order, supplier — out of my own pocket.</span></p>
-      </div>
-    </div>
-    <div class="hist-i con-ad">
-      <span class="hist-y">2021</span>
-      <div>
-        <h4><span class="t-es">El pulpito reversible</span><span class="t-en">The reversible octopus</span></h4>
-        <p><span class="t-es">Se hizo viral y entré a tiempo: <b>59.238 € facturados con 15.201 € de anuncios</b> (ROAS 3,9). Acabé en <b>breakeven</b>: PayPal me retuvo 16.000 € durante seis meses y mi proveedor se fue de vacaciones sin avisar, con los pedidos sin despachar. La facturación estaba; el dinero no.</span><span class="t-en">It went viral and I got in on time: <b>€59,238 billed on €15,201 of ads</b> (3.9 ROAS). I ended at <b>breakeven</b>: PayPal held €16,000 for six months and my supplier left on holiday without warning, orders unshipped. The revenue was there; the money wasn&#8217;t.</span></p>
-      </div>
-      <figure class="hist-ad">
-          <img src="assets/ev-ad-octopet.jpg" loading="lazy" width="271" height="430"
-               alt="Anuncio de Oktopet en Facebook / Oktopet Facebook ad">
-          <figcaption><span class="t-es">1K comentarios<br>189 compartidos</span><span class="t-en">1K comments<br>189 shares</span></figcaption>
-      </figure>
-    </div>
-    <div class="hist-i">
-      <span class="hist-y">2025-26</span>
-      <div>
-        <h4><span class="t-es">COD en Colombia</span><span class="t-en">COD in Colombia</span></h4>
-        <p><span class="t-es">La tienda que ECXM opera. <b>Factura cuatro veces más que aquel pico — y esta vez con beneficio.</b> La cifra que miro ya no es la facturación: es la utilidad neta conciliada. La trato como lo que es: un negocio, no un pico.</span><span class="t-en">The store ECXM runs. <b>It bills four times what that spike did — and this time at a profit.</b> The figure I watch is no longer revenue: it&#8217;s reconciled net profit. I treat it as what it is: a business, not a spike.</span></p>
-      </div>
-    </div>
+  <!-- ══ el arco del negocio, en 3 puntos ══════════════════════════════
+       Hasta el 2026-08-26 esto eran 3 bloques de texto + la foto del anuncio,
+       apilados. Diego pidió una línea ascendente con 3 puntos que abran el
+       texto, y la foto dentro del popup. El texto es VERBATIM del bloque
+       anterior: no entra ni una cifra nueva.
+       Los puntos NO llevan JS propio: son `[data-mt]/[data-mc]`, que es lo que
+       el modal reutilizable ya escucha — así se abren con CLIC y con ENTER, y
+       sin hover, que en móvil no existe (punto 1 de la misma lista). ══ -->
+  <div class="tl reveal">
+    <svg class="tl-line" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="tlg" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stop-color="#9b5cff" stop-opacity=".30"/>
+          <stop offset=".55" stop-color="#22d3ff" stop-opacity=".75"/>
+          <stop offset="1" stop-color="#9bff57" stop-opacity=".95"/>
+        </linearGradient>
+      </defs>
+      <path d="M6,97 C26,95 34,93 50,92 C92,89 112,70 150,62 C190,54 218,40 250,34 C268,31 282,29 294,28"
+            fill="none" stroke="url(#tlg)" stroke-width="2" vector-effect="non-scaling-stroke"
+            stroke-linecap="round"/>
+    </svg>
+
+    <button class="tl-n" type="button" style="--x:16.6%;--y:92%"
+      data-mt="2019 · <span class='t-es'>La primera venta</span><span class='t-en'>The first sale</span>"
+      data-mc="<p><span class='t-es'>Unos auriculares gaming. <b>No fui rentable.</b> Aprendí el ciclo completo (producto, anuncio, pedido, proveedor) pagándolo de mi bolsillo.</span><span class='t-en'>A gaming headset. <b>I didn&#8217;t turn a profit.</b> I learned the whole loop (product, ad, order, supplier) out of my own pocket.</span></p>">
+      <span class="tl-y">2019</span>
+      <span class="tl-h"><span class="t-es">La primera venta</span><span class="t-en">The first sale</span></span>
+      <span class="tl-k"><span class="t-es">no fui rentable</span><span class="t-en">not profitable</span></span>
+      <span class="tl-dot" aria-hidden="true"></span>
+    </button>
+
+    <button class="tl-n" type="button" style="--x:50%;--y:62%"
+      data-mt="2021 · <span class='t-es'>El pulpito reversible</span><span class='t-en'>The reversible octopus</span>"
+      data-mc="<p><span class='t-es'>Se hizo viral y entré a tiempo: <b>59.238 € facturados con 15.201 € de anuncios</b> (ROAS 3,9). Acabé en <b>breakeven</b>: PayPal me retuvo 16.000 € durante seis meses y mi proveedor se fue de vacaciones sin avisar, con los pedidos sin despachar. La facturación estaba; el dinero no.</span><span class='t-en'>It went viral and I got in on time: <b>&#8364;59,238 billed on &#8364;15,201 of ads</b> (3.9 ROAS). I ended at <b>breakeven</b>: PayPal held &#8364;16,000 for six months and my supplier left on holiday without warning, orders unshipped. The revenue was there; the money wasn&#8217;t.</span></p><figure class='mfig'><img src='assets/ev-ad-octopet.jpg' loading='lazy' width='271' height='430' alt='Anuncio de Oktopet en Facebook / Oktopet Facebook ad'><figcaption><span class='t-es'>1K comentarios · 189 compartidos</span><span class='t-en'>1K comments · 189 shares</span></figcaption></figure>">
+      <span class="tl-y">2021</span>
+      <span class="tl-h"><span class="t-es">El pulpito reversible</span><span class="t-en">The reversible octopus</span></span>
+      <span class="tl-k"><span class="t-es">viral, y acabé en breakeven</span><span class="t-en">viral, and I ended at breakeven</span></span>
+      <span class="tl-dot" aria-hidden="true"></span>
+    </button>
+
+    <button class="tl-n" type="button" style="--x:83.4%;--y:34%"
+      data-mt="2025-26 · <span class='t-es'>COD en Colombia</span><span class='t-en'>COD in Colombia</span>"
+      data-mc="<p><span class='t-es'>La tienda que ECXM opera. <b>Factura cuatro veces más que aquel pico, y esta vez con beneficio.</b> La cifra que miro ya no es la facturación: es la utilidad neta conciliada. La trato como lo que es: un negocio, no un pico.</span><span class='t-en'>The store ECXM runs. <b>It bills four times what that spike did, and this time at a profit.</b> The figure I watch is no longer revenue: it&#8217;s reconciled net profit. I treat it as what it is: a business, not a spike.</span></p>">
+      <span class="tl-y">2025-26</span>
+      <span class="tl-h"><span class="t-es">COD en Colombia</span><span class="t-en">COD in Colombia</span></span>
+      <span class="tl-k"><span class="t-es">cuatro veces más, con beneficio</span><span class="t-en">four times more, at a profit</span></span>
+      <span class="tl-dot" aria-hidden="true"></span>
+    </button>
   </div>
 
   <p class="bridge reveal" style="margin-top:0">
@@ -1885,8 +2048,8 @@ body{overflow:hidden}
         <h3><span class="t-es">Meta Ads · el negocio que ECXM operaba</span><span class="t-en">Meta Ads · the business ECXM ran</span></h3>
         <span class="kind"><span class="t-es">performance marketing · COD Colombia</span><span class="t-en">performance marketing · COD Colombia</span></span>
       </div>
-      <p class="thesis"><span class="t-es">Quince meses comprando medios para mi propio ecommerce COD, de abril de 2025 a junio de 2026. <strong>102 campañas con un pipeline explícito</strong> (ad testing → adset testing → scaling ABO → scaling ADV) y una cuenta separada solo para validar productos antes de invertir. El ROAS se sostuvo en <strong>casi 7x mientras se escalaba</strong>, que es la parte difícil: al escalar es cuando cae.</span><span class="t-en">Fifteen months buying media for my own COD ecommerce, April 2025 to June 2026. <strong>102 campaigns with an explicit pipeline</strong> (ad testing → adset testing → scaling ABO → scaling ADV) plus a separate account just to validate products before spending. ROAS held at <strong>nearly 7x while scaling</strong>, which is the hard part: scaling is when it drops.</span></p>
-      <div class="pipe"><span>ad testing</span><i>→</i><span>adset testing</span><i>→</i><span>scaling ABO</span><i>→</i><span>scaling ADV</span><i>⊣</i><span class="gate">utilidad neta conciliada</span></div>
+      <p class="thesis"><span class="t-es">Quince meses comprando medios para mi propio ecommerce COD, de abril de 2025 a junio de 2026. <strong>102 campañas con un pipeline explícito</strong> (product testing ABO → ad testing → adset testing → scaling ADV) y una cuenta aparte solo para validar productos antes de invertir. El ROAS se sostuvo en <strong>casi 7x mientras se escalaba</strong>, que es cuando cae.</span><span class="t-en">Fifteen months buying media for my own COD ecommerce, April 2025 to June 2026. <strong>102 campaigns with an explicit pipeline</strong> (product testing ABO → ad testing → adset testing → scaling ADV) plus a separate account just to validate products before spending. ROAS held at <strong>nearly 7x while scaling</strong>, which is when it drops.</span></p>
+      <div class="pipe"><span>product testing ABO</span><i>→</i><span>ad testing</span><i>→</i><span>adset testing</span><i>→</i><span>scaling ADV</span><i>⊣</i><span class="gate">utilidad neta conciliada</span></div>
       <div class="fail">
         <b><span class="t-es">modo de fallo</span><span class="t-en">failure mode</span></b>
         <span class="t-es">En COD el ROAS de plataforma <strong>no es el dinero que cobras</strong>: no descuenta la no-entrega ni la devolución. Por eso la cifra con la que decidía no era esta: era la utilidad neta conciliada que calcula ECXM sobre los pedidos cerrados de cada mes, con gate de igualdad exacta. El número bonito está aquí arriba; el número real pasa por un gate.</span>
@@ -1922,8 +2085,8 @@ body{overflow:hidden}
       })();
       </script>
       <p class="ev-cap">
-        <span class="t-es">Business Manager, fila de totales de las <b>102 campañas</b>. De ahí salen <b>las cuatro, una a una</b>: <b>10.975 compras</b>, <b>ROAS 6,97</b>, <b>CTR único 6,81 %</b> y un gasto de <b>168.841.118 COP</b>, que a 4.500 COP/EUR son los ~37.500 €. Desliza para verla entera. Debajo, el anuncio ganador de cada producto — <i>el triángulo de play es parte de la captura del anuncio, no un reproductor</i>.</span>
-        <span class="t-en">Business Manager, totals row across <b>102 campaigns</b>. <b>Every one of the four comes from here</b>: <b>10,975 purchases</b>, <b>6.97 ROAS</b>, <b>6.81 % unique CTR</b> and <b>168,841,118 COP</b> of spend, which at 4,500 COP/EUR is the ~€37,500. Swipe to see it whole. Below, the winning ad for each product — <i>the play triangle is part of the ad screenshot, not a player</i>.</span>
+        <span class="t-es">Business Manager, fila de totales de las <b>102 campañas</b>. De ahí salen <b>las cuatro, una a una</b>: <b>10.975 compras</b>, <b>ROAS 6,97</b>, <b>CTR único 6,81 %</b> y un gasto de <b>168.841.118 COP</b>, que a 4.500 COP/EUR son los ~37.500 €. Desliza para verla entera. Debajo, el anuncio ganador de cada producto: <i>el triángulo de play es parte de la captura del anuncio, no un reproductor</i>.</span>
+        <span class="t-en">Business Manager, totals row across <b>102 campaigns</b>. <b>Every one of the four comes from here</b>: <b>10,975 purchases</b>, <b>6.97 ROAS</b>, <b>6.81 % unique CTR</b> and <b>168,841,118 COP</b> of spend, which at 4,500 COP/EUR is the ~€37,500. Swipe to see it whole. Below, the winning ad for each product: <i>the play triangle is part of the ad screenshot, not a player</i>.</span>
       </p>
       <div class="ev-ads">
         <figure>
@@ -1994,7 +2157,7 @@ body{overflow:hidden}
   <div class="sec-head reveal">
     <p class="eyebrow"><span class="t-es">Stack</span><span class="t-en">Stack</span></p>
     <h2><span class="t-es">Lo que uso, y con qué profundidad.</span><span class="t-en">What I use, and how deeply.</span></h2>
-    <p><span class="t-es">Agrupado por lo que hago con ello, no por categoría. <strong>Nada entra aquí si no aparece en uno de los proyectos de arriba</strong>: el mismo filtro que el resto de la página.</span><span class="t-en">Grouped by what I do with it, not by category. <strong>Nothing enters this list unless it appears in one of the projects above</strong>: the same filter as the rest of the page.</span></p>
+    <p><span class="t-es"><strong>Nada entra aquí si no aparece en uno de los proyectos de arriba.</strong></span><span class="t-en"><strong>Nothing enters this list unless it appears in one of the projects above.</strong></span></p>
   </div>
 
   <p class="stk-key reveal"><span class="dotp"></span><span class="t-es">en producción · el resto lo he usado en algún proyecto</span><span class="t-en">in production · the rest I've used in some project</span></p>
@@ -2054,38 +2217,24 @@ body{overflow:hidden}
   </div>
 
 
-  <details class="fold reveal" style="margin-top:30px">
-    <summary><span class="t-es">Lo que suelen pedir en una oferta, y qué tengo en su lugar</span><span class="t-en">What job posts usually ask for, and what I have instead</span></summary>
-    <div class="fold-b">
-      <div class="ldg" style="margin-top:14px">
-        <div class="ldg-row hd">
-          <div class="d"><span class="t-es">lo que pide la oferta</span><span class="t-en">what the posting asks for</span></div>
-          <div class="c"><span class="t-es">lo que tengo</span><span class="t-en">what I have</span></div>
-        </div>
-        <div class="ldg-row">
-          <div class="d"><b>LangChain</b> / <b>LlamaIndex</b></div>
-          <div class="c"><span class="ar">&#8594;</span> <span class="t-es">la orquestación, escrita a mano: siete etapas con estado, artefacto por etapa y reanudación</span><span class="t-en">the orchestration, written by hand: seven stages with state, an artifact per stage and resumption</span></div>
-        </div>
-        <div class="ldg-row">
-          <div class="d"><b>LangSmith</b> / <b>Weights &amp; Biases</b></div>
-          <div class="c"><span class="ar">&#8594;</span> <span class="t-es">mi propio eval harness: goldens por igualdad exacta y un gate que sale con error si empeora</span><span class="t-en">my own eval harness: exact-equality goldens and a gate that exits with an error when it degrades</span></div>
-        </div>
-        <div class="ldg-row">
-          <div class="d"><b>Guardrails AI</b> / <b>NeMo Guardrails</b></div>
-          <div class="c"><span class="ar">&#8594;</span> <span class="t-es">gates que bloquean de verdad, y un tipo que no se puede construir sin su evidencia</span><span class="t-en">gates that actually block, and a type that cannot be built without its evidence</span></div>
-        </div>
-        <div class="ldg-row">
-          <div class="d"><b>RAG</b> <span class="t-es">y bases vectoriales</span><span class="t-en">and vector databases</span></div>
-          <div class="c"><span class="ar" style="color:var(--kill)">&#8594;</span> <span><b><span class="t-es">No lo he construido.</span><span class="t-en">I haven't built it.</span></b> <span class="t-es">Prefiero decirlo aquí que en la entrevista.</span><span class="t-en">I'd rather say it here than in the interview.</span></span></div>
-        </div>
-        <div class="ldg-row">
-          <div class="d"><b>Docker</b> / <b>Kubernetes</b></div>
-          <div class="c"><span class="ar" style="color:var(--kill)">&#8594;</span> <span><b><span class="t-es">Tampoco.</span><span class="t-en">Nor that.</span></b> <span class="t-es">Tres de los cinco corren en local y en tier gratuito, a propósito.</span><span class="t-en">Three of the five run locally and on free tiers, deliberately.</span></span></div>
-        </div>
-      </div>
-      <p class="ldg-note"><span class="t-es">Las dos últimas filas son las que hacen creíbles las tres primeras.</span><span class="t-en">The last two rows are what make the first three believable.</span></p>
+  <!-- ══ los nombres que un recruiter busca, sin el encuadre defensivo ══
+       Hasta el 2026-08-26 esto era una tabla de 5 filas, «Lo que suelen pedir
+       en una oferta, y qué tengo en su lugar». Diego la retiró: discutir con
+       la oferta es una postura rara en un portafolio. Se conservan las dos
+       cosas que sí trabajaban — las 6 herramientas por las que un sourcer
+       filtra, y las 2 que NO ha construido, que son las que hacen creíbles a
+       las otras — en 2 líneas en vez de 5 filas. Sin cifras: no es un claim
+       nuevo, es el mismo texto condensado. ══ -->
+  <div class="nots reveal">
+    <div class="nots-r">
+      <span class="nots-k"><span class="t-es">escrito a mano en vez de</span><span class="t-en">hand-written instead of</span></span>
+      <span class="nots-v">LangChain · LlamaIndex · LangSmith · Weights &amp; Biases · Guardrails AI · NeMo Guardrails</span>
     </div>
-  </details>
+    <div class="nots-r">
+      <span class="nots-k nots-no"><span class="t-es">no lo he construido</span><span class="t-en">I haven't built</span></span>
+      <span class="nots-v"><span class="t-es">RAG y bases vectoriales · Docker · Kubernetes</span><span class="t-en">RAG and vector databases · Docker · Kubernetes</span></span>
+    </div>
+  </div>
 
   <details class="stk-more reveal">
     <summary><span class="t-es">Producto, web y adquisición</span><span class="t-en">Product, web and acquisition</span></summary>
@@ -2116,7 +2265,7 @@ body{overflow:hidden}
   <div class="contact reveal">
     <p class="eyebrow" style="justify-content:center"><span class="t-es">Contacto</span><span class="t-en">Contact</span></p>
     <h2><span class="t-es">Busco un puesto de AI Engineer.</span><span class="t-en">I'm looking for an AI Engineer role.</span></h2>
-    <p><span class="t-es"><strong>En remoto.</strong> Si pones LLMs en producción y necesitas a alguien que construya la capa que los frena ( evals, guardrails, grounding ), si tienes un proceso que nadie quiere tocar en un dominio donde los datos deciden dinero, o un equipo que quiere adoptar IA de verdad y no en diapositivas: hablamos.</span><span class="t-en"><strong>Remote.</strong> If you're putting LLMs into production and need someone to build the layer that reins them in ( evals, guardrails, grounding ) if you have a process nobody wants to touch in a domain where data decides money, or a team that wants to adopt AI for real and not in slides: let's talk.</span></p>
+    <p><span class="t-es">Si pones LLMs en producción y necesitas la capa que los frena (evals, guardrails, grounding), o tienes un proceso que nadie quiere tocar en un dominio donde los datos deciden dinero: hablamos.</span><span class="t-en">If you're putting LLMs into production and need the layer that reins them in (evals, guardrails, grounding), or you have a process nobody wants to touch in a domain where data decides money: let's talk.</span></p>
         <!-- el endpoint de conversion: el email visible y copiable, no solo enlazado.
          Un mailto: no hace nada en un escritorio sin cliente de correo configurado. -->
     <div class="cx-lines">
@@ -2334,8 +2483,15 @@ document.querySelectorAll('.reveal').forEach(function(el,i){el.style.transitionD
 (function(){
   var mx=document.getElementById('mx'); if(!mx) return;
   var kids=[].slice.call(mx.children);
-  var COLS=7; // 1 label + 6 projects
-  // group into rows of 8 starting after the header row
+  /* COLS se DERIVA del marcado, no se teclea. Estuvo clavado a `7` y el
+     2026-08-26, al quitar la columna META ADS, el agrupamiento por filas se
+     desfaso: cells[0] dejo de ser la etiqueta `.rl`, asi que pintar() recibia
+     una celda sin data-ev-* y el texto de evidencia salia VACIO al pasar el
+     raton. Ningun gate del proyecto lee JavaScript, asi que paso /eval,
+     diff_chasis y shot_port en verde; lo vio Diego en la pagina. [INC-JS-01]
+     La cabecera es `.corner` + las `.hc`: el primer `.rl` marca donde acaba. */
+  var COLS=kids.findIndex(function(k){return k.classList.contains('rl');});
+  if(COLS<2) return;
   var rows=[];
   for(var i=COLS;i<kids.length;i+=COLS){ rows.push(kids.slice(i,i+COLS)); }
   var ev=document.getElementById('mxev');
@@ -3214,8 +3370,8 @@ var SC=document.getElementById('twBody');
            '#proto,#boot,.tw-con,.tw-ac,.tw-prompt,.tw-bar,.cmdk,.pcur';
   /* cajas cuyo borde y fondo esperan a su primera linea: en la v4 el
      esqueleto de las tarjetas se pintaba mucho antes que su contenido */
-  var BOXES='.pj,.mc,.cap,.claim,.ldg,.lex,.term,.cx-lines,.ascii-fw,'+
-            '.stat,.fail,.priv,.bridge,.ph,.flow,.blk,.act,.mx,'+
+  var BOXES='.pj,.mc,.cap,.claim,.lex,.term,.cx-lines,.ascii-fw,'+
+            '.stat,.fail,.priv,.bridge,.ph,.flow,.act,.mx,'+
             /* los chips llevan sus corchetes en ::before/::after, que no
                se pueden apagar por linea: si no esperan, se ven filas de
                "[  ]" vacios antes de que llegue su texto */
@@ -3697,79 +3853,75 @@ var SC=document.getElementById('twBody');
 
 
 <script>
-/* ── vista rápida del diagrama al pasar el ratón ───────────────────
-   Sólo con puntero fino: en táctil `hover` no existe (o se emula con
-   el primer toque, que es peor que no tenerlo), así que allí manda el
-   clic y el modal de siempre. No sustituye al modal: lo adelanta. ── */
+/* ── deck: las pestañas y el scroller se siguen ──────────────────
+   Sin scroll-jacking: la pestaña MUEVE el scroller, y el scroller marca la
+   pestaña. Nada toca el scroll vertical. ── */
 (function(){
-  var fino = window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches;
-  if(!fino) return;
-  var dianas = document.querySelectorAll('[data-mid]');
-  if(!dianas.length) return;
-
-  var pop=document.createElement('div');
-  pop.className='dgpop'; pop.setAttribute('aria-hidden','true');
-  pop.innerHTML='<div class="dgpop-t"></div><div class="dgpop-c"></div><div class="dgpop-x"></div>';
-  document.body.appendChild(pop);
-  var tt=pop.querySelector('.dgpop-t'), cc=pop.querySelector('.dgpop-c'), xx=pop.querySelector('.dgpop-x');
-  var actual=null, cierre=0;
-
-  /* a la derecha del elemento; si no cabe, a la izquierda; y siempre
-     dentro de la ventana, que el raíl de la matriz llega hasta el borde */
-  function colocar(el){
-    var r=el.getBoundingClientRect(), w=pop.offsetWidth, h=pop.offsetHeight;
-    var M=10, x, y;
-    if(el.classList.contains('cap')){
-      /* tarjetas de «Qué hago»: el diagrama sale HACIA AFUERA — a la
-         izquierda de la columna izquierda, a la derecha de la derecha —
-         y SIEMPRE a la altura de su propia tarjeta, no de la de abajo.
-         Si el hueco lateral no da (por debajo de ~1900 px de ancho el
-         canalón es de 230 px y el popover mide 370), cae al lado de
-         dentro, pero conservando la altura. */
-      var haciaIzq = (r.left+r.right)/2 < window.innerWidth/2;
-      var fuera  = haciaIzq ? r.left-w-14 : r.right+14;
-      var dentro = haciaIzq ? r.right+14  : r.left-w-14;
-      x = (fuera>=M && fuera+w<=window.innerWidth-M) ? fuera : dentro;
-      y = r.top;
-    } else {
-      /* fases del ciclo: al lado y DEBAJO, que centrado tapaba la propia caja */
-      x = r.right+14;
-      if(x+w>window.innerWidth-M) x = r.left-w-14;
-      y = r.bottom+10;
-      if(y+h>window.innerHeight-M) y = r.top-h-10;
-    }
-    if(x<M) x=M;
-    if(x+w>window.innerWidth-M) x=window.innerWidth-w-M;
-    y=Math.min(Math.max(M,y), window.innerHeight-h-M);
-    pop.style.left=Math.round(x)+'px'; pop.style.top=Math.round(y)+'px';
+  var t=document.getElementById('deckTrack'); if(!t) return;
+  var tabs=[].slice.call(document.querySelectorAll('.deck-tab'));
+  var cards=[].slice.call(t.querySelectorAll('.pj'));
+  if(!tabs.length || tabs.length!==cards.length) return;
+  var act=0;
+  function marcar(i){
+    if(i===act) return; act=i;
+    tabs.forEach(function(b,k){
+      var on=(k===i);
+      b.classList.toggle('on',on);
+      b.setAttribute('aria-selected',on?'true':'false');
+      b.tabIndex=on?0:-1;
+    });
   }
-  function abrir(el){
-    if(actual===el) return;
-    var src=document.getElementById(el.getAttribute('data-mid')||''); if(!src) return;
-    actual=el;
-    tt.innerHTML=el.getAttribute('data-mt')||'';
-    cc.innerHTML=src.innerHTML;
-    /* las tarjetas de «Qué hago» enseñan solo el diagrama al pasar el raton;
-       su texto ya vive en el modal, que es lo que abre el clic. Las fases
-       del ciclo si lo llevan: ahi el diagrama solo no se explica. */
-    xx.innerHTML = el.classList.contains('cap') ? '' : (el.getAttribute('data-mc')||'');
-    colocar(el);                      /* mide ya con el contenido puesto */
-    pop.classList.add('on');
+  function ir(i,foco){
+    t.scrollTo({left:cards[i].offsetLeft-cards[0].offsetLeft,behavior:'smooth'});
+    marcar(i); if(foco) tabs[i].focus();
   }
-  function cerrar(){ actual=null; pop.classList.remove('on'); }
-
-  [].forEach.call(dianas,function(el){
-    el.addEventListener('mouseenter',function(){ clearTimeout(cierre); abrir(el); });
-    el.addEventListener('mouseleave',function(){ cierre=setTimeout(cerrar,90); });
-    el.addEventListener('focus',function(){ clearTimeout(cierre); abrir(el); });
-    el.addEventListener('blur',cerrar);
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){ ir(i,false); });
+    b.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight'||e.key==='ArrowDown'){ e.preventDefault(); ir(Math.min(i+1,tabs.length-1),true); }
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){ e.preventDefault(); ir(Math.max(i-1,0),true); }
+      else if(e.key==='Home'){ e.preventDefault(); ir(0,true); }
+      else if(e.key==='End'){ e.preventDefault(); ir(tabs.length-1,true); }
+    });
   });
-  /* el scroll vive dentro de la ventana del terminal, no en window */
-  var SC=document.getElementById('twBody')||window;
-  SC.addEventListener('scroll',function(){ if(actual) colocar(actual); },{passive:true});
-  /* si se abre el modal, el popover sobra */
-  document.addEventListener('click',function(){ cerrar(); });
+  var raf=0;
+  t.addEventListener('scroll',function(){
+    if(raf) return;
+    raf=requestAnimationFrame(function(){
+      raf=0;
+      var x=t.scrollLeft+t.clientWidth/2, mejor=0, d=1e9;
+      cards.forEach(function(c,k){
+        var cx=c.offsetLeft-cards[0].offsetLeft+c.offsetWidth/2;
+        var dd=Math.abs(cx-x); if(dd<d){ d=dd; mejor=k; }
+      });
+      marcar(mejor);
+    });
+  },{passive:true});
 })();
+
+/* ── la rueda del método solo gira cuando se la ve ────────────────
+   `root:#twBody` NO es opcional: el scroll vive dentro de la ventana del
+   terminal, y un IntersectionObserver sin root ahí dentro no dispara nunca
+   — es el fallo n1 documentado de este chasis (página en blanco con /eval
+   en verde). Arranca en pausa y solo la quita cuando entra. ── */
+(function(){
+  var w=document.querySelector('.fwl'); if(!w) return;
+  w.classList.add('fwl-off');
+  var root=document.getElementById('twBody')||null;
+  if(!('IntersectionObserver' in window)){ w.classList.remove('fwl-off'); return; }
+  new IntersectionObserver(function(es){
+    es.forEach(function(e){ w.classList.toggle('fwl-off', !e.isIntersecting); });
+  },{root:root,rootMargin:'120px 0px',threshold:0}).observe(w);
+})();
+</script>
+
+<script>
+/* ── el diagrama se abre con CLIC, no al pasar el ratón ───────────
+   Hubo un popover que adelantaba el diagrama en hover. Retirado el
+   2026-08-26 a peticion de Diego: el hover no existe en movil —por
+   donde llega el lector 1— y el modal del clic (`[data-mc],[data-mid]`,
+   mas arriba) ya pinta diagrama + texto completo, asi que el popover
+   era un duplicado de escritorio. No se perdio contenido. ── */
 </script>
 
 <script>
@@ -3850,16 +4002,28 @@ var PXR={n:48,f:47,p:["#e9edf7","#e1e6f1","#d6dce8","#cad0df","#bfc6d7","#b2bacd
       for(var j=0;j<rc.length;j++) if(rc[j].width>1&&rc[j].height>1) lin.push(rc[j]);
     }
     if(!lin.length) return;
-    var tope=h1.getBoundingClientRect().top;
+
+    /* ── DOS reglas, en este orden ──────────────────────────────────────
+       1 · CENTRAR el retrato sobre el bloque «titulo + subtitulo», que es lo
+           que pidio Diego el 27-08: al recortar el lede la columna de texto
+           encogio y el retrato quedaba hasta 259 px por debajo del centro.
+       2 · y NO PISAR el titular, que sigue mandando sobre lo anterior. El h1
+           va fuera de la rejilla, asi que sus lineas pueden invadir la columna
+           del retrato: medido, hasta 67 px en ingles. Si la posicion centrada
+           chocaria con alguna, se baja lo JUSTO para librarla.
+       El orden importa: antes solo existia la regla 2, o sea que el retrato
+       caia donde el flujo lo dejara y el JS solo lo corregia hacia abajo.
+       «Evita chocar» no es lo mismo que «centrate». ── */
+
+    var arriba=(document.querySelector('.hero .eyebrow')||h1).getBoundingClientRect().top,
+        abajo=(document.querySelector('.lede')||h1).getBoundingClientRect().bottom,
+        centrado=(arriba+abajo)/2-fr.height/2;
+
+    var suelo=h1.getBoundingClientRect().top;
     for(var j=0;j<lin.length;j++)
-      if(lin[j].right+AIRE>fr.left) tope=Math.max(tope,lin[j].bottom+AIRE*.6);
-    /* el ajuste va en LOS DOS SENTIDOS. Solo subia, dando por hecho que la
-       posicion natural nunca chocaba; dejo de ser cierto en cuanto el h1
-       recibio text-wrap:balance y su ultima linea de ES paso a ser larga
-       («...ueden mentirme.» llegaba a la columna del retrato). Un ajuste
-       de un solo sentido no es un ajuste: es una apuesta sobre como
-       reparte el titular. */
-    fig.style.marginTop=Math.round(tope-fr.top)+'px';
+      if(lin[j].right+AIRE>fr.left) suelo=Math.max(suelo,lin[j].bottom+AIRE*.6);
+
+    fig.style.marginTop=Math.round(Math.max(centrado,suelo)-fr.top)+'px';
   }
 
   function medir(){

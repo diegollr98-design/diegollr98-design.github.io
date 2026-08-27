@@ -528,6 +528,12 @@ body{overflow:hidden}
   color:var(--muted2);background:transparent;border:1px solid var(--line2);
   border-radius:7px;padding:4px 8px;cursor:pointer;
   transition:border-color .18s,color .18s,background .18s}
+/* el boton medía 43x29: por debajo del 44x44 que exige el proyecto. Se agranda
+   el AREA TACTIL con un pseudo-elemento, sin tocar su aspecto ni el alto de la
+   barra. `inset` asimetrico a proposito: en horizontal el hueco con el CTA de
+   correo es de 6-8 px a <=560 y no se puede invadir. (27-08) */
+.tw-lang>button{position:relative}
+.tw-lang>button::after{content:'';position:absolute;inset:-10px -4px}
 .tw-lang>button:hover,.tw-lang>button[aria-expanded="true"]{
   border-color:var(--accent-line);color:var(--text);background:var(--accent-soft)}
 .tw-lang>button i{width:0;height:0;border-left:3.5px solid transparent;
@@ -1494,7 +1500,7 @@ report = validar_landing(output_dir)
       <div class="oi"><span class="ok2"><span class="t-es">cobertura parcial</span><span class="t-en">partial coverage</span></span><span class="ov"><span class="t-es"><b>Goldens de landing.</b> 4 congelados de 27 landings del set de regresión. Los tres canónicos cubren los builders más frágiles; el resto se compara por diff, que detecta cambios pero no juzga si son correctos.</span><span class="t-en"><b>Landing goldens.</b> 4 frozen out of the 27 landings in the regression set. The three canonical ones cover the most fragile builders; the rest are compared by diff, which detects changes but doesn't judge whether they're right.</span></span></div>
     </div>
 
-    <p class="bridge reveal"><span class="t-es">El resto del método —el agente ciego que audita mis planes, el ledger que convierte un fallo en regla— es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method —the blind agent auditing my own plans, the ledger that turns a failure into a rule— is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
+    <p class="bridge reveal"><span class="t-es">El resto del método (el agente ciego que audita mis planes, el ledger que convierte un fallo en regla) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (the blind agent auditing my own plans, the ledger that turns a failure into a rule) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
   </div>
 </section>
 
@@ -1577,46 +1583,46 @@ document.querySelectorAll('.ct').forEach(function(c){ c.textContent=(c.dataset.p
 /* ── pipeline rail ── */
 (function(){
   var P=[
-    {es:{t:'Espiar — PRXDUCT SNIPE',c:'Playwright + cookies',
+    {es:{t:'Espiar · PRXDUCT SNIPE',c:'Playwright + cookies',
          d:'Escanea la biblioteca de anuncios de Meta buscando qué está vendiendo la competencia. Agrupa los hallazgos por producto entre varios competidores, calcula un win-rate y deja el triaje listo para decidir qué merece un test.',
          m:'6.286 hallazgos indexados · 28 escaneos · 449 grupos cruzados · master list en COMPES_TRACKER.xlsx'},
-     en:{t:'Spy — PRXDUCT SNIPE',c:'Playwright + cookies',
+     en:{t:'Spy · PRXDUCT SNIPE',c:'Playwright + cookies',
          d:"Scans Meta's ad library for what competitors are actually selling. Groups findings by product across competitors, computes a win-rate and leaves the triage ready to decide what deserves a test.",
          m:'6,286 findings indexed · 28 scans · 449 cross-groups · master list in COMPES_TRACKER.xlsx'}},
-    {es:{t:'Analizar — PRXDUCT LAB',c:'~$0,004 / producto',
+    {es:{t:'Analizar · PRXDUCT LAB',c:'~$0,004 / producto',
          d:'Coge el producto candidato y produce el dossier: precios x1/x2/x3 con su CPA de equilibrio, análisis de las landings de la competencia, comparativa de copies publicitarios y títulos generados. Lo caro (el juicio) lo hace un modelo pequeño; lo exacto (los números) no lo toca.',
          m:'Modelo barato para texto repetitivo · caché por hash de prompt · el precio lo calcula Python puro'},
-     en:{t:'Analyse — PRXDUCT LAB',c:'~$0.004 / product',
+     en:{t:'Analyse · PRXDUCT LAB',c:'~$0.004 / product',
          d:'Takes the candidate product and produces the dossier: x1/x2/x3 pricing with its break-even CPA, competitor landing analysis, ad-copy comparison and generated titles. The fuzzy part (judgment) goes to a small model; the exact part (the numbers) it never touches.',
          m:'Cheap model for repetitive text · cache by prompt hash · pricing computed by pure Python'}},
-    {es:{t:'Clonar — CXMPE REP',c:'$0 · determinista',
+    {es:{t:'Clonar · CXMPE REP',c:'$0 · determinista',
          d:'Reconstruye la landing del competidor sobre nuestra plantilla: copy, imágenes, vídeos, FAQs, tablas comparativas, carruseles y reseñas reales. Sin LLM. Cada generación pasa por un validator que aborta si detecta placeholders, fugas del competidor o enlaces rotos.',
          m:'26 extractores · 9 parsers de reseñas · 5 plataformas · 27 landings en el set de regresión'},
-     en:{t:'Clone — CXMPE REP',c:'$0 · deterministic',
+     en:{t:'Clone · CXMPE REP',c:'$0 · deterministic',
          d:"Rebuilds the competitor's landing on our template: copy, images, videos, FAQs, comparison tables, carousels and real reviews. No LLM. Every build goes through a validator that aborts on placeholders, competitor leaks or broken links.",
          m:'26 extractors · 9 review parsers · 5 platforms · 27 landings in the regression set'}},
-    {es:{t:'Crear — CREATIVE',c:'coste declarado por pieza',
+    {es:{t:'Crear · CREATIVE',c:'coste declarado por pieza',
          d:'Del ADN de marca a las piezas: estáticos, animación y UGC. Toda operación por encima de $0,10 aborta con una excepción si no lleva confirmación explícita, con el importe estimado en el mensaje — el gasto nunca ocurre por pulsar un botón sin querer.',
          m:'Imagen ~$0,04 · animación ~$0,54 · clip UGC ~$0,45 · ADN de marca, ganchos y letra: $0'},
-     en:{t:'Create — CREATIVE',c:'cost declared per piece',
+     en:{t:'Create · CREATIVE',c:'cost declared per piece',
          d:'From brand DNA to the assets: statics, animation and UGC. Any operation above $0.10 aborts with an exception unless explicitly confirmed, with the estimated amount in the message — spend never happens from an accidental button click.',
          m:'Image ~$0.04 · animation ~$0.54 · UGC clip ~$0.45 · brand DNA, hooks and lyrics: $0'}},
-    {es:{t:'Vender — CONTROL DIARIO',c:'$0 · hoja viva',
+    {es:{t:'Vender · CONTROL DIARIO',c:'$0 · hoja viva',
          d:'El pulso del día: gasto por cuenta publicitaria, pedidos, cancelados y devoluciones por producto. Las columnas calculadas se replican en Python para poder testearlas — y tienen su propio gate golden que bloquea si una fórmula cambia sin querer.',
          m:'Autosync silencioso al Excel · columnas de cuenta publicitaria dinámicas · 6 casos golden congelados'},
-     en:{t:'Sell — DAILY CONTROL',c:'$0 · living sheet',
+     en:{t:'Sell · DAILY CONTROL',c:'$0 · living sheet',
          d:"The day's pulse: spend per ad account, orders, cancellations and returns per product. The computed columns are re-implemented in Python so they can be tested — and they have their own golden gate that blocks if a formula changes by accident.",
          m:'Silent autosync to Excel · dynamic ad-account columns · 6 frozen golden cases'}},
-    {es:{t:'Cerrar — FINANZAS · MES',c:'$0 · OCR gratuito',
+    {es:{t:'Cerrar · FINANZAS · MES',c:'$0 · OCR gratuito',
          d:'Limpia el export de Dropi, cruza los fletes reales del wallet, lee las facturas del mes por OCR y atribuye la publicidad campaña a campaña — bajando a nivel de ad set cuando la campaña es un test multi-producto. El resultado es la utilidad neta por producto.',
          m:'pedidos de 6 meses cerrados · 136 facturas · 209 campañas extraídas · los cobros fallidos no cuentan'},
-     en:{t:'Close — FINANCE · MONTH',c:'$0 · free-tier OCR',
+     en:{t:'Close · FINANCE · MONTH',c:'$0 · free-tier OCR',
          d:'Cleans the Dropi export, cross-matches real shipping costs from the wallet, OCR-reads the month\'s invoices and attributes ad spend campaign by campaign — descending to ad-set level when the campaign is a multi-product test. The output is net profit per product.',
          m:'orders from 6 closed months · 136 invoices · 209 campaigns extracted · failed charges never count'}},
-    {es:{t:'Decidir — ANALYTICS',c:'$0 · motor de reglas',
+    {es:{t:'Decidir · ANALYTICS',c:'$0 · motor de reglas',
          d:'Cruza el histórico de cada producto con benchmarks calibrados para COD Colombia y emite recomendaciones accionables por prioridad: % de entrega bajo es un problema logístico, CPA cerca del equilibrio es un problema creativo, conversión baja es un problema de landing.',
          m:'Reglas deterministas, sin LLM · categorías creativo / logística / conversión · URGENTE · NORMAL · SUGERIDO'},
-     en:{t:'Decide — ANALYTICS',c:'$0 · rule engine',
+     en:{t:'Decide · ANALYTICS',c:'$0 · rule engine',
          d:'Crosses each product\'s history with benchmarks calibrated for COD Colombia and emits actionable, prioritised recommendations: low delivery rate is a logistics problem, CPA near break-even is a creative problem, low conversion is a landing problem.',
          m:'Deterministic rules, no LLM · creative / logistics / conversion categories · URGENT · NORMAL · SUGGESTED'}}
   ];
