@@ -2083,7 +2083,7 @@ body{overflow:hidden}
       (function(){
         var s=document.querySelector('.ev-scroll'); if(!s) return;
         var root=document.querySelector('#twBody')||null, hecho=false;
-        function anclar(){ if(hecho||!s.clientWidth) return; if(s.clientWidth<520){ s.scrollLeft=1000; } hecho=true; }
+        function anclar(){ if(hecho||!s.clientWidth) return; s.scrollLeft=s.scrollWidth; hecho=true; }
         if('IntersectionObserver' in window){
           var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) anclar(); }); },{root:root,threshold:.1});
           io.observe(s);
@@ -2096,7 +2096,7 @@ body{overflow:hidden}
       </p>
       <div class="ev-ads">
         <figure>
-          <img src="assets/ev-ad-nitric.jpg" loading="lazy" width="411" height="710"
+          <img src="assets/ev-ad-nitric.jpg" loading="lazy" width="411" height="677"
                alt="Anuncio de Óxido Nítrico / Nitric Oxide ad">
           <figcaption><span class="t-es"><b>752</b> comentarios · <b>181</b> compartidos</span><span class="t-en"><b>752</b> comments · <b>181</b> shares</span></figcaption>
         </figure>
@@ -2106,7 +2106,7 @@ body{overflow:hidden}
           <figcaption><span class="t-es"><b>145</b> comentarios · <b>152</b> compartidos · <i>vídeo</i></span><span class="t-en"><b>145</b> comments · <b>152</b> shares · <i>video</i></span></figcaption>
         </figure>
         <figure>
-          <img src="assets/ev-ad-cajafuerte.jpg" loading="lazy" width="312" height="636"
+          <img src="assets/ev-ad-cajafuerte.jpg" loading="lazy" width="312" height="612"
                alt="Anuncio en vídeo de caja fuerte portátil / Portable safe video ad">
           <figcaption><span class="t-es"><b>116</b> comentarios · <b>57</b> compartidos · <i>vídeo · hook con IA</i></span><span class="t-en"><b>116</b> comments · <b>57</b> shares · <i>video · AI hook</i></span></figcaption>
         </figure>
