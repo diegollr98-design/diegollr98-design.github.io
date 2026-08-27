@@ -326,7 +326,7 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .ev-ads figure{width:186px;max-width:100%;flex:0 0 auto}
 .ev-ads figure{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface2)}
 .ev-ads img{width:100%;height:auto;display:block}
-.ev-ads figcaption{font-family:'JetBrains Mono';font-size:.63rem;line-height:1.6;color:var(--muted);padding:9px 11px;border-top:1px solid var(--line)}
+.ev-ads figcaption{font-family:'JetBrains Mono';font-size:.63rem;line-height:1.6;color:var(--muted);padding:9px 34px 9px 11px;border-top:1px solid var(--line);min-height:40px}
 .ev-ads b{color:var(--hl);font-weight:500}
 .ev-ads i,.ev-cap i{font-style:normal;opacity:.72}
 /* las 4 variantes del anuncio de la caja fuerte. En TEXTO: la captura mide
@@ -351,6 +351,11 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .hk .hk-w td{color:var(--text)}
 .hk .hk-w b{color:var(--hl);font-weight:500}
 .hk .hk-d td{opacity:.62}   /* .5 dejaba «AD1 V. CORTO» por debajo del contraste util */
+/* la tabla la lleva DEBAJO y no en la esquina: `.hkw` tiene `overflow-x`, y un
+   hijo absoluto dentro de un scroller se desplaza con el contenido. */
+.hk-go{display:block;margin-top:7px;text-align:right;font-family:'JetBrains Mono';
+  font-size:.62rem;letter-spacing:.05em;color:var(--muted)}
+.hkw:hover .hk-go,.hkw:focus-visible .hk-go{color:var(--hl)}
 .mdl-box .mhk{margin-top:4px}  /* no lleva .mev: ver el comentario del marcado */
 .mdl-box .mhk img{width:1848px}
 /* 5 columnas desde el 2026-08-26: META ADS salio de la matriz. Sus 6 celdas
@@ -418,7 +423,16 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .mdl-box .mmed{margin:4px auto 0;max-width:min(100%,340px)}
 .mdl-box .mmed img,.mdl-box .mmed video{display:block;width:100%;height:auto;
   max-height:min(72vh,620px);object-fit:contain;border-radius:10px;background:#000}
-.ev-ads figure{cursor:pointer;transition:transform .2s,box-shadow .2s}
+.ev-ads figure{cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative}
+/* la marca de «esto se abre». VISIBLE SIEMPRE, no en :hover: en movil no hay
+   hover, y el lector 1 lee en movil. La cazo Diego, que no vio que se podia
+   tocar; `cursor:pointer` era toda la senal y en tactil no existe. */
+.ev-ads figure::after{content:'\2921';position:absolute;bottom:9px;right:9px;
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono';font-size:.72rem;line-height:1;
+  color:#fff;background:rgba(10,10,18,.72);border:1px solid rgba(255,255,255,.22);
+  border-radius:6px;backdrop-filter:blur(2px);pointer-events:none}
+.ev-ads figure:hover::after,.ev-ads figure:focus-visible::after{background:var(--accent);border-color:transparent}
 .ev-ads figure:hover,.ev-ads figure:focus-visible{transform:translateY(-2px);
   box-shadow:0 12px 30px rgba(0,0,0,.5)}
 .ev-ads figure:focus-visible{outline:2px solid var(--g2);outline-offset:3px}
@@ -2207,10 +2221,11 @@ body{overflow:hidden}
             <tr class="hk-d"><td>AD1 HOOK1 <i><span class='t-es'>hook con IA</span><span class='t-en'>AI hook</span></i></td><td>~4 €</td><td>0</td><td>0</td></tr>
           </tbody>
         </table>
+        <span class="hk-go">⤡ <span class="t-es">la captura de Business Manager</span><span class="t-en">the Business Manager capture</span></span>
       </div>
       <p class="ev-cap">
-        <span class="t-es">El hook de IA <b>no salió más barato por compra</b> (3,68 € contra 3,63): lo que hizo fue <b>sostener el ROAS del original absorbiendo 4,3× el presupuesto</b>, que es la parte difícil. Las otras dos murieron por la misma medición que dejó vivir a esta. <i>Gasto convertido a 4.500 COP/EUR, como el resto de la tarjeta. Donde pone 0, Business Manager imprime un guión. Toca la tabla para ver la captura, que va en COP.</i></span>
-        <span class="t-en">The AI hook <b>did not come out cheaper per purchase</b> (&#8364;3.68 against &#8364;3.63): what it did was <b>hold the original&#8217;s ROAS while absorbing 4.3× the budget</b>, which is the hard part. The other two were killed by the same measurement that let this one live. <i>Spend converted at 4,500 COP/EUR, like the rest of the card. Where it reads 0, Business Manager prints a dash. Tap the table for the capture, which is in COP.</i></span>
+        <span class="t-es">El hook de IA <b>no salió más barato por compra</b> (3,68 € contra 3,63): lo que hizo fue <b>sostener el ROAS del original absorbiendo 4,3× el presupuesto</b>, que es la parte difícil. Las otras dos murieron por la misma medición que dejó vivir a esta. <i>Gasto convertido a 4.500 COP/EUR, como el resto de la tarjeta. Donde pone 0, Business Manager imprime un guión; la captura va en COP.</i></span>
+        <span class="t-en">The AI hook <b>did not come out cheaper per purchase</b> (&#8364;3.68 against &#8364;3.63): what it did was <b>hold the original&#8217;s ROAS while absorbing 4.3× the budget</b>, which is the hard part. The other two were killed by the same measurement that let this one live. <i>Spend converted at 4,500 COP/EUR, like the rest of the card. Where it reads 0, Business Manager prints a dash; the capture is in COP.</i></span>
       </p>
         </div>
       </details>
