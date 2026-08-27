@@ -305,13 +305,22 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
    La tira de totales se sirve a su ancho NATURAL dentro de un scroller:
    escalada al ancho de la tarjeta el texto cae a ~6px y una prueba que
    no se puede leer resta, que es justo por lo que se descarto publicar
-   la captura de Oktopet (800x194). Mismo patron que .mx-scroll. */
+   la captura de la cuenta de Oktopet a 800x194. (La de Oktopet que SI se
+   publica desde el 27-08 es otra: la tabla de sus 9 campanas a 1366px, que a
+   su ancho natural se lee.) Mismo patron que .mx-scroll. */
 .ev-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);
   border-radius:12px;background:#fff;margin-top:20px}
 .ev-scroll img{display:block;width:1770px;max-width:none;height:auto}
 .ev-cap{font-family:'JetBrains Mono';font-size:.66rem;line-height:1.65;color:var(--muted);margin-top:9px}
 .ev-cap b{color:var(--muted2);font-weight:500}
-.ev-ads{display:flex;flex-wrap:wrap;gap:14px;margin-top:18px}
+/* TIRA HORIZONTAL desde el 27-08 (peticion de Diego): apilados ocupaban
+   1.236 px en movil dentro del desplegable. Mismo patron que la tira de totales
+   que tienen justo encima, asi que no introduce un gesto nuevo en esta tarjeta.
+   `nowrap` + scroll: las 3 caben en una fila y se deslizan. */
+.ev-ads{display:flex;flex-wrap:nowrap;gap:14px;margin-top:18px;
+  overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain;
+  padding-bottom:2px}
+.ev-ads::-webkit-scrollbar{display:none}
 /* ancho FIJO: con auto-fit 1fr los anuncios salian a 400px a 1440 y se comian
    la tarjeta entera — el efecto que la decision del 12-08 quiere evitar. */
 .ev-ads figure{width:186px;max-width:100%;flex:0 0 auto}
@@ -320,6 +329,30 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .ev-ads figcaption{font-family:'JetBrains Mono';font-size:.63rem;line-height:1.6;color:var(--muted);padding:9px 11px;border-top:1px solid var(--line)}
 .ev-ads b{color:var(--hl);font-weight:500}
 .ev-ads i,.ev-cap i{font-style:normal;opacity:.72}
+/* las 4 variantes del anuncio de la caja fuerte. En TEXTO: la captura mide
+   1848px y escalada al ancho de la tarjeta el caracter cae a ~1px. La captura
+   se abre al tocar, igual que los 3 anuncios de arriba. */
+.hkw{margin-top:16px;cursor:pointer;overflow-x:auto;overscroll-behavior-x:contain;border:1px solid var(--line);border-radius:12px;
+  background:var(--surface2);padding:11px 13px 6px;transition:border-color .2s,transform .2s}
+.hkw:hover,.hkw:focus-visible{border-color:var(--accent-line);transform:translateY(-2px)}
+.hkw:focus-visible{outline:2px solid var(--g2);outline-offset:3px}
+.hk{width:100%;border-collapse:collapse;font-family:'JetBrains Mono';font-size:.63rem;line-height:1.5}
+.hk th,.hk td{padding:5px 2px;text-align:right;white-space:nowrap}
+/* la primera columna va en DOS renglones a proposito: nombre arriba, que
+   variante es debajo. Con `white-space:normal` el navegador partia «AD1 HOOK2»
+   en tres renglones a 390 y la fila crecia a 3-4 lineas; con el descriptor en
+   bloque la columna la fija el mas largo («corte mas corto», 15 ch) y cabe. */
+.hk th:first-child,.hk td:first-child{text-align:left;white-space:nowrap;padding-right:8px}
+.hk td:first-child i{display:block;opacity:.62}
+.hk thead th{color:var(--muted);font-weight:400;font-size:.57rem;letter-spacing:.06em;
+  text-transform:uppercase;border-bottom:1px solid var(--line)}
+.hk tbody tr+tr td{border-top:1px solid rgba(255,255,255,.05)}
+.hk td{color:var(--muted2)}
+.hk .hk-w td{color:var(--text)}
+.hk .hk-w b{color:var(--hl);font-weight:500}
+.hk .hk-d td{opacity:.62}   /* .5 dejaba «AD1 V. CORTO» por debajo del contraste util */
+.mdl-box .mhk{margin-top:4px}  /* no lleva .mev: ver el comentario del marcado */
+.mdl-box .mhk img{width:1848px}
 /* 5 columnas desde el 2026-08-26: META ADS salio de la matriz. Sus 6 celdas
    estaban las 6 vacias, o sea que no probaba ni una capacidad; y ademas era
    la unica cabecera sin `data-go`, asi que «haz clic en una columna» fallaba
@@ -380,11 +413,34 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
   .tl-dot{position:absolute;left:-1px;margin:0;transform:translateY(4px);order:-1}
 }
 /* la foto del anuncio vive ahora DENTRO del modal */
+/* el creativo real dentro del modal: vertical y alto, asi que se limita por
+   ALTURA, no por anchura, o en un portatil no cabe entero. */
+.mdl-box .mmed{margin:4px auto 0;max-width:min(100%,340px)}
+.mdl-box .mmed img,.mdl-box .mmed video{display:block;width:100%;height:auto;
+  max-height:min(72vh,620px);object-fit:contain;border-radius:10px;background:#000}
+.ev-ads figure{cursor:pointer;transition:transform .2s,box-shadow .2s}
+.ev-ads figure:hover,.ev-ads figure:focus-visible{transform:translateY(-2px);
+  box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.ev-ads figure:focus-visible{outline:2px solid var(--g2);outline-offset:3px}
 .mdl-box .mfig{margin:18px auto 0;max-width:230px;border:1px solid var(--line);border-radius:10px;
   overflow:hidden;background:var(--surface2)}
 .mdl-box .mfig img{width:100%;height:auto;display:block}
 .mdl-box .mfig figcaption{font-family:'JetBrains Mono';font-size:.6rem;line-height:1.55;
   color:var(--muted);padding:7px 9px;border-top:1px solid var(--line)}
+/* dos pruebas en fila que se apilan solas: a 390 el ancho util del modal es
+   ~302px y `flex-basis:200px` no deja sitio a dos, asi que envuelve. */
+.mdl-box .mrow{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:flex-start}
+/* `align-items:flex-start` NO es cosmetico: sin el, `stretch` estira la figura
+   mas corta hasta el alto de la otra y deja una caja vacia de ~150px debajo
+   del creativo. Es el mismo defecto que Diego cazo en las tarjetas del deck
+   `[INC-CSS-12]`, y aqui tampoco lo ve ningun gate: no desborda, no cambia
+   el alto de la pagina y no da error de consola. */
+.mdl-box .mrow .mfig{margin:18px 0 0;flex:1 1 200px;max-width:230px}
+/* `.mev` REDEFINE el ancho: `.ev-scroll img` esta clavado a 1770px, que es el de
+   la tira de totales, y estiraria esta captura deformandola. */
+.mdl-box .mev{margin-top:18px}
+.mdl-box .mev img{width:1366px}
+.mdl-box .ev-cap{margin-top:9px}
 /* ══ .deck · los 5 proyectos en horizontal (PRUEBA, 2026-08-26) ═══════════
    Scroller nativo con scroll-snap: el swipe de movil sale gratis y NO se
    secuestra el scroll vertical. `overscroll-behavior-x:contain` evita que el
@@ -2021,9 +2077,9 @@ body{overflow:hidden}
     </button>
 
     <button class="tl-n" type="button" style="--x:50%;--y:62%"
-      data-mt="2021 · <span class='t-es'>El pulpito reversible</span><span class='t-en'>The reversible octopus</span>"
-      data-mc="<p><span class='t-es'>Se hizo viral y entré a tiempo: <b>59.238 € facturados con 15.201 € de anuncios</b> (ROAS 3,9). Acabé en <b>breakeven</b>: PayPal me retuvo 16.000 € durante seis meses y mi proveedor se fue de vacaciones sin avisar, con los pedidos sin despachar. La facturación estaba; el dinero no.</span><span class='t-en'>It went viral and I got in on time: <b>&#8364;59,238 billed on &#8364;15,201 of ads</b> (3.9 ROAS). I ended at <b>breakeven</b>: PayPal held &#8364;16,000 for six months and my supplier left on holiday without warning, orders unshipped. The revenue was there; the money wasn&#8217;t.</span></p><figure class='mfig'><img src='assets/ev-ad-octopet.jpg' loading='lazy' width='271' height='430' alt='Anuncio de Oktopet en Facebook / Oktopet Facebook ad'><figcaption><span class='t-es'>1K comentarios · 189 compartidos</span><span class='t-en'>1K comments · 189 shares</span></figcaption></figure>">
-      <span class="tl-y">2021</span>
+      data-mt="2020-21 · <span class='t-es'>El pulpito reversible</span><span class='t-en'>The reversible octopus</span>"
+      data-mc="<p><span class='t-es'>Se hizo viral y entré a tiempo: <b>59.238 € facturados con 15.201 € de anuncios</b> (ROAS 3,9) entre noviembre de 2020 y marzo de 2021. Acabé en <b>breakeven</b>: PayPal me retuvo 16.000 € durante seis meses y mi proveedor se fue de vacaciones sin avisar, con los pedidos sin despachar. La facturación estaba; el dinero no.</span><span class='t-en'>It went viral and I got in on time: <b>&#8364;59,238 billed on &#8364;15,201 of ads</b> (3.9 ROAS) between November 2020 and March 2021. I ended at <b>breakeven</b>: PayPal held &#8364;16,000 for six months and my supplier left on holiday without warning, orders unshipped. The revenue was there; the money wasn&#8217;t.</span></p><div class='mrow'><figure class='mfig'><img src='assets/ev-ad-octopet-full.jpg' loading='lazy' width='900' height='900' alt='Creativo del anuncio del pulpito reversible / Reversible octopus ad creative'><figcaption><span class='t-es'>el creativo</span><span class='t-en'>the creative</span></figcaption></figure><figure class='mfig'><img src='assets/ev-ad-octopet.jpg' loading='lazy' width='271' height='425' alt='Anuncio de Oktopet en Facebook / Oktopet Facebook ad'><figcaption><span class='t-es'>1K comentarios · 189 compartidos</span><span class='t-en'>1K comments · 189 shares</span></figcaption></figure></div><div class='ev-scroll mev' data-sx='400'><img src='assets/ev-oktopet-campanas.png' loading='lazy' width='1366' height='332' alt='Las 9 campanas de Oktopet en Business Manager / Oktopet&#8217;s 9 campaigns in Business Manager'></div><p class='ev-cap'><span class='t-es'>Las <b>9 campañas</b> en Business Manager, con el rango arriba a la derecha (<b>10 nov 2020 – 8 mar 2021</b>). Sumadas dan las dos cifras de arriba al céntimo: <b>15.201,12 €</b> de gasto y <b>59.238,42 €</b> de valor de compra. Aterriza sobre el <b>gasto</b>, resaltado; desliza a la derecha para el ROAS y el valor de compra, y a la izquierda para los nombres de campaña. <i>El ID de la cuenta va difuminado; no se ha tocado nada más.</i></span><span class='t-en'>The <b>9 campaigns</b> in Business Manager, date range top right (<b>10 Nov 2020 – 8 Mar 2021</b>). Summed, they give the two figures above to the cent: <b>&#8364;15,201.12</b> of spend and <b>&#8364;59,238.42</b> of purchase value. It lands on <b>spend</b>, highlighted; swipe right for ROAS and purchase value, left for the campaign names. <i>The account ID is blurred; nothing else was touched.</i></span></p>">
+      <span class="tl-y">2020-21</span>
       <span class="tl-h"><span class="t-es">El pulpito reversible</span><span class="t-en">The reversible octopus</span></span>
       <span class="tl-k"><span class="t-es">viral, y acabé en breakeven</span><span class="t-en">viral, and I ended at breakeven</span></span>
       <span class="tl-dot" aria-hidden="true"></span>
@@ -2091,30 +2147,73 @@ body{overflow:hidden}
       })();
       </script>
       <p class="ev-cap">
-        <span class="t-es">Business Manager, fila de totales de las <b>102 campañas</b>. De ahí salen <b>las cuatro, una a una</b>: <b>10.975 compras</b>, <b>ROAS 6,97</b>, <b>CTR único 6,81 %</b> y un gasto de <b>168.841.118 COP</b>, que a 4.500 COP/EUR son los ~37.500 €. Desliza para verla entera. Debajo, el anuncio ganador de cada producto: <i>el triángulo de play es parte de la captura del anuncio, no un reproductor</i>.</span>
-        <span class="t-en">Business Manager, totals row across <b>102 campaigns</b>. <b>Every one of the four comes from here</b>: <b>10,975 purchases</b>, <b>6.97 ROAS</b>, <b>6.81 % unique CTR</b> and <b>168,841,118 COP</b> of spend, which at 4,500 COP/EUR is the ~€37,500. Swipe to see it whole. Below, the winning ad for each product: <i>the play triangle is part of the ad screenshot, not a player</i>.</span>
+        <span class="t-es">Business Manager, fila de totales de las <b>102 campañas</b>. De ahí salen <b>las cuatro, una a una</b>: <b>10.975 compras</b>, <b>ROAS 6,97</b>, <b>CTR único 6,81 %</b> y un gasto de <b>168.841.118 COP</b>, que a 4.500 COP/EUR son los ~37.500 €. Desliza para verla entera.</span>
+        <span class="t-en">Business Manager, totals row across <b>102 campaigns</b>. <b>Every one of the four comes from here</b>: <b>10,975 purchases</b>, <b>6.97 ROAS</b>, <b>6.81 % unique CTR</b> and <b>168,841,118 COP</b> of spend, which at 4,500 COP/EUR is the ~€37,500. Swipe to see it whole.</span>
       </p>
+      <details class="fold" style="margin-top:16px">
+        <summary>
+          <span class="t-es">Las 3 creatividades ganadoras · 752, 145 y 116 comentarios · una con el hook generado con IA</span>
+          <span class="t-en">The 3 winning creatives · 752, 145 and 116 comments · one with an AI-generated hook</span>
+        </summary>
+        <div class="fold-b">
+          <p class="ev-cap" style="margin:0 0 6px">
+            <span class="t-es">El anuncio ganador de cada producto. <i>Toca cualquiera para ver el creativo original: los dos con triángulo son vídeo y se reproducen.</i></span>
+            <span class="t-en">The winning ad for each product. <i>Tap any of them to see the original creative: the two with a triangle are video and do play.</i></span>
+          </p>
       <div class="ev-ads">
-        <figure>
+        <figure tabindex="0" role="button"
+          data-mt="<span class='t-es'>Óxido Nítrico · el creativo</span><span class='t-en'>Nitric Oxide · the creative</span>"
+          data-mc="<div class='mmed'><img src='assets/ev-ad-nitric-full.jpg' alt='Creativo del anuncio de Óxido Nítrico'></div>">
           <img src="assets/ev-ad-nitric.jpg" loading="lazy" width="411" height="677"
                alt="Anuncio de Óxido Nítrico / Nitric Oxide ad">
           <figcaption><span class="t-es"><b>752</b> comentarios · <b>181</b> compartidos</span><span class="t-en"><b>752</b> comments · <b>181</b> shares</span></figcaption>
         </figure>
-        <figure>
+        <figure tabindex="0" role="button"
+          data-mt="<span class='t-es'>Candida Cleanse · el creativo</span><span class='t-en'>Candida Cleanse · the creative</span>"
+          data-mc="<div class='mmed'><video src='assets/ev-ad-candida.mp4' poster='assets/poster-ad-candida.jpg' width='360' height='640' controls playsinline preload='none'></video></div>">
           <img src="assets/ev-ad-candida.jpg" loading="lazy" width="306" height="612"
                alt="Anuncio en vídeo de Candida Cleanse / Candida Cleanse video ad">
           <figcaption><span class="t-es"><b>145</b> comentarios · <b>152</b> compartidos · <i>vídeo</i></span><span class="t-en"><b>145</b> comments · <b>152</b> shares · <i>video</i></span></figcaption>
         </figure>
-        <figure>
+        <figure tabindex="0" role="button"
+          data-mt="<span class='t-es'>Caja fuerte portátil · el creativo</span><span class='t-en'>Portable safe · the creative</span>"
+          data-mc="<div class='mmed'><video src='assets/ev-ad-cajafuerte.mp4' poster='assets/poster-ad-cajafuerte.jpg' width='1080' height='1916' controls playsinline preload='none'></video></div>">
           <img src="assets/ev-ad-cajafuerte.jpg" loading="lazy" width="312" height="612"
                alt="Anuncio en vídeo de caja fuerte portátil / Portable safe video ad">
           <figcaption><span class="t-es"><b>116</b> comentarios · <b>57</b> compartidos · <i>vídeo · hook con IA</i></span><span class="t-en"><b>116</b> comments · <b>57</b> shares · <i>video · AI hook</i></span></figcaption>
         </figure>
       </div>
       <p class="ev-cap" style="margin-top:13px">
-        <span class="t-es">El de la caja fuerte es <b>el mismo anuncio con otro hook</b>: cuando el original se quedó sin rendimiento, generé tres hooks con IA y dejé que la métrica eligiera cuál vivía. Este es el que aguantó. <i>Un modelo produce el creativo y una medición decide: el mismo bucle que los cinco sistemas.</i></span>
-        <span class="t-en">The safe&#8217;s is <b>the same ad with a different hook</b>: when the original ran out of performance, I generated three hooks with AI and let the metric pick which one lived. This is the one that lasted. <i>A model produces the creative, a measurement decides: the same loop as the five systems.</i></span>
+        <span class="t-es">El de la caja fuerte es <b>el mismo anuncio con otro hook</b>: cuando el original se quedó sin rendimiento probé <b>tres variaciones</b> (dos hooks generados con IA y un corte más corto) y dejé que la métrica eligiera cuál vivía. Este es el que aguantó. <i>Un modelo produce el creativo y una medición decide: el mismo bucle que los cinco sistemas.</i></span>
+        <span class="t-en">The safe&#8217;s is <b>the same ad with a different hook</b>: when the original ran out of performance I tested <b>three variations</b> (two AI-generated hooks and a shorter cut) and let the metric pick which one lived. This is the one that lasted. <i>A model produces the creative, a measurement decides: the same loop as the five systems.</i></span>
       </p>
+
+      <div class="hkw" tabindex="0" role="button"
+        data-mt="<span class='t-es'>Las 4 variantes, en Business Manager</span><span class='t-en'>The 4 variants, in Business Manager</span>"
+        data-mc="<div class='ev-scroll mhk' data-sx='0'><img src='assets/ev-hooks-ia.jpg' loading='lazy' width='1848' height='396' alt='Las 4 variantes del anuncio en Business Manager / The 4 ad variants in Business Manager'></div><p class='ev-cap'><span class='t-es'>La pantalla de la que sale la tabla. Las cuatro filas <code>AD1*</code> son el original y sus tres variantes; las otras cuatro son anuncios distintos de la misma campaña. Desliza a la derecha para las compras y el ROAS.</span><span class='t-en'>The screen the table comes from. The four <code>AD1*</code> rows are the original and its three variants; the other four are different ads in the same campaign. Swipe right for purchases and ROAS.</span></p>">
+        <table class="hk">
+          <thead>
+            <tr>
+              <th><span class="t-es">variante</span><span class="t-en">variant</span></th>
+              <th><span class="t-es">gasto</span><span class="t-en">spend</span></th>
+              <th><span class="t-es">compras</span><span class="t-en">purchases</span></th>
+              <th>ROAS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hk-w"><td>AD1 HOOK2 <i><span class='t-es'>hook con IA</span><span class='t-en'>AI hook</span></i></td><td>~1.853 €</td><td><b>503</b></td><td><b>7,93</b></td></tr>
+            <tr><td>AD1 <i><span class='t-es'>el original</span><span class='t-en'>the original</span></i></td><td>~432 €</td><td>119</td><td>7,88</td></tr>
+            <tr class="hk-d"><td>AD1 V. CORTO <i><span class='t-es'>corte corto</span><span class='t-en'>shorter cut</span></i></td><td>~32 €</td><td>4</td><td>3,52</td></tr>
+            <tr class="hk-d"><td>AD1 HOOK1 <i><span class='t-es'>hook con IA</span><span class='t-en'>AI hook</span></i></td><td>~4 €</td><td>0</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="ev-cap">
+        <span class="t-es">El hook de IA <b>no salió más barato por compra</b> (3,68 € contra 3,63): lo que hizo fue <b>sostener el ROAS del original absorbiendo 4,3× el presupuesto</b>, que es la parte difícil. Las otras dos murieron por la misma medición que dejó vivir a esta. <i>Gasto convertido a 4.500 COP/EUR, como el resto de la tarjeta. Donde pone 0, Business Manager imprime un guión. Toca la tabla para ver la captura, que va en COP.</i></span>
+        <span class="t-en">The AI hook <b>did not come out cheaper per purchase</b> (&#8364;3.68 against &#8364;3.63): what it did was <b>hold the original&#8217;s ROAS while absorbing 4.3× the budget</b>, which is the hard part. The other two were killed by the same measurement that let this one live. <i>Spend converted at 4,500 COP/EUR, like the rest of the card. Where it reads 0, Business Manager prints a dash. Tap the table for the capture, which is in COP.</i></span>
+      </p>
+        </div>
+      </details>
 
       <div class="pj-foot">
         <div class="roles">
@@ -2542,6 +2641,16 @@ document.querySelectorAll('.reveal').forEach(function(el,i){el.style.transitionD
     if(mid){var src=document.getElementById(mid); if(src) dg=src.innerHTML;}
     c.innerHTML=dg+(el.getAttribute('data-mc')||'');
     m.classList.add('mdl-on'); document.body.style.overflow='hidden'; ultimo=el;
+    /* una tira que se desliza aterriza donde estan las cifras, no en la casilla
+       de seleccion: la misma decision que la tira de totales de `#negocio`. Alli
+       lo hace un IIFE con IntersectionObserver, que aqui no sirve porque el
+       contenido no existe hasta que se abre el modal.
+       ⚠️ VA DESPUES de `mdl-on`, no antes: el modal es `display:none` hasta esa
+       linea, asi que el scroller mide 0 y `scrollLeft=400` se recorta a 0 sin
+       avisar. Medido: la tira aterrizaba en 0 en los 4 casos. Es la misma clase
+       de fallo que el `getComputedTextLength()`→0 dentro de un contenedor
+       oculto `[INC-MED-02]`: el DOM esta puesto y la geometria todavia no. */
+    c.querySelectorAll('[data-sx]').forEach(function(x){ x.scrollLeft=+x.getAttribute('data-sx')||0; });
     m.querySelector('.mdl-x').focus();
   }
   function cerrar(){
