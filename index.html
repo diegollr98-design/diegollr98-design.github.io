@@ -404,7 +404,13 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
 .deck-tab.on b{background:var(--grad3);-webkit-background-clip:text;background-clip:text;
   -webkit-text-fill-color:transparent;color:transparent}
 .deck-tab.on .deck-nm{color:var(--text)}
-.deck-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;
+/* ⚠ `align-items:start` — las tarjetas NO se estiran. Por defecto un contenedor
+   flex las iguala al alto de la mas alta, y ese sobrante se quedaba DENTRO de la
+   tarjeta, con su borde alrededor: medido a 1440, la cola muerta al pie iba de
+   31 px (ECXM) a 154 px (QUANT), 123 px de diferencia. Un hueco delimitado por un
+   borde se lee como un fallo; el mismo hueco fuera de la tarjeta se lee como
+   maquetacion. Lo vio Diego en la pagina, 27-08. [INC-CSS-12] */
+.deck-track{display:flex;align-items:flex-start;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;
   scrollbar-width:none;overscroll-behavior-x:contain;scroll-behavior:smooth}
 .deck-track::-webkit-scrollbar{display:none}
 /* ⚠ `align-content:start` NO es cosmetico. El carrusel iguala el alto de las 5
