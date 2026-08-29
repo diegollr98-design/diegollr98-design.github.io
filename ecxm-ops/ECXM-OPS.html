@@ -14,6 +14,9 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Diego · ECXM OPS · el gate que impide que un sistema mienta con dinero">
 <meta name="twitter:card" content="summary_large_image">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ca_ES">
 <meta property="og:type" content="website">
 <meta name="author" content="Diego · ECXM OPS">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AE%3C/text%3E%3C/svg%3E">
@@ -23,8 +26,18 @@
 <script>
   /* set language ASAP — no FOUC. stored pref > browser lang > es */
   (function(){try{
+    var OK={es:1,en:1,ca:1};   /* los idiomas que ESTA pagina tiene. Una pagina con catalan anade ca:1 */
     var l=localStorage.getItem('pf_lang');
-    if(!l){l=(navigator.language||'es').toLowerCase().indexOf('en')===0?'en':'es';}
+    if(!OK[l]){
+      /* [SEED §5.8] Antes preguntaba literalmente «es ingles? si no, castellano», asi que
+         un navegador en `ca-ES` aterrizaba en castellano: justo el lector para el que se
+         tradujo. Se comprueba el catalan PRIMERO porque es el mas especifico de los tres.
+         El `if(!OK[l])` final no es de adorno: una pagina que no tenga esa lengua cae al
+         castellano en vez de quedarse con las tres ocultas ([INC-JS-04]). */
+      var n=(navigator.language||'es').toLowerCase();
+      l = n.indexOf('ca')===0 ? 'ca' : (n.indexOf('en')===0 ? 'en' : 'es');
+      if(!OK[l]) l='es';
+    }
     document.documentElement.lang=l;
     document.documentElement.className='lang-'+l;
   }catch(e){}})();
@@ -68,8 +81,17 @@ img,svg{display:block}
 :focus-visible{outline:2px solid var(--g2);outline-offset:3px;border-radius:4px}
 
 /* i18n: hide the inactive language */
-html.lang-es .t-en{display:none!important}
-html.lang-en .t-es{display:none!important}
+/* Cada idioma oculta a TODOS los demas. Con solo dos reglas, anadir `t-ca` lo hacia
+   visible en castellano y en ingles a la vez. */
+html.lang-es .t-en,html.lang-es .t-ca{display:none!important}
+html.lang-en .t-es,html.lang-en .t-ca{display:none!important}
+html.lang-ca .t-es,html.lang-ca .t-en{display:none!important}
+/* [INC-TIPO-01] Inter compone `l·l` como ela geminada precompuesta y a 16 px el punt
+   volat desaparece: «cel·les» se lee «ceHes». `locl 0` desactiva esa forma
+   localizada. Medido: el `·` pasa de 1,53 px a 4,61, y el layout no se mueve
+   (docH/docW/h1 +0 a 390 y 1440, en catalan). NO lo arreglan `kern`, `liga`,
+   `dlig`, `calt` ni `ccmp`, ni cambiar el caracter por `ŀ`. */
+html.lang-ca .t-ca{font-feature-settings:'locl' 0}
 
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,6vw,40px)}
 .grad-text{background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
@@ -441,6 +463,7 @@ footer .hl{color:var(--muted2)}
   .stbl td,.prov td{border:0;padding:10px 16px}
   .stbl td::before,.prov td::before{content:attr(data-h-es);display:block;font-family:'JetBrains Mono';font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
   html.lang-en .stbl td::before,html.lang-en .prov td::before{content:attr(data-h)}
+  html.lang-ca .stbl td::before,html.lang-ca .prov td::before{content:attr(data-h-ca)}
 }
 @media(max-width:520px){footer{flex-direction:column;text-align:center}}
 @media(prefers-reduced-motion:reduce){
@@ -798,7 +821,7 @@ body{overflow:hidden}
            son destinos y van en gris; esto es la accion que la pagina existe para pedir. ── -->
       <a class="tw-mail" href="mailto:diegollr98@gmail.com" title="diegollr98@gmail.com">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
-          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span></span></a>
+          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span><span class="t-ca">Escriu-me</span></span></a>
       <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M4.98 3.5a2.5 2.5 0 11-.01 5 2.5 2.5 0 01.01-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.5 4.76 5.76V21h-4v-5.7c0-1.36-.03-3.1-1.9-3.1-1.9 0-2.19 1.47-2.19 3v5.8h-4z"/></svg>
@@ -816,12 +839,13 @@ body{overflow:hidden}
          diseño de la ventana es no usar el desplegable nativo. -->
     <div class="tw-lang">
       <button type="button" id="langBtn" aria-haspopup="listbox" aria-expanded="false">
-        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span>
+        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span><span class="sr t-ca">Idioma</span>
         <span id="langCur">ES</span><i aria-hidden="true"></i>
       </button>
       <ul class="tw-langlist" id="langList" role="listbox" hidden>
         <li role="option" data-v="es" aria-selected="true">ES</li>
         <li role="option" data-v="en" aria-selected="false">EN</li>
+        <li role="option" data-v="ca" aria-selected="false">CA</li>
       </ul>
     </div>
   </div>
@@ -832,10 +856,10 @@ body{overflow:hidden}
 <div class="wrap" id="top">
   <!-- hero -->
   <header class="hero">
-    <div class="eyebrow"><span class="t-es">AI Engineer · operaciones · e-commerce COD Colombia</span><span class="t-en">AI Engineer · operations · COD e-commerce, Colombia</span></div>
+    <div class="eyebrow"><span class="t-es">AI Engineer · operaciones · e-commerce COD Colombia</span><span class="t-en">AI Engineer · operations · COD e-commerce, Colombia</span><span class="t-ca">AI Engineer · operacions · e-commerce COD Colòmbia</span></div>
 
     <h1 class="t-es display">Construí el <span class="grad-text">sistema operativo</span> de un negocio entero, y el gate que le impide mentir con dinero.</h1>
-    <h1 class="t-en display">I built the <span class="grad-text">operating system</span> of an entire business, and the gate that stops it lying about money.</h1>
+    <h1 class="t-en display">I built the <span class="grad-text">operating system</span> of an entire business, and the gate that stops it lying about money.</h1><h1 class="t-ca display">Vaig construir el <span class="grad-text">sistema operatiu</span> d'un negoci sencer, i el gate que li impedeix mentir amb diners.</h1>
 
     <p class="lede t-es">
       ECXM OPS cubre la cadena completa de un negocio de dropshipping COD, de espiar a la competencia a cerrar el mes,
@@ -846,23 +870,23 @@ body{overflow:hidden}
       ECXM OPS covers the full chain of a COD dropshipping business, from spying on competitors to closing the month,
       in one dashboard and a 35-command CLI. The failure mode isn't Streamlit crashing: it's the pivot
       <strong>fluently asserting a false net profit</strong>. One misattributed decimal is <strong>somebody else's pay</strong>.
-    </p>
+    </p><p class="lede t-ca">ECXM OPS cobreix la cadena completa d'un negoci de dropshipping COD, d'espiar la competència a tancar el mes, en un sol dashboard i una CLI de 35 comandes. El mode de fallada no és que Streamlit peti: és que el pivot <strong>afirmi amb tota fluïdesa una utilitat neta falsa</strong>. Un decimal mal atribuït és <strong>el sou d'una altra persona</strong>.</p>
 
-    <p class="hero-note"><span class="t-es">En uso diario en mi propio negocio desde mayo de 2026, con 6.286 anuncios de la competencia indexados. Construido en solitario, con IA.</span><span class="t-en">In daily use in my own business since May 2026, with 6,286 competitor ads indexed. Built solo, with AI.</span></p>
+    <p class="hero-note"><span class="t-es">En uso diario en mi propio negocio desde mayo de 2026, con 6.286 anuncios de la competencia indexados. Construido en solitario, con IA.</span><span class="t-en">In daily use in my own business since May 2026, with 6,286 competitor ads indexed. Built solo, with AI.</span><span class="t-ca">En ús diari al meu propi negoci des del maig del 2026, amb 6.286 anuncis de la competència indexats. Construït en solitari, amb IA.</span></p>
 
     <div class="cta">
       <a href="#recorrido" class="btn btn-primary">
         <svg viewBox="0 0 24 24" fill="#08080d"><path d="M8 5v14l11-7z"/></svg>
-        <span class="t-es">Ver el recorrido</span><span class="t-en">Watch the walkthrough</span>
+        <span class="t-es">Ver el recorrido</span><span class="t-en">Watch the walkthrough</span><span class="t-ca">Veure el recorregut</span>
       </a>
-      <a href="#dinero" class="btn btn-ghost"><span class="t-es">El gate del dinero</span><span class="t-en">The money gate</span></a>
+      <a href="#dinero" class="btn btn-ghost"><span class="t-es">El gate del dinero</span><span class="t-en">The money gate</span><span class="t-ca">El gate dels diners</span></a>
     </div>
 
     <div class="stats">
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="7"></span></div><div class="l"><span class="t-es">etapas encadenadas · espiar → analizar → clonar → crear → vender → cerrar → decidir</span><span class="t-en">chained stages · spy → analyse → clone → create → sell → close → decide</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="3309"></span></div><div class="l"><span class="t-es">pedidos conciliados en 6 meses cerrados · 136 facturas OCR en 4 divisas</span><span class="t-en">orders reconciled across 6 closed months · 136 OCR invoices in 4 currencies</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="u">$</span><span class="ct" data-to="0"></span></div><div class="l"><span class="t-es">coste LLM del clonador de landings · era ~$0,05 por landing con Vision</span><span class="t-en">LLM cost of the landing cloner · it used to be ~$0.05 per landing with Vision</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="3"></span><span class="u">/3</span></div><div class="l"><span class="t-es">gates golden en verde por igualdad exacta · uno de ellos decide una liquidación</span><span class="t-en">golden gates green on exact equality · one of them decides a payout</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="7"></span></div><div class="l"><span class="t-es">etapas encadenadas · espiar → analizar → clonar → crear → vender → cerrar → decidir</span><span class="t-en">chained stages · spy → analyse → clone → create → sell → close → decide</span><span class="t-ca">etapes encadenades · espiar → analitzar → clonar → crear → vendre → tancar → decidir</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="3309"></span></div><div class="l"><span class="t-es">pedidos conciliados en 6 meses cerrados · 136 facturas OCR en 4 divisas</span><span class="t-en">orders reconciled across 6 closed months · 136 OCR invoices in 4 currencies</span><span class="t-ca">comandes conciliades en 6 mesos tancats · 136 factures OCR en 4 divises</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="u">$</span><span class="ct" data-to="0"></span></div><div class="l"><span class="t-es">coste LLM del clonador de landings · era ~$0,05 por landing con Vision</span><span class="t-en">LLM cost of the landing cloner · it used to be ~$0.05 per landing with Vision</span><span class="t-ca">cost LLM del clonador de landings · era ~$0,05 per landing amb Vision</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="3"></span><span class="u">/3</span></div><div class="l"><span class="t-es">gates golden en verde por igualdad exacta · uno de ellos decide una liquidación</span><span class="t-en">golden gates green on exact equality · one of them decides a payout</span><span class="t-ca">gates golden en verd per igualtat exacta · un d'ells decideix una liquidació</span></div></div>
     </div>
   </header>
 </div>
@@ -873,43 +897,43 @@ body{overflow:hidden}
 <section id="recorrido">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Recorrido</span><span class="t-en">Walkthrough</span></div>
+      <div class="eyebrow"><span class="t-es">Recorrido</span><span class="t-en">Walkthrough</span><span class="t-ca">Recorregut</span></div>
       <h2 class="t-es">Un producto entra por un extremo y sale una liquidación por el otro</h2>
-      <h2 class="t-en">A product goes in one end and a payout comes out the other</h2>
+      <h2 class="t-en">A product goes in one end and a payout comes out the other</h2><h2 class="t-ca">Un producte entra per un extrem i en surt una liquidació per l'altre</h2>
       <p class="t-es">No son siete scripts sueltos: es <strong>una sola cadena</strong> donde la salida de cada etapa es la entrada de la siguiente, y donde el estado vive en archivos que las demás etapas saben leer. Pulsa cualquier estación para ver qué hace, qué cuesta y con qué se sincroniza.</p>
-      <p class="t-en">These aren't seven loose scripts: it's <strong>a single chain</strong> where each stage's output is the next one's input, and where state lives in files the other stages know how to read. Click any station to see what it does, what it costs and what it syncs with.</p>
+      <p class="t-en">These aren't seven loose scripts: it's <strong>a single chain</strong> where each stage's output is the next one's input, and where state lives in files the other stages know how to read. Click any station to see what it does, what it costs and what it syncs with.</p><p class="t-ca">No són set scripts solts: és <strong>una sola cadena</strong> on la sortida de cada etapa és l'entrada de la següent, i on l'estat viu en fitxers que les altres etapes saben llegir. Prem qualsevol estació per veure què fa, què costa i amb què se sincronitza.</p>
     </div>
 
     <div class="video vp reveal" id="vpBox" data-hero="ECXM-OPS-hero-90s.mp4" data-tour="ECXM-OPS-tour-completo.mp4">
       <video id="vpVideo" src="ECXM-OPS-hero-90s.mp4" poster="../assets/poster-ecxm-ops.jpg"
              muted loop playsinline preload="metadata"></video>
-      <span class="vp-tag"><span class="t-es">vista previa · corte hero</span><span class="t-en">preview · hero cut</span></span>
+      <span class="vp-tag"><span class="t-es">vista previa · corte hero</span><span class="t-en">preview · hero cut</span><span class="t-ca">vista prèvia · tall hero</span></span>
       <button class="vp-ov" id="vpBtn" type="button">
         <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
-        <span class="vt"><span class="t-es">Recorrido del sistema · 6:18</span><span class="t-en">System walkthrough · 6:18</span></span>
-        <span class="vs"><span class="t-es">Sin voz: el sistema real con los rótulos en pantalla. Pasa el ratón para ver el corte de 90 s; pulsa para el recorrido entero.</span><span class="t-en">No voice-over: the real system with on-screen captions. Hover for the 90 s cut; click for the full walkthrough.</span></span>
+        <span class="vt"><span class="t-es">Recorrido del sistema · 6:18</span><span class="t-en">System walkthrough · 6:18</span><span class="t-ca">Recorregut del sistema · 6:18</span></span>
+        <span class="vs"><span class="t-es">Sin voz: el sistema real con los rótulos en pantalla. Pasa el ratón para ver el corte de 90 s; pulsa para el recorrido entero.</span><span class="t-en">No voice-over: the real system with on-screen captions. Hover for the 90 s cut; click for the full walkthrough.</span><span class="t-ca">Sense veu: el sistema real amb els rètols a la pantalla. Passa el ratolí per veure el tall de 90 s; prem per al recorregut sencer.</span></span>
       </button>
     </div>
     <div class="vp-chaps reveal" id="vpChaps" role="group" aria-label="Capítulos del recorrido">
-      <button type="button" class="vc" data-t="0"><b>01</b><span class="t-es">De espiar a la competencia a clonar su landing</span><span class="t-en">From spying on competitors to cloning their landing</span><b>0:00</b></button>
-      <button type="button" class="vc" data-t="172.6"><b>02</b><span class="t-es">Del creativo al dinero: la atribución</span><span class="t-en">From the creative to the money: attribution</span><b>2:52</b></button>
-      <button type="button" class="vc" data-t="268.7"><b>03</b><span class="t-es">El gate que bloquea, y por qué existe</span><span class="t-en">The gate that blocks, and why it exists</span><b>4:28</b></button>
+      <button type="button" class="vc" data-t="0"><b>01</b><span class="t-es">De espiar a la competencia a clonar su landing</span><span class="t-en">From spying on competitors to cloning their landing</span><span class="t-ca">D'espiar la competència a clonar la seva landing</span><b>0:00</b></button>
+      <button type="button" class="vc" data-t="172.6"><b>02</b><span class="t-es">Del creativo al dinero: la atribución</span><span class="t-en">From the creative to the money: attribution</span><span class="t-ca">Del creatiu als diners: l'atribució</span><b>2:52</b></button>
+      <button type="button" class="vc" data-t="268.7"><b>03</b><span class="t-es">El gate que bloquea, y por qué existe</span><span class="t-en">The gate that blocks, and why it exists</span><span class="t-ca">El gate que bloqueja, i per què existeix</span><b>4:28</b></button>
     </div>
-    <p class="video-note"><span class="t-es">Guion: escaneo de la Ads Library → producto al LAB (precios + copy + títulos) → réplica de la landing en <b>$0</b> → creativos → control diario → cierre de mes → la tabla que dice qué producto es winner.</span><span class="t-en">Script: Ads Library scan → product into the LAB (pricing + copy + titles) → landing replica at <b>$0</b> → creatives → daily control → month close → the table that says which product is a winner.</span></p>
+    <p class="video-note"><span class="t-es">Guion: escaneo de la Ads Library → producto al LAB (precios + copy + títulos) → réplica de la landing en <b>$0</b> → creativos → control diario → cierre de mes → la tabla que dice qué producto es winner.</span><span class="t-en">Script: Ads Library scan → product into the LAB (pricing + copy + titles) → landing replica at <b>$0</b> → creatives → daily control → month close → the table that says which product is a winner.</span><span class="t-ca">Guió: escaneig de l'Ads Library → producte al LAB (preus + copy + títols) → rèplica de la landing en <b>$0</b> → creatius → control diari → tancament de mes → la taula que diu quin producte és winner.</span></p>
 
     <!-- rail -->
     <div class="rail reveal">
       <div class="rail-track" role="tablist" aria-label="Etapas del sistema">
-        <button class="rl" role="tab" aria-selected="true" data-i="0"><span class="dot">01</span><span class="nm"><span class="t-es">Espiar</span><span class="t-en">Spy</span></span><span class="tg">SNIPE</span></button>
-        <button class="rl" role="tab" aria-selected="false" data-i="1"><span class="dot">02</span><span class="nm"><span class="t-es">Analizar</span><span class="t-en">Analyse</span></span><span class="tg">LAB</span></button>
-        <button class="rl" role="tab" aria-selected="false" data-i="2"><span class="dot">03</span><span class="nm"><span class="t-es">Clonar</span><span class="t-en">Clone</span></span><span class="tg">REP</span></button>
-        <button class="rl" role="tab" aria-selected="false" data-i="3"><span class="dot">04</span><span class="nm"><span class="t-es">Crear</span><span class="t-en">Create</span></span><span class="tg">CREATIVE</span></button>
-        <button class="rl" role="tab" aria-selected="false" data-i="4"><span class="dot">05</span><span class="nm"><span class="t-es">Vender</span><span class="t-en">Sell</span></span><span class="tg">DÍA A DÍA</span></button>
-        <button class="rl" role="tab" aria-selected="false" data-i="5"><span class="dot">06</span><span class="nm"><span class="t-es">Cerrar</span><span class="t-en">Close</span></span><span class="tg">MES</span></button>
-        <button class="rl" role="tab" aria-selected="false" data-i="6"><span class="dot">07</span><span class="nm"><span class="t-es">Decidir</span><span class="t-en">Decide</span></span><span class="tg">ANALYTICS</span></button>
+        <button class="rl" role="tab" aria-selected="true" data-i="0"><span class="dot">01</span><span class="nm"><span class="t-es">Espiar</span><span class="t-en">Spy</span><span class="t-ca">Espiar</span></span><span class="tg">SNIPE</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="1"><span class="dot">02</span><span class="nm"><span class="t-es">Analizar</span><span class="t-en">Analyse</span><span class="t-ca">Analitzar</span></span><span class="tg">LAB</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="2"><span class="dot">03</span><span class="nm"><span class="t-es">Clonar</span><span class="t-en">Clone</span><span class="t-ca">Clonar</span></span><span class="tg">REP</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="3"><span class="dot">04</span><span class="nm"><span class="t-es">Crear</span><span class="t-en">Create</span><span class="t-ca">Crear</span></span><span class="tg">CREATIVE</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="4"><span class="dot">05</span><span class="nm"><span class="t-es">Vender</span><span class="t-en">Sell</span><span class="t-ca">Vendre</span></span><span class="tg">DÍA A DÍA</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="5"><span class="dot">06</span><span class="nm"><span class="t-es">Cerrar</span><span class="t-en">Close</span><span class="t-ca">Tancar</span></span><span class="tg">MES</span></button>
+        <button class="rl" role="tab" aria-selected="false" data-i="6"><span class="dot">07</span><span class="nm"><span class="t-es">Decidir</span><span class="t-en">Decide</span><span class="t-ca">Decidir</span></span><span class="tg">ANALYTICS</span></button>
       </div>
       <div class="rail-panel" id="rail-panel" role="tabpanel" aria-live="polite"></div>
-      <p class="rail-note"><span class="t-es">Estas 7 etapas del ciclo del producto viven en 6 pestañas del dashboard (cerrar y vender comparten FINANZAS). Hay 3 más de soporte (FEEDBACK, ACADEMIA y ROADMAP, que renderiza el mapa de arquitectura del propio dashboard) 9 en total.</span><span class="t-en">These 7 product-cycle stages live in 6 dashboard tabs (sell and close share FINANCE). There are 3 more support tabs (FEEDBACK, ACADEMIA and ROADMAP, which renders the dashboard's own architecture map) 9 in total.</span></p>
+      <p class="rail-note"><span class="t-es">Estas 7 etapas del ciclo del producto viven en 6 pestañas del dashboard (cerrar y vender comparten FINANZAS). Hay 3 más de soporte (FEEDBACK, ACADEMIA y ROADMAP, que renderiza el mapa de arquitectura del propio dashboard) 9 en total.</span><span class="t-en">These 7 product-cycle stages live in 6 dashboard tabs (sell and close share FINANCE). There are 3 more support tabs (FEEDBACK, ACADEMIA and ROADMAP, which renders the dashboard's own architecture map) 9 in total.</span><span class="t-ca">Aquestes 7 etapes del cicle del producte viuen en 6 pestanyes del dashboard (tancar i vendre comparteixen FINANCES). N'hi ha 3 més de suport (FEEDBACK, ACADÈMIA i ROADMAP, que renderitza el mapa d'arquitectura del mateix dashboard) 9 en total.</span></p>
     </div>
   </div>
 </section>
@@ -919,11 +943,11 @@ body{overflow:hidden}
 <section id="dinero">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Flagship · la superficie irreversible</span><span class="t-en">Flagship · the irreversible surface</span></div>
+      <div class="eyebrow"><span class="t-es">Flagship · la superficie irreversible</span><span class="t-en">Flagship · the irreversible surface</span><span class="t-ca">Flagship · la superfície irreversible</span></div>
       <h2 class="t-es">La única cifra del sistema que se convierte en el pago de una persona</h2>
-      <h2 class="t-en">The one figure in the system that turns into somebody's pay</h2>
+      <h2 class="t-en">The one figure in the system that turns into somebody's pay</h2><h2 class="t-ca">L'única xifra del sistema que es converteix en el pagament d'una persona</h2>
       <p class="t-es">El contrato del equipo tiene una cláusula corta: un producto es <strong>winner</strong> si cierra el mes con <strong>utilidad neta positiva</strong>, y entonces el reparto pasa de 50/50 a 40/60 a favor del colaborador. Toda la maquinaria de abajo existe para producir <span class="hl">ese número</span>. El dashboard está hecho para que yo confíe y cierre rápido: <strong>esa confianza es exactamente lo que convierte un error de atribución en dinero mal repartido.</strong></p>
-      <p class="t-en">The team contract has one short clause: a product is a <strong>winner</strong> if it closes the month with <strong>positive net profit</strong>, and then the split moves from 50/50 to 40/60 in the collaborator's favour. All the machinery below exists to produce <span class="hl">that number</span>. The dashboard is built so I trust it and close fast: <strong>that trust is exactly what turns an attribution error into money paid out wrong.</strong></p>
+      <p class="t-en">The team contract has one short clause: a product is a <strong>winner</strong> if it closes the month with <strong>positive net profit</strong>, and then the split moves from 50/50 to 40/60 in the collaborator's favour. All the machinery below exists to produce <span class="hl">that number</span>. The dashboard is built so I trust it and close fast: <strong>that trust is exactly what turns an attribution error into money paid out wrong.</strong></p><p class="t-ca">El contracte de l'equip té una clàusula curta: un producte és <strong>winner</strong> si tanca el mes amb <strong>utilitat neta positiva</strong>, i llavors el repartiment passa de 50/50 a 40/60 a favor del col·laborador. Tota la maquinària de sota existeix per produir <span class="hl">aquell número</span>. El dashboard està fet perquè jo m'hi confiï i tanqui de pressa: <strong>aquesta confiança és exactament el que converteix un error d'atribució en diners mal repartits.</strong></p>
     </div>
 
     <div class="engine reveal">
@@ -947,98 +971,98 @@ body{overflow:hidden}
 
         <!-- feeders -->
         <rect class="mg-rect" x="196" y="18" width="164" height="46" rx="10" stroke="#22d3ff" stroke-width="1.5"/>
-        <text x="278" y="38" text-anchor="middle" class="mg-title t-es">WALLET Dropi</text><text x="278" y="38" text-anchor="middle" class="mg-title t-en">Dropi WALLET</text>
-        <text x="278" y="53" text-anchor="middle" class="mg-sub t-es">fletes reales por pedido</text><text x="278" y="53" text-anchor="middle" class="mg-sub t-en">real shipping cost per order</text>
+        <text x="278" y="38" text-anchor="middle" class="mg-title t-es">WALLET Dropi</text><text x="278" y="38" text-anchor="middle" class="mg-title t-en">Dropi WALLET</text><text x="278" y="38" text-anchor="middle" class="mg-title t-ca">WALLET Dropi</text>
+        <text x="278" y="53" text-anchor="middle" class="mg-sub t-es">fletes reales por pedido</text><text x="278" y="53" text-anchor="middle" class="mg-sub t-en">real shipping cost per order</text><text x="278" y="53" text-anchor="middle" class="mg-sub t-ca">ports reals per comanda</text>
         <path d="M278,64 L278,120" fill="none" stroke="#22d3ff" stroke-width="1.6" opacity=".5" class="mg-flow" marker-end="url(#mn-arw)"/>
 
         <rect class="mg-rect" x="420" y="18" width="200" height="46" rx="10" stroke="#9b5cff" stroke-width="1.6"/>
-        <text x="520" y="38" text-anchor="middle" class="mg-title t-es">FACTURAS · OCR</text><text x="520" y="38" text-anchor="middle" class="mg-title t-en">INVOICES · OCR</text>
-        <text x="520" y="53" text-anchor="middle" class="mg-sub t-es">136 PDFs · 4 divisas · caja real</text><text x="520" y="53" text-anchor="middle" class="mg-sub t-en">136 PDFs · 4 currencies · real cash</text>
+        <text x="520" y="38" text-anchor="middle" class="mg-title t-es">FACTURAS · OCR</text><text x="520" y="38" text-anchor="middle" class="mg-title t-en">INVOICES · OCR</text><text x="520" y="38" text-anchor="middle" class="mg-title t-ca">FACTURES · OCR</text>
+        <text x="520" y="53" text-anchor="middle" class="mg-sub t-es">136 PDFs · 4 divisas · caja real</text><text x="520" y="53" text-anchor="middle" class="mg-sub t-en">136 PDFs · 4 currencies · real cash</text><text x="520" y="53" text-anchor="middle" class="mg-sub t-ca">136 PDFs · 4 divises · caixa real</text>
         <path d="M520,64 L520,124" fill="none" stroke="#9b5cff" stroke-width="1.6" opacity=".55" class="mg-flow" marker-end="url(#mn-arw)"/>
         <circle r="2.6" fill="#9b5cff" color="#9b5cff" class="mg-glow"><animateMotion dur="1.6s" repeatCount="indefinite" path="M520,64 L520,124"/></circle>
 
         <rect class="mg-rect" x="420" y="272" width="200" height="46" rx="10" stroke="#ffce6a" stroke-width="1.4"/>
-        <text x="520" y="292" text-anchor="middle" class="mg-title t-es">SERVICIOS + ADMIN</text><text x="520" y="292" text-anchor="middle" class="mg-title t-en">SERVICES + ADMIN</text>
-        <text x="520" y="307" text-anchor="middle" class="mg-sub t-es">repartidos ∝ ventas entregadas</text><text x="520" y="307" text-anchor="middle" class="mg-sub t-en">allocated ∝ delivered sales</text>
+        <text x="520" y="292" text-anchor="middle" class="mg-title t-es">SERVICIOS + ADMIN</text><text x="520" y="292" text-anchor="middle" class="mg-title t-en">SERVICES + ADMIN</text><text x="520" y="292" text-anchor="middle" class="mg-title t-ca">SERVEIS + ADMIN</text>
+        <text x="520" y="307" text-anchor="middle" class="mg-sub t-es">repartidos ∝ ventas entregadas</text><text x="520" y="307" text-anchor="middle" class="mg-sub t-en">allocated ∝ delivered sales</text><text x="520" y="307" text-anchor="middle" class="mg-sub t-ca">repartits ∝ vendes lliurades</text>
         <path d="M520,272 L520,212" fill="none" stroke="#ffce6a" stroke-width="1.5" opacity=".45" class="mg-flow" marker-end="url(#mn-arw)"/>
 
         <!-- main chain -->
         <rect class="mg-rect" x="14" y="140" width="150" height="56" rx="12" stroke="#8a8a99" stroke-width="1.6"/>
-        <text x="89" y="164" text-anchor="middle" class="mg-title t-es">PEDIDOS · Dropi</text><text x="89" y="164" text-anchor="middle" class="mg-title t-en">ORDERS · Dropi</text>
-        <text x="89" y="180" text-anchor="middle" class="mg-sub t-es">export del mes</text><text x="89" y="180" text-anchor="middle" class="mg-sub t-en">month export</text>
+        <text x="89" y="164" text-anchor="middle" class="mg-title t-es">PEDIDOS · Dropi</text><text x="89" y="164" text-anchor="middle" class="mg-title t-en">ORDERS · Dropi</text><text x="89" y="164" text-anchor="middle" class="mg-title t-ca">COMANDES · Dropi</text>
+        <text x="89" y="180" text-anchor="middle" class="mg-sub t-es">export del mes</text><text x="89" y="180" text-anchor="middle" class="mg-sub t-en">month export</text><text x="89" y="180" text-anchor="middle" class="mg-sub t-ca">export del mes</text>
 
         <path d="M164,168 L196,168" fill="none" stroke="#8a8a99" stroke-width="1.6" opacity=".6" class="mg-flow" marker-end="url(#mn-arw)"/>
 
         <rect class="mg-rect" x="196" y="140" width="164" height="56" rx="12" stroke="#22d3ff" stroke-width="1.8"/>
         <text x="278" y="164" text-anchor="middle" class="mg-title">LIMPIO</text>
-        <text x="278" y="180" text-anchor="middle" class="mg-sub t-es">solo los 4 estatus finales</text><text x="278" y="180" text-anchor="middle" class="mg-sub t-en">only the 4 final statuses</text>
+        <text x="278" y="180" text-anchor="middle" class="mg-sub t-es">solo los 4 estatus finales</text><text x="278" y="180" text-anchor="middle" class="mg-sub t-en">only the 4 final statuses</text><text x="278" y="180" text-anchor="middle" class="mg-sub t-ca">només els 4 estats finals</text>
 
         <path d="M360,168 L420,168" fill="none" stroke="#22d3ff" stroke-width="1.8" opacity=".6" class="mg-flow" marker-end="url(#mn-arw)"/>
         <circle r="3" fill="#22d3ff" color="#22d3ff" class="mg-glow"><animateMotion dur="1.7s" repeatCount="indefinite" path="M360,168 L420,168"/></circle>
 
         <rect class="mg-rect mg-pulse" x="420" y="124" width="200" height="88" rx="13" stroke="url(#mn-grad)" stroke-width="2.4"/>
-        <text x="520" y="153" text-anchor="middle" class="mg-title t-es">UTILIDAD NETA</text><text x="520" y="153" text-anchor="middle" class="mg-title t-en">NET PROFIT</text>
-        <text x="520" y="170" text-anchor="middle" class="mg-sub t-es">ventas ENT − flete − costo − facturas</text><text x="520" y="170" text-anchor="middle" class="mg-sub t-en">DELIVERED sales − shipping − cost − invoices</text>
+        <text x="520" y="153" text-anchor="middle" class="mg-title t-es">UTILIDAD NETA</text><text x="520" y="153" text-anchor="middle" class="mg-title t-en">NET PROFIT</text><text x="520" y="153" text-anchor="middle" class="mg-title t-ca">UTILITAT NETA</text>
+        <text x="520" y="170" text-anchor="middle" class="mg-sub t-es">ventas ENT − flete − costo − facturas</text><text x="520" y="170" text-anchor="middle" class="mg-sub t-en">DELIVERED sales − shipping − cost − invoices</text><text x="520" y="170" text-anchor="middle" class="mg-sub t-ca">vendes LLIU − port − cost − factures</text>
         <text x="520" y="192" text-anchor="middle" class="mg-el" style="fill:#bd9bff">pivot.utilidad_mes()</text>
 
         <path d="M620,168 L700,168" fill="none" stroke="#9b5cff" stroke-width="2" opacity=".7" class="mg-flow" marker-end="url(#mn-arw)"/>
         <circle r="3.2" fill="#9b5cff" color="#9b5cff" class="mg-glow"><animateMotion dur="1.5s" repeatCount="indefinite" path="M620,168 L700,168"/></circle>
         <text x="660" y="152" text-anchor="middle" class="mg-gate">/eval-finanzas</text>
         <text x="660" y="196" text-anchor="middle" class="mg-el t-es" style="fill:#5dff9b">igualdad exacta</text>
-        <text x="660" y="196" text-anchor="middle" class="mg-el t-en" style="fill:#5dff9b">exact equality</text>
+        <text x="660" y="196" text-anchor="middle" class="mg-el t-en" style="fill:#5dff9b">exact equality</text><text x="660" y="196" text-anchor="middle" class="mg-el t-ca" style="fill:#5dff9b">igualtat exacta</text>
 
         <rect class="mg-rect" x="700" y="140" width="132" height="56" rx="12" stroke="#ffce6a" stroke-width="1.8"/>
-        <text x="766" y="164" text-anchor="middle" class="mg-title t-es">¿neta &gt; 0?</text><text x="766" y="164" text-anchor="middle" class="mg-title t-en">net &gt; 0?</text>
-        <text x="766" y="180" text-anchor="middle" class="mg-sub t-es">cláusula 4.1</text><text x="766" y="180" text-anchor="middle" class="mg-sub t-en">clause 4.1</text>
+        <text x="766" y="164" text-anchor="middle" class="mg-title t-es">¿neta &gt; 0?</text><text x="766" y="164" text-anchor="middle" class="mg-title t-en">net &gt; 0?</text><text x="766" y="164" text-anchor="middle" class="mg-title t-ca">neta &gt; 0?</text>
+        <text x="766" y="180" text-anchor="middle" class="mg-sub t-es">cláusula 4.1</text><text x="766" y="180" text-anchor="middle" class="mg-sub t-en">clause 4.1</text><text x="766" y="180" text-anchor="middle" class="mg-sub t-ca">clàusula 4.1</text>
 
         <path d="M832,156 C876,140 884,120 892,100" fill="none" stroke="#5dff9b" stroke-width="1.8" opacity=".6" class="mg-flow" marker-end="url(#mn-arw)"/>
         <path d="M832,180 C876,196 884,216 892,236" fill="none" stroke="#8a8a99" stroke-width="1.8" opacity=".5" class="mg-flow" marker-end="url(#mn-arw)"/>
 
         <rect class="mg-rect" x="892" y="70" width="176" height="58" rx="12" stroke="#5dff9b" stroke-width="1.9"/>
         <text x="980" y="94" text-anchor="middle" class="mg-title">WINNER · 40 / 60</text>
-        <text x="980" y="110" text-anchor="middle" class="mg-sub t-es">60 % para el colaborador</text><text x="980" y="110" text-anchor="middle" class="mg-sub t-en">60 % to the collaborator</text>
+        <text x="980" y="110" text-anchor="middle" class="mg-sub t-es">60 % para el colaborador</text><text x="980" y="110" text-anchor="middle" class="mg-sub t-en">60 % to the collaborator</text><text x="980" y="110" text-anchor="middle" class="mg-sub t-ca">60 % per al col·laborador</text>
 
         <rect class="mg-rect" x="892" y="208" width="176" height="58" rx="12" stroke="#8a8a99" stroke-width="1.7"/>
-        <text x="980" y="232" text-anchor="middle" class="mg-title t-es">NORMAL · 50 / 50</text><text x="980" y="232" text-anchor="middle" class="mg-title t-en">STANDARD · 50 / 50</text>
-        <text x="980" y="248" text-anchor="middle" class="mg-sub t-es">reparto por defecto</text><text x="980" y="248" text-anchor="middle" class="mg-sub t-en">default split</text>
+        <text x="980" y="232" text-anchor="middle" class="mg-title t-es">NORMAL · 50 / 50</text><text x="980" y="232" text-anchor="middle" class="mg-title t-en">STANDARD · 50 / 50</text><text x="980" y="232" text-anchor="middle" class="mg-title t-ca">NORMAL · 50 / 50</text>
+        <text x="980" y="248" text-anchor="middle" class="mg-sub t-es">reparto por defecto</text><text x="980" y="248" text-anchor="middle" class="mg-sub t-en">default split</text><text x="980" y="248" text-anchor="middle" class="mg-sub t-ca">repartiment per defecte</text>
       </svg>
     </div>
-    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle ↔</span><span class="t-en">Pinch to zoom in and read the detail ↔</span></p>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle ↔</span><span class="t-en">Pinch to zoom in and read the detail ↔</span><span class="t-ca">Pessiga per apropar i llegir el detall ↔</span></p>
     <p class="engine-cap reveal t-es">La convención de nombres de campaña en Meta (<b>[NOMBRE]_[PRODUCTO]_[FECHA]</b>) no es cosmética: es lo que permite que el gasto publicitario baje hasta el producto correcto. Si una campaña no la respeta, el sistema lo marca, sin ella la atribución falla y la liquidación se reparte mal.</p>
-    <p class="engine-cap reveal t-en">The Meta campaign naming convention (<b>[NAME]_[PRODUCT]_[DATE]</b>) isn't cosmetic: it's what lets ad spend flow down to the right product. If a campaign breaks it, the system flags it, without it attribution fails and the payout is split wrong.</p>
+    <p class="engine-cap reveal t-en">The Meta campaign naming convention (<b>[NAME]_[PRODUCT]_[DATE]</b>) isn't cosmetic: it's what lets ad spend flow down to the right product. If a campaign breaks it, the system flags it, without it attribution fails and the payout is split wrong.</p><p class="engine-cap reveal t-ca">La convenció de noms de campanya a Meta (<b>[NOM]_[PRODUCTE]_[DATA]</b>) no és cosmètica: és el que permet que la despesa publicitària baixi fins al producte correcte. Si una campanya no la respecta, el sistema ho marca, sense ella l'atribució falla i la liquidació es reparteix malament.</p>
 
     <!-- procedencia -->
     <table class="prov reveal">
       <thead><tr>
-        <th><span class="t-es">Fuente</span><span class="t-en">Source</span></th>
-        <th><span class="t-es">Qué es</span><span class="t-en">What it is</span></th>
-        <th><span class="t-es">Regla dura</span><span class="t-en">Hard rule</span></th>
-        <th><span class="t-es">Uso</span><span class="t-en">Use</span></th>
+        <th><span class="t-es">Fuente</span><span class="t-en">Source</span><span class="t-ca">Font</span></th>
+        <th><span class="t-es">Qué es</span><span class="t-en">What it is</span><span class="t-ca">Què és</span></th>
+        <th><span class="t-es">Regla dura</span><span class="t-en">Hard rule</span><span class="t-ca">Regla dura</span></th>
+        <th><span class="t-es">Uso</span><span class="t-en">Use</span><span class="t-ca">Ús</span></th>
       </tr></thead>
       <tbody>
         <tr>
-          <td data-h="Source" data-h-es="Fuente"><span class="src">LIMPIO</span></td>
-          <td data-h="What it is" data-h-es="Qué es"><span class="t-es">ventas, estatus y flete del export de Dropi</span><span class="t-en">sales, status and shipping from the Dropi export</span></td>
-          <td data-h="Hard rule" data-h-es="Regla dura" class="rule"><span class="t-es">solo los <b>4 estatus finales</b> cuentan para el mes; un pedido en tránsito no tiene resultado todavía</span><span class="t-en">only the <b>4 final statuses</b> count for the month; an in-transit order has no outcome yet</span></td>
-          <td data-h="Use" data-h-es="Uso"><span class="tagp tp-base"><span class="t-es">base</span><span class="t-en">base</span></span></td>
+          <td data-h="Source" data-h-es="Fuente" data-h-ca="Font"><span class="src">LIMPIO</span></td>
+          <td data-h="What it is" data-h-es="Qué es" data-h-ca="Què és"><span class="t-es">ventas, estatus y flete del export de Dropi</span><span class="t-en">sales, status and shipping from the Dropi export</span><span class="t-ca">vendes, estats i port de l'export de Dropi</span></td>
+          <td data-h="Hard rule" data-h-es="Regla dura" data-h-ca="Regla dura" class="rule"><span class="t-es">solo los <b>4 estatus finales</b> cuentan para el mes; un pedido en tránsito no tiene resultado todavía</span><span class="t-en">only the <b>4 final statuses</b> count for the month; an in-transit order has no outcome yet</span><span class="t-ca">només els <b>4 estats finals</b> compten per al mes; una comanda en trànsit encara no té resultat</span></td>
+          <td data-h="Use" data-h-es="Uso" data-h-ca="Ús"><span class="tagp tp-base"><span class="t-es">base</span><span class="t-en">base</span><span class="t-ca">base</span></span></td>
         </tr>
         <tr>
-          <td data-h="Source" data-h-es="Fuente"><span class="src">FACTURA (OCR)</span></td>
-          <td data-h="What it is" data-h-es="Qué es"><span class="t-es">costes, servicios y publicidad leídos de los PDFs</span><span class="t-en">costs, services and ad spend read from the PDFs</span></td>
-          <td data-h="Hard rule" data-h-es="Regla dura" class="rule"><span class="t-es">es lo que se pagó <b>de verdad</b>; un cobro con estado «Error» no cuenta</span><span class="t-en">it's what was <b>actually</b> charged; a payment in "Error" state doesn't count</span></td>
-          <td data-h="Use" data-h-es="Uso"><span class="tagp tp-cash"><span class="t-es">caja · liquidación</span><span class="t-en">cash · payout</span></span></td>
+          <td data-h="Source" data-h-es="Fuente" data-h-ca="Font"><span class="src">FACTURA (OCR)</span></td>
+          <td data-h="What it is" data-h-es="Qué es" data-h-ca="Què és"><span class="t-es">costes, servicios y publicidad leídos de los PDFs</span><span class="t-en">costs, services and ad spend read from the PDFs</span><span class="t-ca">costos, serveis i publicitat llegits dels PDFs</span></td>
+          <td data-h="Hard rule" data-h-es="Regla dura" data-h-ca="Regla dura" class="rule"><span class="t-es">es lo que se pagó <b>de verdad</b>; un cobro con estado «Error» no cuenta</span><span class="t-en">it's what was <b>actually</b> charged; a payment in "Error" state doesn't count</span><span class="t-ca">és el que es va pagar <b>de veritat</b>; un cobrament amb estat «Error» no compta</span></td>
+          <td data-h="Use" data-h-es="Uso" data-h-ca="Ús"><span class="tagp tp-cash"><span class="t-es">caja · liquidación</span><span class="t-en">cash · payout</span><span class="t-ca">caixa · liquidació</span></span></td>
         </tr>
         <tr>
-          <td data-h="Source" data-h-es="Fuente"><span class="src">CSV Ads</span></td>
-          <td data-h="What it is" data-h-es="Qué es"><span class="t-es">impresiones, visitas y compras de Meta</span><span class="t-en">impressions, visits and purchases from Meta</span></td>
-          <td data-h="Hard rule" data-h-es="Regla dura" class="rule"><span class="t-es"><b>nunca</b> reemplaza a la factura como coste real: no trae ni desglose por campaña ni estado del cobro</span><span class="t-en"><b>never</b> replaces the invoice as real cost: it carries neither per-campaign breakdown nor payment state</span></td>
-          <td data-h="Use" data-h-es="Uso"><span class="tagp tp-perf"><span class="t-es">rendimiento · CPA</span><span class="t-en">performance · CPA</span></span></td>
+          <td data-h="Source" data-h-es="Fuente" data-h-ca="Font"><span class="src">CSV Ads</span></td>
+          <td data-h="What it is" data-h-es="Qué es" data-h-ca="Què és"><span class="t-es">impresiones, visitas y compras de Meta</span><span class="t-en">impressions, visits and purchases from Meta</span><span class="t-ca">impressions, visites i compres de Meta</span></td>
+          <td data-h="Hard rule" data-h-es="Regla dura" data-h-ca="Regla dura" class="rule"><span class="t-es"><b>nunca</b> reemplaza a la factura como coste real: no trae ni desglose por campaña ni estado del cobro</span><span class="t-en"><b>never</b> replaces the invoice as real cost: it carries neither per-campaign breakdown nor payment state</span><span class="t-ca"><b>mai</b> substitueix la factura com a cost real: no porta ni desglossament per campanya ni estat del cobrament</span></td>
+          <td data-h="Use" data-h-es="Uso" data-h-ca="Ús"><span class="tagp tp-perf"><span class="t-es">rendimiento · CPA</span><span class="t-en">performance · CPA</span><span class="t-ca">rendiment · CPA</span></span></td>
         </tr>
         <tr>
-          <td data-h="Source" data-h-es="Fuente"><span class="src"><span class="t-es">PRORRATEO</span><span class="t-en">ALLOCATION</span></span></td>
-          <td data-h="What it is" data-h-es="Qué es"><span class="t-es">servicios repartidos entre productos</span><span class="t-en">services split across products</span></td>
-          <td data-h="Hard rule" data-h-es="Regla dura" class="rule"><span class="t-es">es una <b>estimación</b> y se etiqueta como tal; jamás se presenta como coste directo del producto</span><span class="t-en">it's an <b>estimate</b> and is labelled as one; never presented as a direct product cost</span></td>
-          <td data-h="Use" data-h-es="Uso"><span class="tagp tp-est"><span class="t-es">estimado</span><span class="t-en">estimated</span></span></td>
+          <td data-h="Source" data-h-es="Fuente" data-h-ca="Font"><span class="src"><span class="t-es">PRORRATEO</span><span class="t-en">ALLOCATION</span><span class="t-ca">PRORRATEIG</span></span></td>
+          <td data-h="What it is" data-h-es="Qué es" data-h-ca="Què és"><span class="t-es">servicios repartidos entre productos</span><span class="t-en">services split across products</span><span class="t-ca">serveis repartits entre productes</span></td>
+          <td data-h="Hard rule" data-h-es="Regla dura" data-h-ca="Regla dura" class="rule"><span class="t-es">es una <b>estimación</b> y se etiqueta como tal; jamás se presenta como coste directo del producto</span><span class="t-en">it's an <b>estimate</b> and is labelled as one; never presented as a direct product cost</span><span class="t-ca">és una <b>estimació</b> i s'etiqueta com a tal; mai es presenta com a cost directe del producte</span></td>
+          <td data-h="Use" data-h-es="Uso" data-h-ca="Ús"><span class="tagp tp-est"><span class="t-es">estimado</span><span class="t-en">estimated</span><span class="t-ca">estimat</span></span></td>
         </tr>
       </tbody>
     </table>
@@ -1077,7 +1101,7 @@ rate = _TASAS_COP.get(currency_norm, <span class="a">None</span>)
 <span class="cm"># a 29.75 USD invoice landed as 29.75 COP</span>
 <span class="cm"># → cost understated ~4,200× → a losing</span>
 <span class="cm"># product could show up as a </span><span class="r">winner</span>
-</div>
+</div><div class="sb-code reveal t-ca"><span class="cm"># la garantia no la dona el prompt — la força un `return None`</span> <span class="cm"># ecxm/finanzas/facturas.py :: _convertir_cop</span> tasa = _TASAS_COP.get(divisa_norm, <span class="a">None</span>) <span class="a">if</span> tasa <span class="a">is</span> <span class="a">None</span>: <span class="cm"># divisa desconeguda: NO inventar taxa 1.0</span> print(<span class="b">f"AVISO: divisa '{divisa}' desconocida"</span>) <span class="a">return</span> <span class="r">None</span> <span class="cm"># el dashboard mostra " — "</span> <span class="a">return</span> round(imp * tasa, <span class="g">2</span>) <span class="cm"># abans tornava l'import SENSE convertir:</span> <span class="cm"># una factura de 29,75 USD entrava com a 29,75 COP</span> <span class="cm"># → cost subestimat ~4.200× → un producte</span> <span class="cm"># perdedor podia aparèixer com a </span><span class="r">winner</span></div>
       <div class="sb-body reveal t-es">
         <p><strong>Abstenerse cuesta 5 segundos; una cifra falsa cuesta una liquidación.</strong> Ante un dato incompleto (divisa desconocida, factura sin desglose, mes sin cerrar) el sistema devuelve <span class="mono">None</span> y avisa en rojo. Nunca un número plausible sin fuente.</p>
         <p>Ese bug era real y estaba vivo: la conversión silenciosa a tasa 1.0 hacía pasar una factura en dólares por pesos colombianos. No lo cazó ningún test verde: lo cazó preguntarle al código <em>de dónde sale este número</em>.</p>
@@ -1087,7 +1111,7 @@ rate = _TASAS_COP.get(currency_norm, <span class="a">None</span>)
         <p><strong>Abstaining costs 5 seconds; a false figure costs a payout.</strong> Faced with incomplete data (unknown currency, invoice with no breakdown, month not closed) the system returns <span class="mono">None</span> and warns in red. Never a plausible number with no source.</p>
         <p>That bug was real and live: the silent 1.0-rate conversion passed a dollar invoice off as Colombian pesos. No green test caught it: what caught it was asking the code <em>where does this number come from</em>.</p>
         <p>That's why every value carries its provenance and the sources <strong>never substitute for one another</strong>. Mixing the invoice (what I paid) with the Meta CSV (how it performed) was a genuine bug, not a theoretical debate. Today it's a written rule.</p>
-      </div>
+      </div><div class="sb-body reveal t-ca"><p><strong>Abstenir-se costa 5 segons; una xifra falsa costa una liquidació.</strong> Davant d'una dada incompleta (divisa desconeguda, factura sense desglossament, mes sense tancar) el sistema torna <span class="mono">None</span> i avisa en vermell. Mai un número plausible sense font.</p> <p>Aquell bug era real i estava viu: la conversió silenciosa a taxa 1.0 feia passar una factura en dòlars per pesos colombians. No el va caçar cap test verd: el va caçar preguntar al codi <em>d'on surt aquest número</em>.</p> <p>Per això cada dada porta la seva procedència i les fonts <strong>no se substitueixen entre si</strong>. Barrejar la factura (el que vaig pagar) amb el CSV de Meta (com va rendir) va ser un bug de veritat, no una discussió teòrica. Avui és una regla escrita.</p></div>
     </div>
 
     <div class="term reveal">
@@ -1123,13 +1147,13 @@ rate = _TASAS_COP.get(currency_norm, <span class="a">None</span>)
 <span class="cm"># the same inputs give the same number to the peso. A 0.5 % tolerance would</span>
 <span class="cm"># mask a real regression.</span>
 <span class="cm">#</span>
-<span class="cm"># If it BLOCKS, the change </span><span class="hi">does not ship</span><span class="cm">. It isn't a warning: it's a no.</span></pre>
+<span class="cm"># If it BLOCKS, the change </span><span class="hi">does not ship</span><span class="cm">. It isn't a warning: it's a no.</span></pre><pre class="t-ca"><span class="pr">$</span> python tests/golden_finanzas/eval_finanzas.py check-all [check] ENERO 2026 — VEREDICTO: <span class="ok">PASA</span> (5 productos, igualdad exacta) [check] MARZO 2026 — VEREDICTO: <span class="ok">PASA</span> (4 productos, igualdad exacta) [check] ABRIL 2026 — VEREDICTO: <span class="ok">PASA</span> (3 productos, igualdad exacta) <span class="cm"># el gate corre les FUNCIONS REALS del tancament — pivot.calcular_neta_mes()</span> <span class="cm"># i pivot.utilidad_mes() — contra tres mesos tancats i verificats a mà.</span> <span class="cm"># Sense reimplementar la lògica: si el golden i producció divergeixen, és un bug</span> <span class="cm"># del golden, no del negoci.</span> <span class="cm">#</span> <span class="cm"># Igualtat EXACTA, no ±tolerància: l'OCR queda fora d'aquest camí, així que</span> <span class="cm"># dues corregudes sobre els mateixos inputs donen el mateix número al peso. Una</span> <span class="cm"># tolerància del 0,5 % emmascararia una regressió real.</span> <span class="cm">#</span> <span class="cm"># Si BLOQUEJA, el canvi </span><span class="hi">no es tanca</span><span class="cm">. No és un avís: és un no.</span></pre>
     </div>
 
     <div class="truth reveal">
-      <span class="tl grad-text"><span class="t-es">El límite honesto del gate</span><span class="t-en">The gate's honest limit</span></span>
+      <span class="tl grad-text"><span class="t-es">El límite honesto del gate</span><span class="t-en">The gate's honest limit</span><span class="t-ca">El límit honest del gate</span></span>
       <p class="t-es">Ningún agente puede <b>verificar que una factura sea real</b> o que un flete sea correcto. Lo que sí es verificable por ejecución es que <b>la cifra es reproducible desde inputs congelados</b> y que <b>cada número dice de dónde sale</b>. El golden comprueba aritmética y trazabilidad, no verdad de negocio: eso lo firma una persona mirando el mes real. El pipe <b>propone</b>; yo <b>confirmo</b>. Y el ground-truth del golden lo fijo yo, no el pipe: si el pipe pudiera reescribirlo para aprobar, el gate sería un sello de goma.</p>
-      <p class="t-en">No agent can <b>verify that an invoice is real</b> or that a shipping charge is right. What <i>is</i> verifiable by execution is that <b>the figure is reproducible from frozen inputs</b> and that <b>every number states its source</b>. The golden checks arithmetic and traceability, not business truth: a human signs that off looking at the real month. The pipe <b>proposes</b>; I <b>confirm</b>. And the golden's ground truth is set by me, not by the pipe: if the pipe could rewrite it to pass, the gate would be a rubber stamp.</p>
+      <p class="t-en">No agent can <b>verify that an invoice is real</b> or that a shipping charge is right. What <i>is</i> verifiable by execution is that <b>the figure is reproducible from frozen inputs</b> and that <b>every number states its source</b>. The golden checks arithmetic and traceability, not business truth: a human signs that off looking at the real month. The pipe <b>proposes</b>; I <b>confirm</b>. And the golden's ground truth is set by me, not by the pipe: if the pipe could rewrite it to pass, the gate would be a rubber stamp.</p><p class="t-ca">Cap agent pot <b>verificar que una factura sigui real</b> ni que un port sigui correcte. El que sí és verificable per execució és que <b>la xifra és reproduïble des d'inputs congelats</b> i que <b>cada número diu d'on surt</b>. El golden comprova aritmètica i traçabilitat, no veritat de negoci: això ho signa una persona mirant el mes real. El pipe <b>proposa</b>; jo <b>confirmo</b>. I el ground-truth del golden el fixo jo, no el pipe: si el pipe pogués reescriure'l per aprovar, el gate seria un segell de goma.</p>
     </div>
   </div>
 </section>
@@ -1139,47 +1163,47 @@ rate = _TASAS_COP.get(currency_norm, <span class="a">None</span>)
 <section id="precio">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Determinismo · pruébalo tú</span><span class="t-en">Determinism · try it yourself</span></div>
+      <div class="eyebrow"><span class="t-es">Determinismo · pruébalo tú</span><span class="t-en">Determinism · try it yourself</span><span class="t-ca">Determinisme · prova-ho tu</span></div>
       <h2 class="t-es">El precio de venta no lo decide una IA</h2>
-      <h2 class="t-en">The selling price is not decided by an AI</h2>
+      <h2 class="t-en">The selling price is not decided by an AI</h2><h2 class="t-ca">El preu de venda no el decideix una IA</h2>
       <p class="t-es">Es aritmética pura: <span class="mono">precio = (coste × n + costes_fijos) / (1 − margen)</span>, redondeado al siguiente precio psicológico terminado en <span class="hl">.900</span>, más un pequeño optimizador que busca la progresión de descuentos más creíble. <strong>Cero tokens.</strong> Un LLM aquí no aportaría nada y sí podría equivocarse distinto cada vez.</p>
-      <p class="t-en">It's pure arithmetic: <span class="mono">price = (cost × n + fixed_costs) / (1 − margin)</span>, rounded up to the next psychological price ending in <span class="hl">.900</span>, plus a small optimiser that finds the most believable discount progression. <strong>Zero tokens.</strong> An LLM would add nothing here and could get it wrong differently every time.</p>
+      <p class="t-en">It's pure arithmetic: <span class="mono">price = (cost × n + fixed_costs) / (1 − margin)</span>, rounded up to the next psychological price ending in <span class="hl">.900</span>, plus a small optimiser that finds the most believable discount progression. <strong>Zero tokens.</strong> An LLM would add nothing here and could get it wrong differently every time.</p><p class="t-ca">És aritmètica pura: <span class="mono">precio = (coste × n + costes_fijos) / (1 − margen)</span>, arrodonit al següent preu psicològic acabat en <span class="hl">.900</span>, més un petit optimitzador que busca la progressió de descomptes més creïble. <strong>Zero tokens.</strong> Un LLM aquí no aportaria res i sí que podria equivocar-se diferent cada vegada.</p>
     </div>
 
     <div class="calc reveal">
       <div class="calc-top">
-        <span class="cl"><span class="t-es">coste del producto en Dropi</span><span class="t-en">product cost at Dropi</span></span>
-        <span class="cn"><b id="pp-v">$30.000</b> <span class="t-es">COP</span><span class="t-en">COP</span></span>
+        <span class="cl"><span class="t-es">coste del producto en Dropi</span><span class="t-en">product cost at Dropi</span><span class="t-ca">cost del producte a Dropi</span></span>
+        <span class="cn"><b id="pp-v">$30.000</b> <span class="t-es">COP</span><span class="t-en">COP</span><span class="t-ca">COP</span></span>
       </div>
       <input type="range" min="5000" max="200000" step="1000" value="30000" id="pp-range" aria-label="Coste del producto en COP">
       <div class="tiers">
-        <div class="tier"><div class="tk">x1</div><div class="tp"><b id="p1">$87.900</b></div><div class="td"><span class="t-es">antes</span><span class="t-en">was</span> <s id="g1v">$200.000</s> · <span class="off" id="e26v">55% off</span></div></div>
-        <div class="tier"><div class="tk">x2</div><div class="tp"><b id="p2">$118.900</b></div><div class="td"><span class="t-es">descuento mostrado</span><span class="t-en">displayed discount</span> <span class="off" id="h27v">65%</span></div></div>
-        <div class="tier"><div class="tk">x3</div><div class="tp"><b id="p3">$150.900</b></div><div class="td"><span class="t-es">descuento mostrado</span><span class="t-en">displayed discount</span> <span class="off" id="h28v">75%</span></div></div>
+        <div class="tier"><div class="tk">x1</div><div class="tp"><b id="p1">$87.900</b></div><div class="td"><span class="t-es">antes</span><span class="t-en">was</span><span class="t-ca">abans</span> <s id="g1v">$200.000</s> · <span class="off" id="e26v">55% off</span></div></div>
+        <div class="tier"><div class="tk">x2</div><div class="tp"><b id="p2">$118.900</b></div><div class="td"><span class="t-es">descuento mostrado</span><span class="t-en">displayed discount</span><span class="t-ca">descompte mostrat</span> <span class="off" id="h27v">65%</span></div></div>
+        <div class="tier"><div class="tk">x3</div><div class="tp"><b id="p3">$150.900</b></div><div class="td"><span class="t-es">descuento mostrado</span><span class="t-en">displayed discount</span><span class="t-ca">descompte mostrat</span> <span class="off" id="h28v">75%</span></div></div>
       </div>
       <div class="calc-foot">
         <span class="cf-l">
           <span class="t-es"><b>CPA de equilibrio</b>: lo máximo que puedo pagar por una venta antes de perder dinero. Es el número que decide si un anuncio sigue vivo o se apaga.</span>
-          <span class="t-en"><b>Break-even CPA</b>: the most I can pay for one sale before losing money. It's the number that decides whether an ad stays on or gets killed.</span>
+          <span class="t-en"><b>Break-even CPA</b>: the most I can pay for one sale before losing money. It's the number that decides whether an ad stays on or gets killed.</span><span class="t-ca"><b>CPA d'equilibri</b>: el màxim que puc pagar per una venda abans de perdre diners. És el número que decideix si un anunci segueix viu o s'apaga.</span>
         </span>
-        <span class="calc-be"><b id="be-v">$4.967</b><small><span class="t-es">CPA breakeven COP</span><span class="t-en">break-even CPA, COP</span></small></span>
+        <span class="calc-be"><b id="be-v">$4.967</b><small><span class="t-es">CPA breakeven COP</span><span class="t-en">break-even CPA, COP</span><span class="t-ca">CPA breakeven COP</span></small></span>
       </div>
       <div class="calc-params">
-        <span><span class="t-es">flete base</span><span class="t-en">base shipping</span> <b>$17.063</b></span>
-        <span><span class="t-es">% entrega</span><span class="t-en">delivery rate</span> <b>75%</b></span>
-        <span><span class="t-es">admin/pedido</span><span class="t-en">admin/order</span> <b>$2.909</b></span>
-        <span><span class="t-es">CPA objetivo</span><span class="t-en">target CPA</span> <b>$15.000</b></span>
-        <span><span class="t-es">margen</span><span class="t-en">margin</span> <b>5%</b></span>
+        <span><span class="t-es">flete base</span><span class="t-en">base shipping</span><span class="t-ca">port base</span> <b>$17.063</b></span>
+        <span><span class="t-es">% entrega</span><span class="t-en">delivery rate</span><span class="t-ca">% lliurament</span> <b>75%</b></span>
+        <span><span class="t-es">admin/pedido</span><span class="t-en">admin/order</span><span class="t-ca">admin/comanda</span> <b>$2.909</b></span>
+        <span><span class="t-es">CPA objetivo</span><span class="t-en">target CPA</span><span class="t-ca">CPA objectiu</span> <b>$15.000</b></span>
+        <span><span class="t-es">margen</span><span class="t-en">margin</span><span class="t-ca">marge</span> <b>5%</b></span>
       </div>
       <div class="calc-note">
         <span class="t-es">Esto <b>no es una maqueta</b>: es el algoritmo de <span class="mono">ecxm/predev/precios.py</span> portado a JavaScript línea por línea, incluido el redondeo bancario de Python y el optimizador de progresión de descuentos. Lo verifiqué contra los <b>mismos 7 casos golden</b> que blindan la versión en Python: los 9 campos coinciden al peso en los 7. Los parámetros de arriba son los valores por defecto del repo; en producción se leen del Excel de la tienda.</span>
-        <span class="t-en">This is <b>not a mock-up</b>: it's the algorithm from <span class="mono">ecxm/predev/precios.py</span> ported to JavaScript line by line, including Python's banker's rounding and the discount-progression optimiser. I verified it against the <b>same 7 golden cases</b> that guard the Python version: all 9 fields match to the peso across all 7. The parameters above are the repo defaults; in production they're read from the store's spreadsheet.</span>
+        <span class="t-en">This is <b>not a mock-up</b>: it's the algorithm from <span class="mono">ecxm/predev/precios.py</span> ported to JavaScript line by line, including Python's banker's rounding and the discount-progression optimiser. I verified it against the <b>same 7 golden cases</b> that guard the Python version: all 9 fields match to the peso across all 7. The parameters above are the repo defaults; in production they're read from the store's spreadsheet.</span><span class="t-ca">Això <b>no és una maqueta</b>: és l'algorisme de <span class="mono">ecxm/predev/precios.py</span> portat a JavaScript línia per línia, inclòs l'arrodoniment bancari de Python i l'optimitzador de progressió de descomptes. El vaig verificar contra els <b>mateixos 7 casos golden</b> que blinden la versió en Python: els 9 camps coincideixen al peso als 7. Els paràmetres de dalt són els valors per defecte del repo; en producció es llegeixen de l'Excel de la botiga.</span>
       </div>
     </div>
 
     <div class="scale-facts">
-      <div class="sf reveal"><div class="sfn"><b>7/7</b></div><h4><span class="t-es">casos golden idénticos</span><span class="t-en">identical golden cases</span></h4><p><span class="t-es">El port JS y el original Python coinciden en los 9 campos, incluidos los bordes (entrega 0 %, CPA explícito).</span><span class="t-en">The JS port and the Python original agree on all 9 fields, edge cases included (0 % delivery, explicit CPA).</span></p></div>
-      <div class="sf reveal"><div class="sfn"><b>0</b></div><h4><span class="t-es">tolerancia</span><span class="t-en">tolerance</span></h4><p><span class="t-es">Redondeo a 2 decimales solo para neutralizar el ruido del float. Nada más se perdona.</span><span class="t-en">Rounding to 2 decimals only to neutralise float noise. Nothing else is forgiven.</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>7/7</b></div><h4><span class="t-es">casos golden idénticos</span><span class="t-en">identical golden cases</span><span class="t-ca">casos golden idèntics</span></h4><p><span class="t-es">El port JS y el original Python coinciden en los 9 campos, incluidos los bordes (entrega 0 %, CPA explícito).</span><span class="t-en">The JS port and the Python original agree on all 9 fields, edge cases included (0 % delivery, explicit CPA).</span><span class="t-ca">El port JS i l'original Python coincideixen als 9 camps, inclosos els límits (lliurament 0 %, CPA explícit).</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>0</b></div><h4><span class="t-es">tolerancia</span><span class="t-en">tolerance</span><span class="t-ca">tolerància</span></h4><p><span class="t-es">Redondeo a 2 decimales solo para neutralizar el ruido del float. Nada más se perdona.</span><span class="t-en">Rounding to 2 decimals only to neutralise float noise. Nothing else is forgiven.</span><span class="t-ca">Arrodoniment a 2 decimals només per neutralitzar el soroll del float. Res més es perdona.</span></p></div>
     </div>
   </div>
 </section>
@@ -1189,18 +1213,18 @@ rate = _TASAS_COP.get(currency_norm, <span class="a">None</span>)
 <section id="cero">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Ingeniería con resultado económico</span><span class="t-en">Engineering with a financial result</span></div>
+      <div class="eyebrow"><span class="t-es">Ingeniería con resultado económico</span><span class="t-en">Engineering with a financial result</span><span class="t-ca">Enginyeria amb resultat econòmic</span></div>
       <h2 class="t-es">El pipeline que dejó de pagar por pensar</h2>
-      <h2 class="t-en">The pipeline that stopped paying to think</h2>
+      <h2 class="t-en">The pipeline that stopped paying to think</h2><h2 class="t-ca">El pipeline que va deixar de pagar per pensar</h2>
       <p class="t-es">Clonar la landing de un competidor empezó como lo empieza todo el mundo: mandarle capturas a un modelo de visión y pedirle que la reconstruya. Funcionaba, costaba <strong>~$0,05 por landing</strong> y era <strong>distinto en cada corrida</strong>. Hoy el mismo trabajo lo hacen <span class="hl">26 extractores deterministas y 9 parsers de reseñas</span> sobre el HTML real: mismo input, mismo output, <strong>$0</strong>. Vision sigue ahí, pero solo detrás de un flag explícito, nunca como fallback silencioso.</p>
-      <p class="t-en">Cloning a competitor's landing page started the way everyone starts: send screenshots to a vision model and ask it to rebuild the page. It worked, it cost <strong>~$0.05 per landing</strong> and it was <strong>different on every run</strong>. Today the same job is done by <span class="hl">26 deterministic extractors and 9 review parsers</span> over the real HTML: same input, same output, <strong>$0</strong>. Vision is still there, but only behind an explicit flag, never as a silent fallback.</p>
+      <p class="t-en">Cloning a competitor's landing page started the way everyone starts: send screenshots to a vision model and ask it to rebuild the page. It worked, it cost <strong>~$0.05 per landing</strong> and it was <strong>different on every run</strong>. Today the same job is done by <span class="hl">26 deterministic extractors and 9 review parsers</span> over the real HTML: same input, same output, <strong>$0</strong>. Vision is still there, but only behind an explicit flag, never as a silent fallback.</p><p class="t-ca">Clonar la landing d'un competidor va començar com ho comença tothom: enviar-li captures a un model de visió i demanar-li que la reconstrueixi. Funcionava, costava <strong>~$0,05 per landing</strong> i era <strong>diferent en cada correguda</strong>. Avui la mateixa feina la fan <span class="hl">26 extractors deterministes i 9 parsers de ressenyes</span> sobre l'HTML real: mateix input, mateix output, <strong>$0</strong>. Vision hi segueix, però només darrere d'un flag explícit, mai com a fallback silenciós.</p>
     </div>
 
     <div class="scale-facts">
-      <div class="sf reveal"><div class="sfn"><b>5</b></div><h4><span class="t-es">plataformas cubiertas</span><span class="t-en">platforms covered</span></h4><p><span class="t-es">Shopify, Funnelish, GemPages, Pagefly y Tiendanube, cada una con su forma de esconder el mismo contenido.</span><span class="t-en">Shopify, Funnelish, GemPages, Pagefly and Tiendanube, each hiding the same content its own way.</span></p></div>
-      <div class="sf reveal"><div class="sfn"><b>27</b></div><h4><span class="t-es">landings de regresión</span><span class="t-en">regression landings</span></h4><p><span class="t-es">Un set real de competidores. Se regeneran una a una y se diffea el HTML: el validator en verde no basta.</span><span class="t-en">A real competitor set. Regenerated one by one with an HTML diff: a green validator isn't enough.</span></p></div>
-      <div class="sf reveal"><div class="sfn"><b>4</b></div><h4><span class="t-es">goldens congelados</span><span class="t-en">frozen goldens</span></h4><p><span class="t-es">Partidos por zona (copy · CSS · footer) y con las URLs normalizadas, para que el diff detecte drift y no ruido.</span><span class="t-en">Split by zone (copy · CSS · footer) with normalised URLs, so the diff catches drift, not noise.</span></p></div>
-      <div class="sf reveal"><div class="sfn"><b>8.549</b></div><h4><span class="t-es">líneas del extractor</span><span class="t-en">extractor lines</span></h4><p><span class="t-es">El precio real de la determinación: cada caso raro de cada builder, escrito y cubierto por el set.</span><span class="t-en">The real price of determinism: every builder's weird case, written down and covered by the set.</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>5</b></div><h4><span class="t-es">plataformas cubiertas</span><span class="t-en">platforms covered</span><span class="t-ca">plataformes cobertes</span></h4><p><span class="t-es">Shopify, Funnelish, GemPages, Pagefly y Tiendanube, cada una con su forma de esconder el mismo contenido.</span><span class="t-en">Shopify, Funnelish, GemPages, Pagefly and Tiendanube, each hiding the same content its own way.</span><span class="t-ca">Shopify, Funnelish, GemPages, Pagefly i Tiendanube, cadascuna amb la seva manera d'amagar el mateix contingut.</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>27</b></div><h4><span class="t-es">landings de regresión</span><span class="t-en">regression landings</span><span class="t-ca">landings de regressió</span></h4><p><span class="t-es">Un set real de competidores. Se regeneran una a una y se diffea el HTML: el validator en verde no basta.</span><span class="t-en">A real competitor set. Regenerated one by one with an HTML diff: a green validator isn't enough.</span><span class="t-ca">Un set real de competidors. Es regeneren una a una i es fa diff de l'HTML: el validator en verd no n'hi ha prou.</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>4</b></div><h4><span class="t-es">goldens congelados</span><span class="t-en">frozen goldens</span><span class="t-ca">goldens congelats</span></h4><p><span class="t-es">Partidos por zona (copy · CSS · footer) y con las URLs normalizadas, para que el diff detecte drift y no ruido.</span><span class="t-en">Split by zone (copy · CSS · footer) with normalised URLs, so the diff catches drift, not noise.</span><span class="t-ca">Partits per zona (copy · CSS · footer) i amb les URLs normalitzades, perquè el diff detecti drift i no soroll.</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>8.549</b></div><h4><span class="t-es">líneas del extractor</span><span class="t-en">extractor lines</span><span class="t-ca">línies de l'extractor</span></h4><p><span class="t-es">El precio real de la determinación: cada caso raro de cada builder, escrito y cubierto por el set.</span><span class="t-en">The real price of determinism: every builder's weird case, written down and covered by the set.</span><span class="t-ca">El preu real de la determinació: cada cas rar de cada builder, escrit i cobert pel set.</span></p></div>
     </div>
 
     <div class="sb" style="margin-top:44px">
@@ -1237,7 +1261,7 @@ report = validar_landing(output_dir)
         output_dir, report.failures)
 <span class="cm"># CLI → exit 1 · dashboard → catches the</span>
 <span class="cm"># exception and exposes the HTML to debug</span>
-</div>
+</div><div class="sb-code reveal t-ca"><span class="cm"># el gate no avisava: deixava passar</span> <span class="cm"># replicar_plantilla.py, durant 11 dies</span> report = validar_landing(output_dir) <span class="a">if</span> <span class="a">not</span> report.passed: print(<span class="r">"[WARN] la réplica tiene fallos"</span>) <span class="cm"># "no avortem un generat</span> <span class="cm"># imperfecte, només avisem"</span> <span class="cm"># ── després ──────────────────────────</span> <span class="a">if</span> <span class="a">not</span> report.passed: <span class="a">raise</span> <span class="g">ReplicaValidatorFailed</span>( output_dir, report.failures) <span class="cm"># CLI → exit 1 · dashboard → captura l'</span> <span class="cm"># excepció i exposa l'HTML per depurar</span></div>
       <div class="sb-body reveal t-es">
         <p>El validator existía desde hacía semanas, con su lista de placeholders prohibidos y sus checks de estructura. Y aun así, <strong>once días de landings con fallos pasaron el gate</strong>, porque el gate solo imprimía un warning.</p>
         <p><strong>Una defensa que solo avisa entrena a su dueño a ignorarla.</strong> Hoy la regla del repo es explícita: toda defensa nueva tiene que abortar: <span class="mono">exit ≠ 0</span>, <span class="mono">raise</span>, o un fallo detectable aguas abajo. Si hace falta no bloquear en un caso concreto, se hace con un flag visible, no con silencio por defecto.</p>
@@ -1247,7 +1271,7 @@ report = validar_landing(output_dir)
         <p>The validator had existed for weeks, with its forbidden-placeholder list and its structure checks. And still, <strong>eleven days of broken landings sailed through the gate</strong>, because the gate only printed a warning.</p>
         <p><strong>A defense that merely warns trains its owner to ignore it.</strong> The repo rule is now explicit: every new defense must abort: <span class="mono">exit ≠ 0</span>, <span class="mono">raise</span>, or a failure detectable downstream. If a specific case genuinely shouldn't block, that's done with a visible flag, not with silence by default.</p>
         <p>The same principle fixed a subtler failure: a <span class="mono">sys.exit()</span> inside a library raises <span class="mono">SystemExit</span>, which <em>doesn't inherit from Exception</em>, so it sailed straight through every <span class="mono">except Exception</span> in the dashboard and took the whole UI down.</p>
-      </div>
+      </div><div class="sb-body reveal t-ca"><p>El validator existia des de feia setmanes, amb la seva llista de placeholders prohibits i els seus checks d'estructura. I tot i així, <strong>onze dies de landings amb fallades van passar el gate</strong>, perquè el gate només imprimia un warning.</p> <p><strong>Una defensa que només avisa entrena el seu amo a ignorar-la.</strong> Avui la regla del repo és explícita: tota defensa nova ha d'avortar: <span class="mono">exit ≠ 0</span>, <span class="mono">raise</span>, o una fallada detectable aigües avall. Si cal no bloquejar en un cas concret, es fa amb un flag visible, no amb silenci per defecte.</p> <p>El mateix principi va arreglar una altra fallada més subtil: un <span class="mono">sys.exit()</span> dins d'una llibreria llança <span class="mono">SystemExit</span>, que <em>no hereta d'Exception</em>, així que travessava tots els <span class="mono">except Exception</span> del dashboard i s'enduia per davant la interfície sencera.</p></div>
     </div>
   </div>
 </section>
@@ -1257,67 +1281,67 @@ report = validar_landing(output_dir)
 <section id="decisiones">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Lo que decidí NO construir</span><span class="t-en">What I decided NOT to build</span></div>
+      <div class="eyebrow"><span class="t-es">Lo que decidí NO construir</span><span class="t-en">What I decided NOT to build</span><span class="t-ca">El que vaig decidir NO construir</span></div>
       <h2 class="t-es">Decisiones medidas, no intuidas</h2>
-      <h2 class="t-en">Measured decisions, not guessed</h2>
+      <h2 class="t-en">Measured decisions, not guessed</h2><h2 class="t-ca">Decisions mesurades, no intuïdes</h2>
       <p class="t-es">El activo que no se puede fingir no es el código: es el <strong>juicio</strong>. Cada una de estas ideas era razonable y tentadora; todas murieron con un dato concreto delante. Varias iban <strong>en contra de lo que yo quería que fuera verdad</strong>, y por eso están aquí.</p>
-      <p class="t-en">The asset you can't fake isn't the code: it's <strong>judgment</strong>. Every one of these ideas was reasonable and tempting; all of them died with a concrete piece of data in front of them. Several went <strong>against what I wanted to be true</strong>, which is exactly why they're here.</p>
+      <p class="t-en">The asset you can't fake isn't the code: it's <strong>judgment</strong>. Every one of these ideas was reasonable and tempting; all of them died with a concrete piece of data in front of them. Several went <strong>against what I wanted to be true</strong>, which is exactly why they're here.</p><p class="t-ca">L'actiu que no es pot fingir no és el codi: és el <strong>criteri</strong>. Cadascuna d'aquestes idees era raonable i temptadora; totes van morir amb una dada concreta al davant. Diverses anaven <strong>en contra del que jo volia que fos veritat</strong>, i per això són aquí.</p>
     </div>
 
     <table class="stbl reveal">
       <thead><tr>
-        <th><span class="t-es">Idea</span><span class="t-en">Idea</span></th>
-        <th><span class="t-es">Por qué tentaba</span><span class="t-en">Why it tempted</span></th>
-        <th><span class="t-es">Qué encontré</span><span class="t-en">What I found</span></th>
-        <th><span class="t-es">Veredicto</span><span class="t-en">Verdict</span></th>
+        <th><span class="t-es">Idea</span><span class="t-en">Idea</span><span class="t-ca">Idea</span></th>
+        <th><span class="t-es">Por qué tentaba</span><span class="t-en">Why it tempted</span><span class="t-ca">Per què temptava</span></th>
+        <th><span class="t-es">Qué encontré</span><span class="t-en">What I found</span><span class="t-ca">Què vaig trobar</span></th>
+        <th><span class="t-es">Veredicto</span><span class="t-en">Verdict</span><span class="t-ca">Veredicte</span></th>
       </tr></thead>
       <tbody>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">CSV de Meta como fuente de coste</span><span class="t-en">Meta CSV as the cost source</span></span><span class="sd"><span class="t-es">un solo archivo con todo el gasto del mes</span><span class="t-en">one file with the whole month's spend</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">un download y listo, sin OCR</span><span class="t-en">one download and done, no OCR</span></td>
-          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">sin desglose por campaña ni estado Pagado/Error; los PDFs sí lo traen</span><span class="t-en">no per-campaign breakdown, no Paid/Error state; the PDFs have both</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Descartado como coste</span><span class="t-en">Ruled out as cost</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">CSV de Meta como fuente de coste</span><span class="t-en">Meta CSV as the cost source</span><span class="t-ca">CSV de Meta com a font de cost</span></span><span class="sd"><span class="t-es">un solo archivo con todo el gasto del mes</span><span class="t-en">one file with the whole month's spend</span><span class="t-ca">un sol fitxer amb tota la despesa del mes</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">un download y listo, sin OCR</span><span class="t-en">one download and done, no OCR</span><span class="t-ca">un download i llestos, sense OCR</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" data-h-ca="Què vaig trobar" class="mono"><span class="t-es">sin desglose por campaña ni estado Pagado/Error; los PDFs sí lo traen</span><span class="t-en">no per-campaign breakdown, no Paid/Error state; the PDFs have both</span><span class="t-ca">sense desglossament per campanya ni estat Pagat/Error; els PDFs sí que ho porten</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill"><span class="t-es">Descartado como coste</span><span class="t-en">Ruled out as cost</span><span class="t-ca">Descartat com a cost</span></span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Contar el flete de todos los pedidos</span><span class="t-en">Count shipping on every order</span></span><span class="sd"><span class="t-es">al fin y al cabo es flete que se paga</span><span class="t-en">after all, it's shipping that gets paid</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">parecía más conservador</span><span class="t-en">it looked more conservative</span></td>
-          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">la suma por producto dejaba de cuadrar con el total del mes</span><span class="t-en">the per-product sum stopped matching the month total</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Solo 4 estatus finales</span><span class="t-en">Final 4 statuses only</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">Contar el flete de todos los pedidos</span><span class="t-en">Count shipping on every order</span><span class="t-ca">Comptar el port de totes les comandes</span></span><span class="sd"><span class="t-es">al fin y al cabo es flete que se paga</span><span class="t-en">after all, it's shipping that gets paid</span><span class="t-ca">al capdavall és port que es paga</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">parecía más conservador</span><span class="t-en">it looked more conservative</span><span class="t-ca">semblava més conservador</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" data-h-ca="Què vaig trobar" class="mono"><span class="t-es">la suma por producto dejaba de cuadrar con el total del mes</span><span class="t-en">the per-product sum stopped matching the month total</span><span class="t-ca">la suma per producte deixava de quadrar amb el total del mes</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill"><span class="t-es">Solo 4 estatus finales</span><span class="t-en">Final 4 statuses only</span><span class="t-ca">Només 4 estats finals</span></span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Vision para clonar reseñas</span><span class="t-en">Vision to clone reviews</span></span><span class="sd"><span class="t-es">cada competidor pinta sus reseñas distinto</span><span class="t-en">every competitor renders reviews differently</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">«un modelo lo resuelve todo»</span><span class="t-en">"one model solves everything"</span></td>
-          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">9 parsers cubren el set entero; sin parser → sección omitida, no invención</span><span class="t-en">9 parsers cover the whole set; no parser → section omitted, nothing invented</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Fuera del pipe · $0</span><span class="t-en">Out of the pipe · $0</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">Vision para clonar reseñas</span><span class="t-en">Vision to clone reviews</span><span class="t-ca">Vision per clonar ressenyes</span></span><span class="sd"><span class="t-es">cada competidor pinta sus reseñas distinto</span><span class="t-en">every competitor renders reviews differently</span><span class="t-ca">cada competidor pinta les seves ressenyes diferent</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">«un modelo lo resuelve todo»</span><span class="t-en">"one model solves everything"</span><span class="t-ca">«un model ho resol tot»</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" data-h-ca="Què vaig trobar" class="mono"><span class="t-es">9 parsers cubren el set entero; sin parser → sección omitida, no invención</span><span class="t-en">9 parsers cover the whole set; no parser → section omitted, nothing invented</span><span class="t-ca">9 parsers cobreixen el set sencer; sense parser → secció omesa, no invenció</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill"><span class="t-es">Fuera del pipe · $0</span><span class="t-en">Out of the pipe · $0</span><span class="t-ca">Fora del pipe · $0</span></span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Servidor, n8n, FastAPI, Postgres</span><span class="t-en">Server, n8n, FastAPI, Postgres</span></span><span class="sd"><span class="t-es">la arquitectura «seria»</span><span class="t-en">the "serious" architecture</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">se ve mejor en un diagrama</span><span class="t-en">it looks better on a diagram</span></td>
-          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">5–15 tests/semana y un operador → infra sin usuarios y con mantenimiento</span><span class="t-en">5–15 tests/week and one operator → infra with no users and real upkeep</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-marg"><span class="t-es">Local + SQLite</span><span class="t-en">Local + SQLite</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">Servidor, n8n, FastAPI, Postgres</span><span class="t-en">Server, n8n, FastAPI, Postgres</span><span class="t-ca">Servidor, n8n, FastAPI, Postgres</span></span><span class="sd"><span class="t-es">la arquitectura «seria»</span><span class="t-en">the "serious" architecture</span><span class="t-ca">l'arquitectura «seriosa»</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">se ve mejor en un diagrama</span><span class="t-en">it looks better on a diagram</span><span class="t-ca">es veu millor en un diagrama</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" data-h-ca="Què vaig trobar" class="mono"><span class="t-es">5–15 tests/semana y un operador → infra sin usuarios y con mantenimiento</span><span class="t-en">5–15 tests/week and one operator → infra with no users and real upkeep</span><span class="t-ca">5–15 tests/setmana i un operador → infra sense usuaris i amb manteniment</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-marg"><span class="t-es">Local + SQLite</span><span class="t-en">Local + SQLite</span><span class="t-ca">Local + SQLite</span></span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Tasa 1.0 para divisa desconocida</span><span class="t-en">1.0 rate for unknown currency</span></span><span class="sd"><span class="t-es">así el importe nunca sale vacío</span><span class="t-en">that way the amount is never empty</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">una tabla sin huecos da confianza</span><span class="t-en">a table with no gaps feels trustworthy</span></td>
-          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">subestimaba un coste en USD ~4.200× → podía convertir un perdedor en winner</span><span class="t-en">understated a USD cost ~4,200× → could turn a loser into a winner</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill">None + <span class="t-es">aviso</span><span class="t-en">warning</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">Tasa 1.0 para divisa desconocida</span><span class="t-en">1.0 rate for unknown currency</span><span class="t-ca">Taxa 1.0 per a divisa desconeguda</span></span><span class="sd"><span class="t-es">así el importe nunca sale vacío</span><span class="t-en">that way the amount is never empty</span><span class="t-ca">així l'import mai surt buit</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">una tabla sin huecos da confianza</span><span class="t-en">a table with no gaps feels trustworthy</span><span class="t-ca">una taula sense forats dona confiança</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" data-h-ca="Què vaig trobar" class="mono"><span class="t-es">subestimaba un coste en USD ~4.200× → podía convertir un perdedor en winner</span><span class="t-en">understated a USD cost ~4,200× → could turn a loser into a winner</span><span class="t-ca">subestimava un cost en USD ~4.200× → podia convertir un perdedor en winner</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill">None + <span class="t-es">aviso</span><span class="t-en">warning</span><span class="t-ca">avís</span></span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Borrar la caché de LLM al cambiar un prompt</span><span class="t-en">Wipe the LLM cache on prompt change</span></span><span class="sd"><span class="t-es">«está sucia, mejor empezar limpio»</span><span class="t-en">"it's dirty, better start clean"</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">higiene aparente</span><span class="t-en">apparent hygiene</span></td>
-          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">268 entradas borradas = 268 llamadas ya pagadas que hubo que repagar</span><span class="t-en">268 entries deleted = 268 already-paid calls that had to be paid again</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-inc"><span class="t-es">Nunca sin permiso</span><span class="t-en">Never without asking</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">Borrar la caché de LLM al cambiar un prompt</span><span class="t-en">Wipe the LLM cache on prompt change</span><span class="t-ca">Esborrar la memòria cau d'LLM en canviar un prompt</span></span><span class="sd"><span class="t-es">«está sucia, mejor empezar limpio»</span><span class="t-en">"it's dirty, better start clean"</span><span class="t-ca">«està bruta, millor començar net»</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">higiene aparente</span><span class="t-en">apparent hygiene</span><span class="t-ca">higiene aparent</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" data-h-ca="Què vaig trobar" class="mono"><span class="t-es">268 entradas borradas = 268 llamadas ya pagadas que hubo que repagar</span><span class="t-en">268 entries deleted = 268 already-paid calls that had to be paid again</span><span class="t-ca">268 entrades esborrades = 268 crides ja pagades que es van haver de repagar</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-inc"><span class="t-es">Nunca sin permiso</span><span class="t-en">Never without asking</span><span class="t-ca">Mai sense permís</span></span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Forzar COP en la publicidad</span><span class="t-en">Force COP on ad spend</span></span><span class="sd"><span class="t-es">hoy todas las cuentas facturan en pesos</span><span class="t-en">today every account bills in pesos</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">funciona… hasta que deje de hacerlo</span><span class="t-en">it works… until it doesn't</span></td>
-          <td data-h="What I found" data-h-es="Qué encontré" class="mono"><span class="t-es">la primera cuenta que facture en USD escondería un ×4.200 sin avisar</span><span class="t-en">the first USD-billing account would silently hide a ×4,200</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-inc"><span class="t-es">Riesgo documentado</span><span class="t-en">Documented risk</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">Forzar COP en la publicidad</span><span class="t-en">Force COP on ad spend</span><span class="t-ca">Forçar COP a la publicitat</span></span><span class="sd"><span class="t-es">hoy todas las cuentas facturan en pesos</span><span class="t-en">today every account bills in pesos</span><span class="t-ca">avui tots els comptes facturen en pesos</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">funciona… hasta que deje de hacerlo</span><span class="t-en">it works… until it doesn't</span><span class="t-ca">funciona… fins que deixi de fer-ho</span></td>
+          <td data-h="What I found" data-h-es="Qué encontré" data-h-ca="Què vaig trobar" class="mono"><span class="t-es">la primera cuenta que facture en USD escondería un ×4.200 sin avisar</span><span class="t-en">the first USD-billing account would silently hide a ×4,200</span><span class="t-ca">el primer compte que facturi en USD amagaria un ×4.200 sense avisar</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-inc"><span class="t-es">Riesgo documentado</span><span class="t-en">Documented risk</span><span class="t-ca">Risc documentat</span></span></td>
         </tr>
       </tbody>
     </table>
     <p class="engine-cap reveal t-es" style="margin-top:22px">La última fila no es un fallo mío que se me olvidó: es un <b>footgun conocido, escrito y fechado</b> en el backlog, con la condición exacta que lo disparará. Prefiero un riesgo documentado y visible a un riesgo resuelto a medias en silencio.</p>
-    <p class="engine-cap reveal t-en" style="margin-top:22px">That last row isn't a mistake I forgot about: it's a <b>known footgun, written down and dated</b> in the backlog, with the exact condition that will trigger it. I'd rather have a documented, visible risk than one half-fixed in silence.</p>
+    <p class="engine-cap reveal t-en" style="margin-top:22px">That last row isn't a mistake I forgot about: it's a <b>known footgun, written down and dated</b> in the backlog, with the exact condition that will trigger it. I'd rather have a documented, visible risk than one half-fixed in silence.</p><p class="engine-cap reveal t-ca" style="margin-top:22px">L'última fila no és una fallada meva que se'm va oblidar: és un <b>footgun conegut, escrit i datat</b> al backlog, amb la condició exacta que el dispararà. Prefereixo un risc documentat i visible a un risc resolt a mitges en silenci.</p>
   </div>
 </section>
 
@@ -1326,17 +1350,17 @@ report = validar_landing(output_dir)
 <section id="arquitectura">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Arquitectura · WAT</span><span class="t-en">Architecture · WAT</span></div>
+      <div class="eyebrow"><span class="t-es">Arquitectura · WAT</span><span class="t-en">Architecture · WAT</span><span class="t-ca">Arquitectura · WAT</span></div>
       <h2 class="t-es">La IA razona; el código determinista ejecuta</h2>
-      <h2 class="t-en">The AI reasons; deterministic code executes</h2>
+      <h2 class="t-en">The AI reasons; deterministic code executes</h2><h2 class="t-ca">La IA raona; el codi determinista executa</h2>
       <p class="t-es">Todo el repo está montado sobre una idea aritmética muy simple: si cada paso de una cadena es un <strong>90 % fiable</strong>, cinco pasos seguidos te dejan en <strong>59 %</strong>. Por eso la IA no ejecuta: <strong>orquesta</strong>. Las instrucciones viven en workflows en markdown, el juicio lo pone el agente, y el trabajo real lo hacen scripts de Python testeables y repetibles.</p>
-      <p class="t-en">The whole repo rests on one very simple piece of arithmetic: if each step in a chain is <strong>90 % reliable</strong>, five steps in a row leave you at <strong>59 %</strong>. That's why the AI doesn't execute: it <strong>orchestrates</strong>. Instructions live in markdown workflows, judgment comes from the agent, and the real work is done by testable, repeatable Python scripts.</p>
+      <p class="t-en">The whole repo rests on one very simple piece of arithmetic: if each step in a chain is <strong>90 % reliable</strong>, five steps in a row leave you at <strong>59 %</strong>. That's why the AI doesn't execute: it <strong>orchestrates</strong>. Instructions live in markdown workflows, judgment comes from the agent, and the real work is done by testable, repeatable Python scripts.</p><p class="t-ca">Tot el repo està muntat sobre una idea aritmètica molt simple: si cada pas d'una cadena és un <strong>90 % fiable</strong>, cinc passos seguits et deixen en <strong>59 %</strong>. Per això la IA no executa: <strong>orquestra</strong>. Les instruccions viuen en workflows en markdown, el criteri el posa l'agent, i la feina real la fan scripts de Python testejables i repetibles.</p>
     </div>
 
     <div class="layers">
-      <div class="layer reveal"><div class="n grad-text">CAPA 01 · WORKFLOWS</div><h4><span class="t-es">Las instrucciones</span><span class="t-en">The instructions</span></h4><p><span class="t-es">SOPs en markdown: objetivo, entradas necesarias, qué herramienta usar y cómo tratar los casos raros. Escritos como se le explica a una persona del equipo, y actualizados cuando el proceso aprende algo.</span><span class="t-en">Markdown SOPs: objective, required inputs, which tool to use and how to handle edge cases. Written the way you'd brief a teammate, and updated whenever the process learns something.</span></p></div>
-      <div class="layer reveal"><div class="n grad-text">CAPA 02 · AGENTE</div><h4><span class="t-es">La decisión</span><span class="t-en">The decision</span></h4><p><span class="t-es">Lee el workflow, encadena las herramientas en el orden correcto, se recupera de los errores y pregunta cuando falta información. No calcula precios ni conmuta números: <span class="hl">conecta intención con ejecución</span>.</span><span class="t-en">Reads the workflow, chains the tools in the right order, recovers from errors and asks when information is missing. It doesn't compute prices or crunch numbers: it <span class="hl">connects intent to execution</span>.</span></p></div>
-      <div class="layer reveal"><div class="n grad-text">CAPA 03 · HERRAMIENTAS</div><h4><span class="t-es">La ejecución</span><span class="t-en">The execution</span></h4><p><span class="t-es">~34.500 líneas de Python en <span class="mono">ecxm/</span>: scraping, pandas, openpyxl, OCR, generación. Consistentes, rápidas y testeables. Toda llamada a un modelo pasa por <span class="mono">core/llm.py</span>: un único punto que cachea por hash y contabiliza el coste.</span><span class="t-en">~34,500 lines of Python in <span class="mono">ecxm/</span>: scraping, pandas, openpyxl, OCR, generation. Consistent, fast and testable. Every model call goes through <span class="mono">core/llm.py</span>: a single point that caches by hash and accounts for cost.</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">CAPA 01 · WORKFLOWS</div><h4><span class="t-es">Las instrucciones</span><span class="t-en">The instructions</span><span class="t-ca">Les instruccions</span></h4><p><span class="t-es">SOPs en markdown: objetivo, entradas necesarias, qué herramienta usar y cómo tratar los casos raros. Escritos como se le explica a una persona del equipo, y actualizados cuando el proceso aprende algo.</span><span class="t-en">Markdown SOPs: objective, required inputs, which tool to use and how to handle edge cases. Written the way you'd brief a teammate, and updated whenever the process learns something.</span><span class="t-ca">SOPs en markdown: objectiu, entrades necessàries, quina eina fer servir i com tractar els casos rars. Escrits com se li explica a una persona de l'equip, i actualitzats quan el procés aprèn alguna cosa.</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">CAPA 02 · AGENTE</div><h4><span class="t-es">La decisión</span><span class="t-en">The decision</span><span class="t-ca">La decisió</span></h4><p><span class="t-es">Lee el workflow, encadena las herramientas en el orden correcto, se recupera de los errores y pregunta cuando falta información. No calcula precios ni conmuta números: <span class="hl">conecta intención con ejecución</span>.</span><span class="t-en">Reads the workflow, chains the tools in the right order, recovers from errors and asks when information is missing. It doesn't compute prices or crunch numbers: it <span class="hl">connects intent to execution</span>.</span><span class="t-ca">Llegeix el workflow, encadena les eines en l'ordre correcte, es recupera dels errors i pregunta quan falta informació. No calcula preus ni commuta números: <span class="hl">connecta intenció amb execució</span>.</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">CAPA 03 · HERRAMIENTAS</div><h4><span class="t-es">La ejecución</span><span class="t-en">The execution</span><span class="t-ca">L'execució</span></h4><p><span class="t-es">~34.500 líneas de Python en <span class="mono">ecxm/</span>: scraping, pandas, openpyxl, OCR, generación. Consistentes, rápidas y testeables. Toda llamada a un modelo pasa por <span class="mono">core/llm.py</span>: un único punto que cachea por hash y contabiliza el coste.</span><span class="t-en">~34,500 lines of Python in <span class="mono">ecxm/</span>: scraping, pandas, openpyxl, OCR, generation. Consistent, fast and testable. Every model call goes through <span class="mono">core/llm.py</span>: a single point that caches by hash and accounts for cost.</span><span class="t-ca">~34.500 línies de Python a <span class="mono">ecxm/</span>: scraping, pandas, openpyxl, OCR, generació. Consistents, ràpides i testejables. Tota crida a un model passa per <span class="mono">core/llm.py</span>: un únic punt que fa cau per hash i comptabilitza el cost.</span></p></div>
     </div>
 
     <div class="engine reveal" style="margin-top:44px">
@@ -1356,32 +1380,32 @@ report = validar_landing(output_dir)
         </style>
 
         <text x="540" y="20" text-anchor="middle" class="cp-el t-es" style="fill:#bd9bff;font-weight:700">LA CADENA (la salida de cada pipe es la entrada del siguiente</text>
-        <text x="540" y="20" text-anchor="middle" class="cp-el t-en" style="fill:#bd9bff;font-weight:700">THE CHAIN) each pipe's output is the next one's input</text>
+        <text x="540" y="20" text-anchor="middle" class="cp-el t-en" style="fill:#bd9bff;font-weight:700">THE CHAIN) each pipe's output is the next one's input</text><text x="540" y="20" text-anchor="middle" class="cp-el t-ca" style="fill:#bd9bff;font-weight:700">LA CADENA (la sortida de cada pipe és l'entrada del següent</text>
 
         <!-- chain -->
         <rect class="cp-rect" x="16" y="44" width="152" height="52" rx="11" stroke="#9b5cff" stroke-width="1.7"/>
         <text x="92" y="66" text-anchor="middle" class="cp-title">SNIPE</text>
-        <text x="92" y="82" text-anchor="middle" class="cp-sub t-es">Ads Library · Playwright</text><text x="92" y="82" text-anchor="middle" class="cp-sub t-en">Ads Library · Playwright</text>
+        <text x="92" y="82" text-anchor="middle" class="cp-sub t-es">Ads Library · Playwright</text><text x="92" y="82" text-anchor="middle" class="cp-sub t-en">Ads Library · Playwright</text><text x="92" y="82" text-anchor="middle" class="cp-sub t-ca">Ads Library · Playwright</text>
 
         <rect class="cp-rect" x="196" y="44" width="152" height="52" rx="11" stroke="#8a6dff" stroke-width="1.7"/>
         <text x="272" y="66" text-anchor="middle" class="cp-title">LAB</text>
-        <text x="272" y="82" text-anchor="middle" class="cp-sub t-es">precios · copy · títulos</text><text x="272" y="82" text-anchor="middle" class="cp-sub t-en">pricing · copy · titles</text>
+        <text x="272" y="82" text-anchor="middle" class="cp-sub t-es">precios · copy · títulos</text><text x="272" y="82" text-anchor="middle" class="cp-sub t-en">pricing · copy · titles</text><text x="272" y="82" text-anchor="middle" class="cp-sub t-ca">preus · copy · títols</text>
 
         <rect class="cp-rect" x="376" y="44" width="152" height="52" rx="11" stroke="#5f9bff" stroke-width="1.7"/>
         <text x="452" y="66" text-anchor="middle" class="cp-title">REP</text>
-        <text x="452" y="82" text-anchor="middle" class="cp-sub t-es">réplica de landing · $0</text><text x="452" y="82" text-anchor="middle" class="cp-sub t-en">landing replica · $0</text>
+        <text x="452" y="82" text-anchor="middle" class="cp-sub t-es">réplica de landing · $0</text><text x="452" y="82" text-anchor="middle" class="cp-sub t-en">landing replica · $0</text><text x="452" y="82" text-anchor="middle" class="cp-sub t-ca">rèplica de landing · $0</text>
 
         <rect class="cp-rect" x="556" y="44" width="152" height="52" rx="11" stroke="#22d3ff" stroke-width="1.7"/>
         <text x="632" y="66" text-anchor="middle" class="cp-title">CREATIVE</text>
-        <text x="632" y="82" text-anchor="middle" class="cp-sub t-es">estáticos · vídeo · UGC</text><text x="632" y="82" text-anchor="middle" class="cp-sub t-en">statics · video · UGC</text>
+        <text x="632" y="82" text-anchor="middle" class="cp-sub t-es">estáticos · vídeo · UGC</text><text x="632" y="82" text-anchor="middle" class="cp-sub t-en">statics · video · UGC</text><text x="632" y="82" text-anchor="middle" class="cp-sub t-ca">estàtics · vídeo · UGC</text>
 
         <rect class="cp-rect" x="736" y="44" width="152" height="52" rx="11" stroke="#37e0ff" stroke-width="1.7"/>
         <text x="812" y="66" text-anchor="middle" class="cp-title">ANALYTICS</text>
-        <text x="812" y="82" text-anchor="middle" class="cp-sub t-es">reglas · $0 LLM</text><text x="812" y="82" text-anchor="middle" class="cp-sub t-en">rules · $0 LLM</text>
+        <text x="812" y="82" text-anchor="middle" class="cp-sub t-es">reglas · $0 LLM</text><text x="812" y="82" text-anchor="middle" class="cp-sub t-en">rules · $0 LLM</text><text x="812" y="82" text-anchor="middle" class="cp-sub t-ca">regles · $0 LLM</text>
 
         <rect class="cp-rect" x="916" y="38" width="150" height="64" rx="12" stroke="#ffce6a" stroke-width="2"/>
-        <text x="991" y="63" text-anchor="middle" class="cp-title t-es">FINANZAS</text><text x="991" y="63" text-anchor="middle" class="cp-title t-en">FINANCE</text>
-        <text x="991" y="79" text-anchor="middle" class="cp-sub t-es">irreversible · el cierre</text><text x="991" y="79" text-anchor="middle" class="cp-sub t-en">irreversible · the close</text>
+        <text x="991" y="63" text-anchor="middle" class="cp-title t-es">FINANZAS</text><text x="991" y="63" text-anchor="middle" class="cp-title t-en">FINANCE</text><text x="991" y="63" text-anchor="middle" class="cp-title t-ca">FINANCES</text>
+        <text x="991" y="79" text-anchor="middle" class="cp-sub t-es">irreversible · el cierre</text><text x="991" y="79" text-anchor="middle" class="cp-sub t-en">irreversible · the close</text><text x="991" y="79" text-anchor="middle" class="cp-sub t-ca">irreversible · el tancament</text>
         <text x="991" y="94" text-anchor="middle" class="cp-el" style="fill:#ffce6a">/eval-finanzas</text>
 
         <path d="M168,70 L196,70" fill="none" stroke="#8a8a99" stroke-width="1.5" opacity=".6" class="cp-flow" marker-end="url(#cp-arw)"/>
@@ -1392,9 +1416,9 @@ report = validar_landing(output_dir)
 
         <!-- shared surface -->
         <rect x="16" y="238" width="1050" height="86" rx="14" fill="rgba(255,255,255,.02)" stroke="url(#cp-grad)" stroke-width="1.6"/>
-        <text x="541" y="268" text-anchor="middle" class="cp-title t-es">SUPERFICIE COMPARTIDA</text><text x="541" y="268" text-anchor="middle" class="cp-title t-en">SHARED SURFACE</text>
+        <text x="541" y="268" text-anchor="middle" class="cp-title t-es">SUPERFICIE COMPARTIDA</text><text x="541" y="268" text-anchor="middle" class="cp-title t-en">SHARED SURFACE</text><text x="541" y="268" text-anchor="middle" class="cp-title t-ca">SUPERFÍCIE COMPARTIDA</text>
         <text x="541" y="288" text-anchor="middle" class="cp-sub t-es">un único dashboard de 17.296 líneas · session_state global · CSS y JS globales · constantes y helpers comunes</text>
-        <text x="541" y="288" text-anchor="middle" class="cp-sub t-en">one 17,296-line dashboard · global session_state · global CSS and JS · shared constants and helpers</text>
+        <text x="541" y="288" text-anchor="middle" class="cp-sub t-en">one 17,296-line dashboard · global session_state · global CSS and JS · shared constants and helpers</text><text x="541" y="288" text-anchor="middle" class="cp-sub t-ca">un únic dashboard de 17.296 línies · session_state global · CSS i JS globals · constants i helpers comuns</text>
         <text x="541" y="308" text-anchor="middle" class="cp-el">COMPES_TRACKER.xlsx · ecxm.db · fb_cookies.json · dashboard_state.json</text>
 
         <path d="M92,96 L92,238" stroke="#9b5cff" stroke-width="1.3" class="cp-share"/>
@@ -1405,45 +1429,45 @@ report = validar_landing(output_dir)
         <path d="M991,102 L991,238" stroke="#ffce6a" stroke-width="1.3" class="cp-share"/>
 
         <text x="541" y="160" text-anchor="middle" class="cp-el t-es" style="fill:#ff8298;font-weight:700">cada línea punteada es una vía por la que un cambio en UNA pestaña puede romper OTRA</text>
-        <text x="541" y="160" text-anchor="middle" class="cp-el t-en" style="fill:#ff8298;font-weight:700">every dotted line is a path by which a change in ONE tab can break ANOTHER</text>
+        <text x="541" y="160" text-anchor="middle" class="cp-el t-en" style="fill:#ff8298;font-weight:700">every dotted line is a path by which a change in ONE tab can break ANOTHER</text><text x="541" y="160" text-anchor="middle" class="cp-el t-ca" style="fill:#ff8298;font-weight:700">cada línia puntejada és una via per la qual un canvi en UNA pestanya pot trencar-ne UNA ALTRA</text>
         <text x="541" y="182" text-anchor="middle" class="cp-el t-es">por eso existe dashboard_map.json: qué hace cada pestaña, con qué se sincroniza y QUÉ SE ROMPE al tocarla</text>
-        <text x="541" y="182" text-anchor="middle" class="cp-el t-en">hence dashboard_map.json: what each tab does, what it syncs with and WHAT BREAKS when you touch it</text>
+        <text x="541" y="182" text-anchor="middle" class="cp-el t-en">hence dashboard_map.json: what each tab does, what it syncs with and WHAT BREAKS when you touch it</text><text x="541" y="182" text-anchor="middle" class="cp-el t-ca">per això existeix dashboard_map.json: què fa cada pestanya, amb què se sincronitza i QUÈ ES TRENCA en tocar-la</text>
         <text x="541" y="204" text-anchor="middle" class="cp-el t-es" style="fill:#bd9bff">se lee ANTES de editar y se actualiza DESPUÉS (es la fuente de verdad, no un diagrama decorativo</text>
-        <text x="541" y="204" text-anchor="middle" class="cp-el t-en" style="fill:#bd9bff">read BEFORE editing and updated AFTER) it's the source of truth, not a decorative diagram</text>
+        <text x="541" y="204" text-anchor="middle" class="cp-el t-en" style="fill:#bd9bff">read BEFORE editing and updated AFTER) it's the source of truth, not a decorative diagram</text><text x="541" y="204" text-anchor="middle" class="cp-el t-ca" style="fill:#bd9bff">es llegeix ABANS d'editar i s'actualitza DESPRÉS (és la font de veritat, no un diagrama decoratiu</text>
 
         <text x="541" y="356" text-anchor="middle" class="cp-el t-es">Cross-Pipe Safety · ninguna tarea se cierra sin comprobar que los demás pipes siguen vivos</text>
-        <text x="541" y="356" text-anchor="middle" class="cp-el t-en">Cross-Pipe Safety · no task closes without checking the other pipes are still alive</text>
+        <text x="541" y="356" text-anchor="middle" class="cp-el t-en">Cross-Pipe Safety · no task closes without checking the other pipes are still alive</text><text x="541" y="356" text-anchor="middle" class="cp-el t-ca">Cross-Pipe Safety · cap tasca es tanca sense comprovar que els altres pipes segueixen vius</text>
         <text x="541" y="378" text-anchor="middle" class="cp-el t-es" style="fill:#9a9ab0">un bug en SNIPE que rompe el pipe de réplicas cuesta más en diagnóstico que el cambio original en desarrollo</text>
-        <text x="541" y="378" text-anchor="middle" class="cp-el t-en" style="fill:#9a9ab0">a bug in SNIPE that breaks the replica pipe costs more to diagnose than the original change cost to build</text>
+        <text x="541" y="378" text-anchor="middle" class="cp-el t-en" style="fill:#9a9ab0">a bug in SNIPE that breaks the replica pipe costs more to diagnose than the original change cost to build</text><text x="541" y="378" text-anchor="middle" class="cp-el t-ca" style="fill:#9a9ab0">un bug a SNIPE que trenca el pipe de rèpliques costa més en diagnòstic que el canvi original en desenvolupament</text>
       </svg>
     </div>
-    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle ↔</span><span class="t-en">Pinch to zoom in and read the detail ↔</span></p>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle ↔</span><span class="t-en">Pinch to zoom in and read the detail ↔</span><span class="t-ca">Pessiga per apropar i llegir el detall ↔</span></p>
 
     <div class="sec-head reveal" style="margin-top:56px;margin-bottom:0">
-      <div class="eyebrow"><span class="t-es">Calibrado de ceremonia</span><span class="t-en">Ceremony calibration</span></div>
+      <div class="eyebrow"><span class="t-es">Calibrado de ceremonia</span><span class="t-en">Ceremony calibration</span><span class="t-ca">Calibratge de cerimònia</span></div>
       <h2 class="t-es">El riesgo lo marca la superficie, no el tamaño del diff</h2>
-      <h2 class="t-en">Risk is set by the surface, not by the size of the diff</h2>
+      <h2 class="t-en">Risk is set by the surface, not by the size of the diff</h2><h2 class="t-ca">El risc el marca la superfície, no la mida del diff</h2>
       <p class="t-es">Un cambio de dos líneas en el cierre de finanzas es <strong>más peligroso</strong> que refactorizar quinientas de estilos. Por eso el proceso no se calibra por líneas cambiadas sino por <strong>dónde</strong> se toca, y ese conjunto de superficies es inmutable: no lo puede ampliar ni relajar ningún proceso automático.</p>
-      <p class="t-en">A two-line change in the finance close is <strong>more dangerous</strong> than refactoring five hundred lines of styling. So the process is calibrated not by lines changed but by <strong>where</strong> you touch, and that set of surfaces is immutable: no automated process can widen or relax it.</p>
+      <p class="t-en">A two-line change in the finance close is <strong>more dangerous</strong> than refactoring five hundred lines of styling. So the process is calibrated not by lines changed but by <strong>where</strong> you touch, and that set of surfaces is immutable: no automated process can widen or relax it.</p><p class="t-ca">Un canvi de dues línies al tancament de finances és <strong>més perillós</strong> que refactoritzar-ne cinc-centes d'estils. Per això el procés no es calibra per línies canviades sinó per <strong>on</strong> es toca, i aquest conjunt de superfícies és immutable: no el pot ampliar ni relaxar cap procés automàtic.</p>
     </div>
     <div class="surf">
       <div class="su irr reveal">
-        <div class="lv"><span class="t-es">Irreversible</span><span class="t-en">Irreversible</span></div>
-        <h4><span class="t-es">El cierre de mes</span><span class="t-en">The month close</span></h4>
-        <p><span class="t-es">Ahí el número se convierte en un pago. También cuenta borrar la caché de LLM ya pagada y romper la convención de nombres de campaña.</span><span class="t-en">That's where the number becomes a payment. Also: deleting already-paid LLM cache, and breaking the campaign naming convention.</span></p>
-        <div class="cer"><span class="t-es">ritual completo + doble pase independiente</span><span class="t-en">full ritual + independent second pass</span></div>
+        <div class="lv"><span class="t-es">Irreversible</span><span class="t-en">Irreversible</span><span class="t-ca">Irreversible</span></div>
+        <h4><span class="t-es">El cierre de mes</span><span class="t-en">The month close</span><span class="t-ca">El tancament de mes</span></h4>
+        <p><span class="t-es">Ahí el número se convierte en un pago. También cuenta borrar la caché de LLM ya pagada y romper la convención de nombres de campaña.</span><span class="t-en">That's where the number becomes a payment. Also: deleting already-paid LLM cache, and breaking the campaign naming convention.</span><span class="t-ca">Allà el número es converteix en un pagament. També compta esborrar la memòria cau d'LLM ja pagada i trencar la convenció de noms de campanya.</span></p>
+        <div class="cer"><span class="t-es">ritual completo + doble pase independiente</span><span class="t-en">full ritual + independent second pass</span><span class="t-ca">ritual complet + doble passada independent</span></div>
       </div>
       <div class="su sen reveal">
-        <div class="lv"><span class="t-es">Sensible · reversible</span><span class="t-en">Sensitive · reversible</span></div>
-        <h4><span class="t-es">Réplicas, pivot, dashboard</span><span class="t-en">Replicas, pivot, dashboard</span></h4>
-        <p><span class="t-es">Duele si se rompe, pero se recupera. Aquí el gate ya existe: validator, golden y set de regresión.</span><span class="t-en">It hurts when it breaks, but it recovers. The gate already exists here: validator, golden and regression set.</span></p>
-        <div class="cer"><span class="t-es">ceremonia media + gate automático</span><span class="t-en">medium ceremony + automated gate</span></div>
+        <div class="lv"><span class="t-es">Sensible · reversible</span><span class="t-en">Sensitive · reversible</span><span class="t-ca">Sensible · reversible</span></div>
+        <h4><span class="t-es">Réplicas, pivot, dashboard</span><span class="t-en">Replicas, pivot, dashboard</span><span class="t-ca">Rèpliques, pivot, dashboard</span></h4>
+        <p><span class="t-es">Duele si se rompe, pero se recupera. Aquí el gate ya existe: validator, golden y set de regresión.</span><span class="t-en">It hurts when it breaks, but it recovers. The gate already exists here: validator, golden and regression set.</span><span class="t-ca">Fa mal si es trenca, però es recupera. Aquí el gate ja existeix: validator, golden i set de regressió.</span></p>
+        <div class="cer"><span class="t-es">ceremonia media + gate automático</span><span class="t-en">medium ceremony + automated gate</span><span class="t-ca">cerimònia mitjana + gate automàtic</span></div>
       </div>
       <div class="su min reveal">
-        <div class="lv"><span class="t-es">No sensible</span><span class="t-en">Not sensitive</span></div>
-        <h4><span class="t-es">Precios, copy de UI, estilos</span><span class="t-en">Pricing, UI copy, styling</span></h4>
-        <p><span class="t-es">Recomputable y visible al instante. Aquí el proceso pesado sería teatro: leer, cambiar, verificar y decirlo.</span><span class="t-en">Recomputable and instantly visible. Heavy process here would be theatre: read, change, verify, say so.</span></p>
-        <div class="cer"><span class="t-es">ceremonia mínima</span><span class="t-en">minimal ceremony</span></div>
+        <div class="lv"><span class="t-es">No sensible</span><span class="t-en">Not sensitive</span><span class="t-ca">No sensible</span></div>
+        <h4><span class="t-es">Precios, copy de UI, estilos</span><span class="t-en">Pricing, UI copy, styling</span><span class="t-ca">Preus, copy d'UI, estils</span></h4>
+        <p><span class="t-es">Recomputable y visible al instante. Aquí el proceso pesado sería teatro: leer, cambiar, verificar y decirlo.</span><span class="t-en">Recomputable and instantly visible. Heavy process here would be theatre: read, change, verify, say so.</span><span class="t-ca">Recomputable i visible a l'instant. Aquí el procés pesat seria teatre: llegir, canviar, verificar i dir-ho.</span></p>
+        <div class="cer"><span class="t-es">ceremonia mínima</span><span class="t-en">minimal ceremony</span><span class="t-ca">cerimònia mínima</span></div>
       </div>
     </div>
   </div>
@@ -1454,15 +1478,15 @@ report = validar_landing(output_dir)
 <section id="metodo">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span></div>
+      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span><span class="t-ca">Com treballo amb IA</span></div>
       <h2 class="t-es">El modo de fallo real no es planificar mal: es reportar sin verificar</h2>
-      <h2 class="t-en">The real failure mode isn't bad planning: it's reporting without verifying</h2>
+      <h2 class="t-en">The real failure mode isn't bad planning: it's reporting without verifying</h2><h2 class="t-ca">El mode de fallada real no és planificar malament: és reportar sense verificar</h2>
       <p class="t-es">Ningún <em>«el subagente reportó OK»</em> cierra nada aquí: el orquestador corre él mismo el gate y <strong>pega la salida real</strong> en el prompt del siguiente paso.</p>
-      <p class="t-en">No <em>"the subagent reported OK"</em> closes anything here: the orchestrator runs the gate itself and <strong>pastes the real output</strong> into the next step's prompt.</p>
+      <p class="t-en">No <em>"the subagent reported OK"</em> closes anything here: the orchestrator runs the gate itself and <strong>pastes the real output</strong> into the next step's prompt.</p><p class="t-ca">Cap <em>«el subagent ha reportat OK»</em> tanca res aquí: l'orquestrador corre ell mateix el gate i <strong>enganxa la sortida real</strong> al prompt del pas següent.</p>
     </div>
 
     <div class="term reveal" style="margin-top:0">
-      <div class="term-bar"><i></i><i></i><i></i><span><span class="t-es">los otros dos gates · el de finanzas está arriba</span><span class="t-en">the other two gates · the finance one is above</span></span></div>
+      <div class="term-bar"><i></i><i></i><i></i><span><span class="t-es">los otros dos gates · el de finanzas está arriba</span><span class="t-en">the other two gates · the finance one is above</span><span class="t-ca">els altres dos gates · el de finances és a dalt</span></span></div>
       <pre class="t-es"><span class="pr">$</span> python tests/golden_precios/eval_precios.py check
 [check] precios — VEREDICTO: <span class="ok">PASA</span> (7 casos, igualdad exacta)
 
@@ -1482,25 +1506,25 @@ report = validar_landing(output_dir)
 <span class="cm"># Goldens holding real business figures are NOT versioned: the harness is</span>
 <span class="cm"># shared, each machine captures its own baseline. With no baseline the gate</span>
 <span class="cm"># neither passes nor blocks — it reports the baseline is missing. A gate that</span>
-<span class="cm"># passes on nothing is worse than no gate at all.</span></pre>
+<span class="cm"># passes on nothing is worse than no gate at all.</span></pre><pre class="t-ca"><span class="pr">$</span> python tests/golden_precios/eval_precios.py check [check] precios — VEREDICTO: <span class="ok">PASA</span> (7 casos, igualdad exacta) <span class="pr">$</span> python tests/golden_control_diario/eval_control_diario.py check [check] control_diario — VEREDICTO: <span class="ok">PASA</span> (6 casos, igualdad exacta) <span class="cm"># Els goldens amb xifres reals del negoci NO es versionen: l'arnès es</span> <span class="cm"># comparteix, cada màquina captura el seu propi baseline. Sense baseline el gate</span> <span class="cm"># ni aprova ni bloqueja — avisa que falta. Un gate que aprova en buit</span> <span class="cm"># és pitjor que no tenir gate.</span></pre>
     </div>
 
     <div class="mgrid">
-      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg><span class="t-es">Verificación por ejecución</span><span class="t-en">Verification by execution</span></h4><p><span class="t-es">Verde local ≠ correcto. Que el dashboard arranque <span class="hl">no dice nada</span> sobre si la utilidad neta que calculó el pivot es la real. La única señal con dientes es el gate golden, y lo corro yo antes de cerrar nada.</span><span class="t-en">Green locally ≠ correct. The dashboard booting <span class="hl">says nothing</span> about whether the net profit the pivot computed is the real one. The only signal with teeth is the golden gate, and I run it myself before closing anything.</span></p></div>
-      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg><span class="t-es">Un bug nunca vive solo</span><span class="t-en">A bug never lives alone</span></h4><p><span class="t-es">Al encontrar un fallo, la pregunta obligatoria es: <span class="hl">¿existe el mismo bug en los caminos análogos?</span> Un invariante como «el flete solo cuenta en los 4 estatus finales» vive en un sitio y lo llaman <b>todas</b> las etapas: ingerir, limpiar, cruzar, pivotar y cerrar.</span><span class="t-en">On finding a defect, the mandatory question is: <span class="hl">does the same bug exist in the analogous paths?</span> An invariant like "shipping only counts on the 4 final statuses" lives in one place and is called by <b>every</b> stage: ingest, clean, cross-match, pivot and close.</span></p></div>
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg><span class="t-es">Verificación por ejecución</span><span class="t-en">Verification by execution</span><span class="t-ca">Verificació per execució</span></h4><p><span class="t-es">Verde local ≠ correcto. Que el dashboard arranque <span class="hl">no dice nada</span> sobre si la utilidad neta que calculó el pivot es la real. La única señal con dientes es el gate golden, y lo corro yo antes de cerrar nada.</span><span class="t-en">Green locally ≠ correct. The dashboard booting <span class="hl">says nothing</span> about whether the net profit the pivot computed is the real one. The only signal with teeth is the golden gate, and I run it myself before closing anything.</span><span class="t-ca">Verd local ≠ correcte. Que el dashboard arrenqui <span class="hl">no diu res</span> sobre si la utilitat neta que va calcular el pivot és la real. L'únic senyal amb dents és el gate golden, i el corro jo abans de tancar res.</span></p></div>
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg><span class="t-es">Un bug nunca vive solo</span><span class="t-en">A bug never lives alone</span><span class="t-ca">Un bug mai viu sol</span></h4><p><span class="t-es">Al encontrar un fallo, la pregunta obligatoria es: <span class="hl">¿existe el mismo bug en los caminos análogos?</span> Un invariante como «el flete solo cuenta en los 4 estatus finales» vive en un sitio y lo llaman <b>todas</b> las etapas: ingerir, limpiar, cruzar, pivotar y cerrar.</span><span class="t-en">On finding a defect, the mandatory question is: <span class="hl">does the same bug exist in the analogous paths?</span> An invariant like "shipping only counts on the 4 final statuses" lives in one place and is called by <b>every</b> stage: ingest, clean, cross-match, pivot and close.</span><span class="t-ca">En trobar una fallada, la pregunta obligatòria és: <span class="hl">existeix el mateix bug als camins anàlegs?</span> Un invariant com «el port només compta als 4 estats finals» viu en un lloc i el criden <b>totes</b> les etapes: ingerir, netejar, creuar, pivotar i tancar.</span></p></div>
     </div>
 
     <div class="open reveal">
       <h4 class="t-es">Lo que sigue abierto</h4>
-      <h4 class="t-en">What's still open</h4>
+      <h4 class="t-en">What's still open</h4><h4 class="t-ca">El que segueix obert</h4>
       <p class="intro t-es">El sistema está en producción y se usa todos los días, pero no está «terminado», y decir lo contrario sería el primer número falso de esta página.</p>
-      <p class="intro t-en">The system is in production and used every day, but it isn't "finished", and saying otherwise would be the first false number on this page.</p>
-      <div class="oi"><span class="ok2"><span class="t-es">aplazado a propósito</span><span class="t-en">deliberately deferred</span></span><span class="ov"><span class="t-es"><b>Auditoría integral del dashboard.</b> Con 17.296 líneas en un solo archivo, una auditoría hecha a trozos genera más ruido que señal. Decisión tomada y fechada: esperar y hacer una sola pasada acotada, con tres focos definidos.</span><span class="t-en"><b>Full dashboard audit.</b> At 17,296 lines in a single file, a piecemeal audit generates more noise than signal. Decision made and dated: wait and do a single scoped pass with three defined focuses.</span></span></div>
-      <div class="oi"><span class="ok2"><span class="t-es">riesgo conocido</span><span class="t-en">known risk</span></span><span class="ov"><span class="t-es"><b>Forzado de divisa en publicidad.</b> Hoy inocuo porque todas las cuentas facturan en pesos; se disparará con la primera que facture en dólares. Está escrito, con su condición de disparo, esperando el arreglo correcto en lugar de un parche.</span><span class="t-en"><b>Currency forcing on ad spend.</b> Harmless today because every account bills in pesos; it will fire with the first one billing in dollars. It's written down, with its trigger condition, waiting for the right fix instead of a patch.</span></span></div>
-      <div class="oi"><span class="ok2"><span class="t-es">cobertura parcial</span><span class="t-en">partial coverage</span></span><span class="ov"><span class="t-es"><b>Goldens de landing.</b> 4 congelados de 27 landings del set de regresión. Los tres canónicos cubren los builders más frágiles; el resto se compara por diff, que detecta cambios pero no juzga si son correctos.</span><span class="t-en"><b>Landing goldens.</b> 4 frozen out of the 27 landings in the regression set. The three canonical ones cover the most fragile builders; the rest are compared by diff, which detects changes but doesn't judge whether they're right.</span></span></div>
+      <p class="intro t-en">The system is in production and used every day, but it isn't "finished", and saying otherwise would be the first false number on this page.</p><p class="intro t-ca">El sistema està en producció i es fa servir cada dia, però no està «acabat», i dir el contrari seria el primer número fals d'aquesta pàgina.</p>
+      <div class="oi"><span class="ok2"><span class="t-es">aplazado a propósito</span><span class="t-en">deliberately deferred</span><span class="t-ca">ajornat a propòsit</span></span><span class="ov"><span class="t-es"><b>Auditoría integral del dashboard.</b> Con 17.296 líneas en un solo archivo, una auditoría hecha a trozos genera más ruido que señal. Decisión tomada y fechada: esperar y hacer una sola pasada acotada, con tres focos definidos.</span><span class="t-en"><b>Full dashboard audit.</b> At 17,296 lines in a single file, a piecemeal audit generates more noise than signal. Decision made and dated: wait and do a single scoped pass with three defined focuses.</span><span class="t-ca"><b>Auditoria integral del dashboard.</b> Amb 17.296 línies en un sol fitxer, una auditoria feta a trossos genera més soroll que senyal. Decisió presa i datada: esperar i fer una sola passada acotada, amb tres focus definits.</span></span></div>
+      <div class="oi"><span class="ok2"><span class="t-es">riesgo conocido</span><span class="t-en">known risk</span><span class="t-ca">risc conegut</span></span><span class="ov"><span class="t-es"><b>Forzado de divisa en publicidad.</b> Hoy inocuo porque todas las cuentas facturan en pesos; se disparará con la primera que facture en dólares. Está escrito, con su condición de disparo, esperando el arreglo correcto en lugar de un parche.</span><span class="t-en"><b>Currency forcing on ad spend.</b> Harmless today because every account bills in pesos; it will fire with the first one billing in dollars. It's written down, with its trigger condition, waiting for the right fix instead of a patch.</span><span class="t-ca"><b>Forçat de divisa en publicitat.</b> Avui inocu perquè tots els comptes facturen en pesos; es dispararà amb el primer que facturi en dòlars. Està escrit, amb la seva condició de dispar, esperant l'arranjament correcte en lloc d'un pedaç.</span></span></div>
+      <div class="oi"><span class="ok2"><span class="t-es">cobertura parcial</span><span class="t-en">partial coverage</span><span class="t-ca">cobertura parcial</span></span><span class="ov"><span class="t-es"><b>Goldens de landing.</b> 4 congelados de 27 landings del set de regresión. Los tres canónicos cubren los builders más frágiles; el resto se compara por diff, que detecta cambios pero no juzga si son correctos.</span><span class="t-en"><b>Landing goldens.</b> 4 frozen out of the 27 landings in the regression set. The three canonical ones cover the most fragile builders; the rest are compared by diff, which detects changes but doesn't judge whether they're right.</span><span class="t-ca"><b>Goldens de landing.</b> 4 congelats de 27 landings del set de regressió. Els tres canònics cobreixen els builders més fràgils; la resta es compara per diff, que detecta canvis però no jutja si són correctes.</span></span></div>
     </div>
 
-    <p class="bridge reveal"><span class="t-es">El resto del método (el agente ciego que audita mis planes, el ledger que convierte un fallo en regla) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (the blind agent auditing my own plans, the ledger that turns a failure into a rule) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
+    <p class="bridge reveal"><span class="t-es">El resto del método (el agente ciego que audita mis planes, el ledger que convierte un fallo en regla) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (the blind agent auditing my own plans, the ledger that turns a failure into a rule) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span><span class="t-ca">La resta del mètode (l'agent cec que audita els meus plans, el ledger que converteix una fallada en regla) és el mateix als cinc sistemes i està explicat una vegada: <a href="../index.html#metodo">a l'índex</a>.</span></p>
   </div>
 </section>
 
@@ -1510,19 +1534,19 @@ report = validar_landing(output_dir)
 <section id="contacto">
   <div class="wrap">
     <div class="contact reveal">
-      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span></div>
+      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span><span class="t-ca">Disponible per treballar</span></div>
       <h2 class="t-es">Cojo un negocio entero, lo descompongo en pipelines y orquesto IA para construir cada pieza, sin perder el rigor donde hay dinero.</h2>
-      <h2 class="t-en">I take an entire business, break it into pipelines and orchestrate AI to build every piece, without losing rigor where money is involved.</h2>
+      <h2 class="t-en">I take an entire business, break it into pipelines and orchestrate AI to build every piece, without losing rigor where money is involved.</h2><h2 class="t-ca">Agafo un negoci sencer, el descomponc en pipelines i orquestro IA per construir cada peça, sense perdre el rigor on hi ha diners.</h2>
       <p class="t-es">Si buscas a alguien para applied-AI, automatización de operaciones o forward-deployed engineering, que construye sistemas para que la IA no se engañe a sí misma <em>ni a ti</em>, hablemos.</p>
-      <p class="t-en">If you're looking for someone in applied-AI, operations automation or forward-deployed engineering who builds systems so the AI can't fool itself <em>or you</em>, let's talk.</p>
-      <p class="hero-note" style="margin:18px auto 0;text-align:center"><span class="t-es">Todo lo de esta página lo construí <b>en solitario, con IA y sin formación técnica previa</b>.</span><span class="t-en">Everything on this page I built <b>solo, with AI and with no prior technical background</b>.</span></p>
+      <p class="t-en">If you're looking for someone in applied-AI, operations automation or forward-deployed engineering who builds systems so the AI can't fool itself <em>or you</em>, let's talk.</p><p class="t-ca">Si busques algú per a applied-AI, automatització d'operacions o forward-deployed engineering, que construeix sistemes perquè la IA no s'enganyi a si mateixa <em>ni a tu</em>, parlem-ne.</p>
+      <p class="hero-note" style="margin:18px auto 0;text-align:center"><span class="t-es">Todo lo de esta página lo construí <b>en solitario, con IA y sin formación técnica previa</b>.</span><span class="t-en">Everything on this page I built <b>solo, with AI and with no prior technical background</b>.</span><span class="t-ca">Tot el d'aquesta pàgina ho vaig construir <b>en solitari, amb IA i sense formació tècnica prèvia</b>.</span></p>
 
       <div class="cta">
         <a href="mailto:diegollr98@gmail.com" class="btn btn-primary">diegollr98@gmail.com</a>
-        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span></button>
+        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span><span class="t-ca">copiar</span></button>
         <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
         <a href="https://github.com/diegollr98-design" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
-        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span></a>
+        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span><span class="t-ca">Tornar a l'índex</span></a>
       </div>
     </div>
   </div>
@@ -1530,7 +1554,7 @@ report = validar_landing(output_dir)
 
 <footer class="wrap">
   <span>ECXM OPS · <span class="hl">Diego</span> · 2026</span>
-  <span><span class="t-es">Sistema en producción · construido con IA</span><span class="t-en">System in production · built with AI</span></span>
+  <span><span class="t-es">Sistema en producción · construido con IA</span><span class="t-en">System in production · built with AI</span><span class="t-ca">Sistema en producció · construït amb IA</span></span>
 </footer>
   </div>
   </div>
@@ -1538,21 +1562,41 @@ report = validar_landing(output_dir)
   <div class="tw-ac" id="twAc" role="listbox" aria-label="Comandos"></div>
   <form class="tw-prompt" id="twForm" autocomplete="off">
     <span class="twp-u" aria-hidden="true">diego@portfolio</span><span class="twp-d" id="twPath" aria-hidden="true">:~</span><span class="twp-s" aria-hidden="true">$</span>
-    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span></label>
+    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span><span class="t-ca">Comanda</span></label>
     <input id="twIn" type="text" spellcheck="false" autocapitalize="off"
-           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands">
+           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands" data-ph-ca="fes clic per veure les comandes">
     <span class="twp-car" aria-hidden="true">&#9611;</span>
   </form>
 
 
 <script>
 /* ── language toggle ── */
+/* [INC-JS-04] Quita TODA clase `lang-*` en vez de enumerar 'lang-es','lang-en'.
+   Una lista tecleada describe el marcado desde fuera y se desfasa sola: es la misma
+   clase que `var COLS=7` ([INC-JS-01]). Con `lang-ca` sin quitar, la secuencia
+   es -> ca -> es dejaba `class="lang-ca lang-es"`, que casa las reglas de ocultacion
+   de DOS idiomas a la vez: pagina EN BLANCO, `<h1>` vacio, 0 errores de consola. */
+/* Tres spans, uno por idioma: el CSS elige, igual que en el resto de la pagina. Vive
+   junto a twSoloLang porque es chasis: cualquier sitio donde el JS PINTE texto bilingue
+   necesita emitir los TRES, o en el idioma sin rama el widget sale VACIO ([INC-JS-06]). */
+function TRI(es, en, ca){
+  /* la clase se COMPONE a proposito: `_pares()` de eval_portfolio cuenta
+     `class="t-xx"` sobre el HTML crudo, y un literal aqui dentro sumaria un bloque
+     fantasma por idioma en las 6 paginas. */
+  var w = function(l, t){ return '<span class="t-'+l+'">'+t+'</span>'; };
+  return w('es', es) + w('en', en) + w('ca', ca);
+}
+function twSoloLang(el, l){
+  if(!el) return;
+  for(var i=el.classList.length-1; i>=0; i--){
+    if(el.classList[i].indexOf('lang-')===0) el.classList.remove(el.classList[i]);
+  }
+  el.classList.add('lang-'+l);
+}
 function setLang(l){
   document.documentElement.lang=l;
-  document.documentElement.classList.remove('lang-es','lang-en');
-  document.documentElement.classList.add('lang-'+l);
-  document.body.classList.remove('lang-es','lang-en');
-  document.body.classList.add('lang-'+l);
+  twSoloLang(document.documentElement, l);
+  twSoloLang(document.body, l);
   document.querySelectorAll('[data-lang-btn]').forEach(function(b){
     b.setAttribute('aria-pressed', String(b.dataset.langBtn===l));
   });
@@ -1812,7 +1856,7 @@ window.__cmds=[
   {g:'abrir',ic:'↗',es:'Caso · SEKURA',en:'Case · SEKURA',c:'open sekura',k:'sekura sekura',url:'../SEKURA/SEKURA.html'},
   {g:'hacer',ic:'✉',es:'Escribirme un email',en:'Write me an email',c:'/mail',k:'email correo mail escribir write contacto contact',url:MAIL},
   {g:'hacer',ic:'↗',es:'Abrir mi LinkedIn',en:'Open my LinkedIn',c:'open linkedin',k:'linkedin perfil profile red social',url:LI,blank:true},
-  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') setLang(document.documentElement.lang==='en'?'es':'en'); }}
+  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') (function(){var v=[].map.call(document.querySelectorAll('#langList li'),function(x){return x.dataset.v;});if(!v.length)return;var i=v.indexOf(document.documentElement.lang);setLang(v[(i+1)%v.length]);})(); }}
 ];
 window.__runCmd=function(c){
   if(c.fn){ c.fn(); return; }
@@ -1823,10 +1867,8 @@ window.__runCmd=function(c){
 /* ── language toggle ── */
 function setLang(l){
   document.documentElement.lang=l;
-  document.documentElement.classList.remove('lang-es','lang-en');
-  document.documentElement.classList.add('lang-'+l);
-  document.body.classList.remove('lang-es','lang-en');
-  document.body.classList.add('lang-'+l);
+  twSoloLang(document.documentElement, l);
+  twSoloLang(document.body, l);
   /* el desplegable tiene que reflejar el cambio venga de donde venga:
      tambien lo dispara el comando /lang de la paleta */
   var cur=document.getElementById('langCur');
@@ -1961,7 +2003,8 @@ var SC=document.getElementById('twBody');
   var form=document.getElementById('twForm'), inp=document.getElementById('twIn');
   var con=document.getElementById('twCon'), ac=document.getElementById('twAc');
   if(!form) return;
-  function lang(){ return document.documentElement.lang==='en'?'en':'es'; }
+  function lang(){ var l=document.documentElement.lang;
+                   return (l==='en'||l==='ca') ? l : 'es'; }
   function norm(t){ return (t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
   inp.placeholder=inp.getAttribute('data-ph-'+lang())||'';
 
@@ -1971,7 +2014,7 @@ var SC=document.getElementById('twBody');
     var l=lang(), qn=norm(q.trim());
     return (window.__cmds||[]).filter(function(c){
       if(!qn) return true;
-      var hay=norm((c.c||'')+' '+c[l]+' '+c.k+' '+c.g);
+      var hay=norm((c.c||'')+' '+(c[l]||c.es)+' '+c.k+' '+c.g);
       return qn.split(/\s+/).every(function(w){ return hay.indexOf(w)>-1; });
     });
   }
@@ -1981,10 +2024,8 @@ var SC=document.getElementById('twBody');
     var l=lang();
     ac.innerHTML=hits.map(function(c,n){
       return '<div class="it" role="option" aria-selected="'+(n===0)+'" data-i="'+n+'">'+
-             '<span class="c">'+(c.c||'')+'</span><span class="l">'+c[l]+'</span></div>';
-    }).join('')+'<div class="hint">'+(l==='en'
-        ?'tab completes · ↑↓ moves · ↵ runs'
-        :'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
+             '<span class="c">'+(c.c||'')+'</span><span class="l">'+(c[l]||c.es)+'</span></div>';
+    }).join('')+'<div class="hint">'+({en:'tab completes · ↑↓ moves · ↵ runs',ca:'tab completa · ↑↓ mou · ↵ executa'}[l]||'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
     items=[].slice.call(ac.querySelectorAll('.it')); sel=0;
     items.forEach(function(el){
       el.addEventListener('click',function(){ runHit(hits[+el.dataset.i],false); });
@@ -2037,7 +2078,7 @@ var SC=document.getElementById('twBody');
        no hizo nada porque el campo se vacia de golpe */
     if(visible && c.c){ inp.value=c.c; }
     setTimeout(function(){
-      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+c[l]+'</span>','echo');
+      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+(c[l]||c.es)+'</span>','echo');
       inp.value='';
       if(window.__runCmd) window.__runCmd(c);
     }, visible && c.c ? 130 : 0);
@@ -2048,13 +2089,13 @@ var SC=document.getElementById('twBody');
     var G={ir:{es:'ir a',en:'go to'},abrir:{es:'abrir caso',en:'open case'},hacer:{es:'acciones',en:'actions'}};
     var html='';
     Object.keys(by).forEach(function(g){
-      html+='<div class="dim">'+(G[g]?G[g][l]:g)+'</div><table>'+
-        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+c[l]+'</td></tr>'; }).join('')+
+      html+='<div class="dim">'+(G[g]?(G[g][l]||G[g].es):g)+'</div><table>'+
+        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+(c[l]||c.es)+'</td></tr>'; }).join('')+
         '</table>';
     });
-    html+='<div class="dim">'+(l==='en'?'also':'además')+
-      '</div><table><tr><td>help</td><td>'+(l==='en'?'this list':'esta lista')+
-      '</td></tr><tr><td>clear</td><td>'+(l==='en'?'clear the console':'limpia la consola')+
+    html+='<div class="dim">'+(({en:'also',ca:'a més'}[l]||'además'))+
+      '</div><table><tr><td>help</td><td>'+(({en:'this list',ca:'aquesta llista'}[l]||'esta lista'))+
+      '</td></tr><tr><td>clear</td><td>'+(({en:'clear the console',ca:'neteja la consola'}[l]||'limpia la consola'))+
       '</td></tr></table>';
     line(html, '', TTL_LONG);
   }
@@ -2114,8 +2155,8 @@ var SC=document.getElementById('twBody');
     var hit=hits[ac.classList.contains('on')?sel:0];
     if(!hit){
       line('<b>$</b> '+q,'echo');
-      line('<span class="ko">'+(l==='en'?'command not found':'orden no encontrada')+
-           '</span> <span class="dim">· '+(l==='en'?'hit tab to list them':'pulsa tab para verlos')+'</span>');
+      line('<span class="ko">'+(({en:'command not found',ca:'ordre no trobada'}[l]||'orden no encontrada'))+
+           '</span> <span class="dim">· '+(({en:'hit tab to list them',ca:'prem tab per llistar-los'}[l]||'pulsa tab para verlos'))+'</span>');
       inp.value=''; return;
     }
     runHit(hit,true);
@@ -2181,6 +2222,32 @@ var SC=document.getElementById('twBody');
   /* cromo de la terminal y navegacion: no son documento, no se imprimen */
   var SKIP='script,style,noscript,svg,title,.progress,.tw-cmd,'+
            '#proto,#boot,.tw-con,.tw-ac,.tw-prompt,.tw-bar,.cmdk,.pcur';
+
+  /* ── el idioma INACTIVO no se imprime, y eso no es una optimizacion menor ──
+     El TreeWalker de split() no filtraba por visibilidad, asi que recorria tambien
+     el idioma en `display:none`: para cada nodo, un Range + un getClientRects() que
+     devuelve 0 rects + un span. No entraba en la busqueda binaria (la parte cara),
+     pero se pagaba igual, y build() volvia a recorrerlos para encenderlos a mano.
+     Medido en YOUTUBE con CPU x4, A/B intercalado, n=9: quitar el ingles ENTERO
+     ahorraba 226 ms de bloqueo de arranque; anadir un tercer idioma costaba 303 ms.
+     O sea ~226-300 ms POR IDIOMA OCULTO, sobre las 5 paginas de caso que ya
+     arrastran ~700 ms de deuda ([INC-PERF-01]).
+
+     No cambia el comportamiento: el texto que NO se envuelve en `.pl` no lleva
+     `opacity:0`, asi que se ve normal — que es exactamente donde acababa antes, con
+     build() marcandolo `.on` por tener caja de tamano cero. Al cambiar de idioma
+     aparece entero, igual que hoy.
+
+     Va en SKIP y no en un `closest` aparte porque asi es UNA sola llamada, y porque
+     build() debe saltarselos por el mismo motivo.
+
+     ⚠️ split() corre UNA vez (:3862) y `remeasure` NO vuelve a partir el texto —lo
+     dice su propio comentario, «carisimo»—, asi que esta lista se calcula con el
+     idioma de arranque y no caduca: los demas idiomas se quedan como texto plano
+     visible, que es su estado final de todos modos. */
+  var __lg=document.documentElement.lang||'es';
+  SKIP+=','+['es','en','ca'].filter(function(l){return l!==__lg;})
+                            .map(function(l){return '.t-'+l;}).join(',');
   /* cajas cuyo borde y fondo esperan a su primera linea: en la v4 el
      esqueleto de las tarjetas se pintaba mucho antes que su contenido */
   var BOXES='.pj,.mc,.cap,.claim,.ldg,.lex,.term,.cx-lines,.ascii-fw,'+
@@ -2652,13 +2719,24 @@ var SC=document.getElementById('twBody');
 
 (function(){ var orig=window.setLang; if(typeof orig!=="function") return;
   window.setLang=function(l){ orig(l); spy(true);
-    var L=document.documentElement.lang==="en"?"en":"es";
+    var L=document.documentElement.lang||"es";  /* [INC-SEED-02] antes: `lang==="en"?"en":"es"`, que en catalan cae al else
+       y deja el selector mostrando "ES" con la pagina en catalan. */
     var t=document.getElementById("twIn");
-    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||"";
+    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||t.getAttribute("data-ph-es")||"";
     var c=document.getElementById("langCur"); if(c) c.textContent=L.toUpperCase();
     var li=document.getElementById("langList");
     if(li) li.querySelectorAll("li").forEach(function(o){
       o.setAttribute("aria-selected", String(o.dataset.v===L)); });
+    /* [INC-JS-05] Los widgets que PINTA el JS no se re-pintaban al cambiar de idioma:
+       sus dos ganchos existian (`__railRefresh` :1823, `__quotaRefresh` :1736) pero su
+       UNICO llamador era la `setLang` pre-chasis, que esta muerta desde el port. Medido
+       sobre la version comiteada, SIN catalan de por medio: el panel de la cadena decia
+       «Alineacion» antes y despues de `setLang('en')`. O sea que un lector ingles lleva
+       leyendo ese panel en castellano desde el port, en produccion.
+       Van con guarda: en las 5 paginas que no tienen esos widgets no hacen nada, y asi
+       el chasis sigue siendo identico en las 6. */
+    if(window.__railRefresh) window.__railRefresh();
+    if(window.__quotaRefresh) window.__quotaRefresh();
     if(window.__printRemeasure) setTimeout(window.__printRemeasure,60);
   }; })();
 
@@ -2742,8 +2820,8 @@ var SC=document.getElementById('twBody');
 <script>
 /* ── contacto: copiar el email. Un mailto: no hace nada sin cliente de correo ── */
 (function(){
-  var T={ok:{es:'copiado',en:'copied'},base:{es:'copiar',en:'copy'}};
-  function paint(b,k){ b.innerHTML='<span class="t-es">'+T[k].es+'</span><span class="t-en">'+T[k].en+'</span>'; }
+  var T={ok:{es:'copiado',en:'copied',ca:'copiat'},base:{es:'copiar',en:'copy',ca:'copiar'}};
+  function paint(b,k){ b.innerHTML=TRI(T[k].es,T[k].en,T[k].ca); }
   Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'),function(b){
     b.addEventListener('click',function(){
       var v=b.dataset.copy, done=function(){ b.classList.add('done'); paint(b,'ok');

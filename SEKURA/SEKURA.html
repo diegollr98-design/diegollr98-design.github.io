@@ -14,6 +14,9 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Diego · SEKURA · Plataforma de seguridad privada">
 <meta name="twitter:card" content="summary_large_image">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ca_ES">
 <meta property="og:type" content="website">
 <meta name="author" content="Diego · SEKURA">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,8 +25,18 @@
 <script>
   /* set language ASAP — no FOUC. stored pref > browser lang > es */
   (function(){try{
+    var OK={es:1,en:1,ca:1};   /* los idiomas que ESTA pagina tiene. Una pagina con catalan anade ca:1 */
     var l=localStorage.getItem('pf_lang');
-    if(!l){l=(navigator.language||'es').toLowerCase().indexOf('en')===0?'en':'es';}
+    if(!OK[l]){
+      /* [SEED §5.8] Antes preguntaba literalmente «es ingles? si no, castellano», asi que
+         un navegador en `ca-ES` aterrizaba en castellano: justo el lector para el que se
+         tradujo. Se comprueba el catalan PRIMERO porque es el mas especifico de los tres.
+         El `if(!OK[l])` final no es de adorno: una pagina que no tenga esa lengua cae al
+         castellano en vez de quedarse con las tres ocultas ([INC-JS-04]). */
+      var n=(navigator.language||'es').toLowerCase();
+      l = n.indexOf('ca')===0 ? 'ca' : (n.indexOf('en')===0 ? 'en' : 'es');
+      if(!OK[l]) l='es';
+    }
     document.documentElement.lang=l;
     document.documentElement.className='lang-'+l;
   }catch(e){}})();
@@ -62,8 +75,17 @@ img,svg{display:block}
 :focus-visible{outline:2px solid var(--g2);outline-offset:3px;border-radius:4px}
 
 /* i18n: hide the inactive language */
-html.lang-es .t-en{display:none!important}
-html.lang-en .t-es{display:none!important}
+/* Cada idioma oculta a TODOS los demas. Con solo dos reglas, anadir `t-ca` lo hacia
+   visible en castellano y en ingles a la vez. */
+html.lang-es .t-en,html.lang-es .t-ca{display:none!important}
+html.lang-en .t-es,html.lang-en .t-ca{display:none!important}
+html.lang-ca .t-es,html.lang-ca .t-en{display:none!important}
+/* [INC-TIPO-01] Inter compone `l·l` como ela geminada precompuesta y a 16 px el punt
+   volat desaparece: «cel·les» se lee «ceHes». `locl 0` desactiva esa forma
+   localizada. Medido: el `·` pasa de 1,53 px a 4,61, y el layout no se mueve
+   (docH/docW/h1 +0 a 390 y 1440, en catalan). NO lo arreglan `kern`, `liga`,
+   `dlig`, `calt` ni `ccmp`, ni cambiar el caracter por `ŀ`. */
+html.lang-ca .t-ca{font-feature-settings:'locl' 0}
 
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,6vw,40px)}
 .grad-text{background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
@@ -360,6 +382,7 @@ footer .hl{color:var(--muted2)}
   .stbl td{border:0;padding:10px 16px}
   .stbl td::before{content:attr(data-h-es);display:block;font-family:'JetBrains Mono';font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
   html.lang-en .stbl td::before{content:attr(data-h)}
+  html.lang-ca .stbl td::before{content:attr(data-h-ca)}
 }
 @media(max-width:520px){.stations{grid-template-columns:1fr}footer{flex-direction:column;text-align:center}}
 @media(prefers-reduced-motion:reduce){
@@ -726,7 +749,7 @@ body{overflow:hidden}
            ellos. La pastilla con texto vive en las otras cinco paginas. -->
       <a class="tw-mail" href="mailto:diegollr98@gmail.com" title="diegollr98@gmail.com">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
-          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span></span></a>
+          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span><span class="t-ca">Escriu-me</span></span></a>
       <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M4.98 3.5a2.5 2.5 0 11-.01 5 2.5 2.5 0 01.01-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.5 4.76 5.76V21h-4v-5.7c0-1.36-.03-3.1-1.9-3.1-1.9 0-2.19 1.47-2.19 3v5.8h-4z"/></svg>
@@ -744,12 +767,13 @@ body{overflow:hidden}
          diseño de la ventana es no usar el desplegable nativo. -->
     <div class="tw-lang">
       <button type="button" id="langBtn" aria-haspopup="listbox" aria-expanded="false">
-        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span>
+        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span><span class="sr t-ca">Idioma</span>
         <span id="langCur">ES</span><i aria-hidden="true"></i>
       </button>
       <ul class="tw-langlist" id="langList" role="listbox" hidden>
         <li role="option" data-v="es" aria-selected="true">ES</li>
         <li role="option" data-v="en" aria-selected="false">EN</li>
+        <li role="option" data-v="ca" aria-selected="false">CA</li>
       </ul>
     </div>
   </div>
@@ -760,10 +784,10 @@ body{overflow:hidden}
 <div class="wrap" id="top">
   <!-- hero -->
   <header class="hero">
-    <div class="eyebrow"><span class="t-es">AI Engineer · plataforma regulada full-stack · seguridad privada (España)</span><span class="t-en">AI Engineer · regulated full-stack platform · private security (Spain)</span></div>
+    <div class="eyebrow"><span class="t-es">AI Engineer · plataforma regulada full-stack · seguridad privada (España)</span><span class="t-en">AI Engineer · regulated full-stack platform · private security (Spain)</span><span class="t-ca">AI Engineer · plataforma regulada full-stack · seguretat privada (Espanya)</span></div>
 
     <h1 class="t-es display">Seguridad privada con la <span class="grad-text">honestidad</span> incrustada en el código.</h1>
-    <h1 class="t-en display">Private security with <span class="grad-text">honesty</span> built into the code.</h1>
+    <h1 class="t-en display">Private security with <span class="grad-text">honesty</span> built into the code.</h1><h1 class="t-ca display">Seguretat privada amb l'<span class="grad-text">honestedat</span> incrustada al codi.</h1>
 
     <p class="lede t-es">
       Entré a un dominio regulado y complejo <strong>sin ser del sector ni saber programar</strong>, y en ~6 semanas
@@ -778,21 +802,21 @@ body{overflow:hidden}
       <strong>rigor and honesty are written into the system itself</strong>: the product refuses to call "security"
       what the law doesn't, the legal engine forbids itself from ruling on compliance and cites the BOE or stays silent,
       and every bug I catch becomes a rule. It's an MVP (Stripe in test mode, license pending): that discipline is the product.
-    </p>
+    </p><p class="lede t-ca">Vaig entrar en un domini regulat i complex <strong>sense ser del sector ni saber programar</strong>, i en ~6 setmanes vaig aixecar un producte real i desplegat. El que el fa diferent no és que funcioni: és que <strong>el rigor i l'honestedat estan escrits en el sistema mateix</strong>: el producte renuncia a dir «seguretat» al que la llei no ho és, el motor legal es prohibeix dictaminar compliment i cita el BOE o calla, i cada bug que caço es converteix en una regla. És un MVP (Stripe en mode test, llicència en tràmit): aquesta disciplina és el producte.</p>
 
     <div class="cta">
       <a href="https://sekuracom.vercel.app/" target="_blank" rel="noopener" class="btn btn-primary">
         <svg viewBox="0 0 24 24" fill="#08080d"><path d="M8 5v14l11-7z"/></svg>
-        <span class="t-es">Ver demo en vivo</span><span class="t-en">See the live demo</span>
+        <span class="t-es">Ver demo en vivo</span><span class="t-en">See the live demo</span><span class="t-ca">Veure demo en viu</span>
       </a>
-      <a href="#sectores" class="btn btn-ghost"><span class="t-es">Explorar el sistema</span><span class="t-en">Explore the system</span></a>
+      <a href="#sectores" class="btn btn-ghost"><span class="t-es">Explorar el sistema</span><span class="t-en">Explore the system</span><span class="t-ca">Explorar el sistema</span></a>
     </div>
 
     <div class="stats">
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="5"></span></div><div class="l"><span class="t-es">sectores de reserva, <b>4 operativos, 1 en camino</b> · 3 regímenes legales</span><span class="t-en">booking sectors, <b>4 live, 1 coming</b> · 3 legal regimes</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="8"></span></div><div class="l"><span class="t-es">departamentos · una empresa como software</span><span class="t-en">departments · a company as software</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="257"></span></div><div class="l"><span class="t-es">tests unit en verde · + suite RLS contra una BD real</span><span class="t-en">unit tests green · + RLS suite against a real DB</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="23"></span></div><div class="l"><span class="t-es">bugs propios cazados · cada uno &rarr; una regla</span><span class="t-en">of my own bugs caught · each one &rarr; a rule</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="5"></span></div><div class="l"><span class="t-es">sectores de reserva, <b>4 operativos, 1 en camino</b> · 3 regímenes legales</span><span class="t-en">booking sectors, <b>4 live, 1 coming</b> · 3 legal regimes</span><span class="t-ca">sectors de reserva, <b>4 operatius, 1 en camí</b> · 3 règims legals</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="8"></span></div><div class="l"><span class="t-es">departamentos · una empresa como software</span><span class="t-en">departments · a company as software</span><span class="t-ca">departaments · una empresa com a programari</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="257"></span></div><div class="l"><span class="t-es">tests unit en verde · + suite RLS contra una BD real</span><span class="t-en">unit tests green · + RLS suite against a real DB</span><span class="t-ca">tests unit en verd · + suite RLS contra una BD real</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="23"></span></div><div class="l"><span class="t-es">bugs propios cazados · cada uno &rarr; una regla</span><span class="t-en">of my own bugs caught · each one &rarr; a rule</span><span class="t-ca">bugs propis caçats · cadascun &rarr; una regla</span></div></div>
     </div>
   </header>
 </div>
@@ -803,58 +827,58 @@ body{overflow:hidden}
 <section id="sectores">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">El catálogo honesto</span><span class="t-en">The honest catalog</span></div>
+      <div class="eyebrow"><span class="t-es">El catálogo honesto</span><span class="t-en">The honest catalog</span><span class="t-ca">El catàleg honest</span></div>
       <h2 class="t-es">Cinco sectores, tres regímenes legales, y el producto sabe la diferencia</h2>
-      <h2 class="t-en">Five sectors, three legal regimes, and the product knows the difference</h2>
+      <h2 class="t-en">Five sectors, three legal regimes, and the product knows the difference</h2><h2 class="t-ca">Cinc sectors, tres règims legals, i el producte sap la diferència</h2>
       <p class="t-es">La misma UI vende cinco sectores, pero por debajo el código distingue con precisión cuáles son legalmente "seguridad privada" y cuáles <strong>no</strong>. <strong>Dos de los cinco no lo son</strong>, y la copy de cara al cliente lo admite, porque venderlos como "seguridad" sería intrusismo. La ley encajada en el catálogo, no en un disclaimer.</p>
-      <p class="t-en">The same UI sells five sectors, but underneath the code precisely tells which are legally "private security" and which are <strong>not</strong>. <strong>Two of the five are not</strong>, and the client-facing copy admits it, because selling them as "security" would be an offense. The law embedded in the catalog, not in a disclaimer.</p>
+      <p class="t-en">The same UI sells five sectors, but underneath the code precisely tells which are legally "private security" and which are <strong>not</strong>. <strong>Two of the five are not</strong>, and the client-facing copy admits it, because selling them as "security" would be an offense. The law embedded in the catalog, not in a disclaimer.</p><p class="t-ca">La mateixa UI ven cinc sectors, però per sota el codi distingeix amb precisió quins són legalment «seguretat privada» i quins <strong>no</strong>. <strong>Dos dels cinc no ho són</strong>, i la copy de cara al client ho admet, perquè vendre'ls com a «seguretat» seria intrusisme. La llei encaixada al catàleg, no en un disclaimer.</p>
     </div>
 
     <table class="stbl reveal">
       <thead><tr>
-        <th><span class="t-es">Sector</span><span class="t-en">Sector</span></th>
-        <th><span class="t-es">Régimen legal</span><span class="t-en">Legal regime</span></th>
-        <th><span class="t-es">Cómo se contrata</span><span class="t-en">How it's engaged</span></th>
-        <th><span class="t-es">¿Seguridad privada?</span><span class="t-en">Private security?</span></th>
+        <th><span class="t-es">Sector</span><span class="t-en">Sector</span><span class="t-ca">Sector</span></th>
+        <th><span class="t-es">Régimen legal</span><span class="t-en">Legal regime</span><span class="t-ca">Règim legal</span></th>
+        <th><span class="t-es">Cómo se contrata</span><span class="t-en">How it's engaged</span><span class="t-ca">Com es contracta</span></th>
+        <th><span class="t-es">¿Seguridad privada?</span><span class="t-en">Private security?</span><span class="t-ca">Seguretat privada?</span></th>
       </tr></thead>
       <tbody>
         <tr>
-          <td data-h="Sector" data-h-es="Sector"><span class="sn"><span class="t-es">Escolta</span><span class="t-en">Bodyguard</span></span><span class="sd"><span class="t-es">Protección de personas · flota + niveles</span><span class="t-en">Personal protection · fleet + tiers</span></span></td>
-          <td data-h="Legal regime" data-h-es="Régimen legal"><span class="t-es">Ley 5/2014 · seguridad privada</span><span class="t-en">Law 5/2014 · private security</span></td>
-          <td data-h="How it's engaged" data-h-es="Cómo se contrata"><span class="v v-kill"><span class="t-es">autorización estatal · por contratación</span><span class="t-en">state authorization · per engagement</span></span></td>
-          <td data-h="Private security?" data-h-es="¿Seguridad privada?"><span class="v v-res"><span class="t-es">SÍ</span><span class="t-en">YES</span></span></td>
+          <td data-h="Sector" data-h-es="Sector" data-h-ca="Sector"><span class="sn"><span class="t-es">Escolta</span><span class="t-en">Bodyguard</span><span class="t-ca">Escorta</span></span><span class="sd"><span class="t-es">Protección de personas · flota + niveles</span><span class="t-en">Personal protection · fleet + tiers</span><span class="t-ca">Protecció de persones · flota + nivells</span></span></td>
+          <td data-h="Legal regime" data-h-es="Régimen legal" data-h-ca="Règim legal"><span class="t-es">Ley 5/2014 · seguridad privada</span><span class="t-en">Law 5/2014 · private security</span><span class="t-ca">Ley 5/2014 · seguretat privada</span></td>
+          <td data-h="How it's engaged" data-h-es="Cómo se contrata" data-h-ca="Com es contracta"><span class="v v-kill"><span class="t-es">autorización estatal · por contratación</span><span class="t-en">state authorization · per engagement</span><span class="t-ca">autorització estatal · per contractació</span></span></td>
+          <td data-h="Private security?" data-h-es="¿Seguridad privada?" data-h-ca="Seguretat privada?"><span class="v v-res"><span class="t-es">SÍ</span><span class="t-en">YES</span><span class="t-ca">SÍ</span></span></td>
         </tr>
         <tr>
-          <td data-h="Sector" data-h-es="Sector"><span class="sn"><span class="t-es">Vigilante</span><span class="t-en">Security guard</span></span><span class="sd"><span class="t-es">Vigilancia estática / presencial</span><span class="t-en">Static / on-site guarding</span></span></td>
-          <td data-h="Legal regime" data-h-es="Régimen legal"><span class="t-es">Ley 5/2014 · seguridad privada</span><span class="t-en">Law 5/2014 · private security</span></td>
-          <td data-h="How it's engaged" data-h-es="Cómo se contrata"><span class="v v-val"><span class="t-es">self-service · sin autorización individual</span><span class="t-en">self-service · no individual authorization</span></span></td>
-          <td data-h="Private security?" data-h-es="¿Seguridad privada?"><span class="v v-res"><span class="t-es">SÍ</span><span class="t-en">YES</span></span></td>
+          <td data-h="Sector" data-h-es="Sector" data-h-ca="Sector"><span class="sn"><span class="t-es">Vigilante</span><span class="t-en">Security guard</span><span class="t-ca">Vigilant</span></span><span class="sd"><span class="t-es">Vigilancia estática / presencial</span><span class="t-en">Static / on-site guarding</span><span class="t-ca">Vigilància estàtica / presencial</span></span></td>
+          <td data-h="Legal regime" data-h-es="Régimen legal" data-h-ca="Règim legal"><span class="t-es">Ley 5/2014 · seguridad privada</span><span class="t-en">Law 5/2014 · private security</span><span class="t-ca">Ley 5/2014 · seguretat privada</span></td>
+          <td data-h="How it's engaged" data-h-es="Cómo se contrata" data-h-ca="Com es contracta"><span class="v v-val"><span class="t-es">self-service · sin autorización individual</span><span class="t-en">self-service · no individual authorization</span><span class="t-ca">self-service · sense autorització individual</span></span></td>
+          <td data-h="Private security?" data-h-es="¿Seguridad privada?" data-h-ca="Seguretat privada?"><span class="v v-res"><span class="t-es">SÍ</span><span class="t-en">YES</span><span class="t-ca">SÍ</span></span></td>
         </tr>
         <tr>
-          <td data-h="Sector" data-h-es="Sector"><span class="sn"><span class="t-es">Controlador de acceso</span><span class="t-en">Access controller</span></span><span class="sd"><span class="t-es">Admisión y aforo en espectáculos</span><span class="t-en">Admission &amp; capacity at events</span></span></td>
-          <td data-h="Legal regime" data-h-es="Régimen legal"><span class="t-es">Régimen autonómico de espectáculos</span><span class="t-en">Regional entertainment-venue regime</span></td>
-          <td data-h="How it's engaged" data-h-es="Cómo se contrata"><span class="v v-val"><span class="t-es">self-service · acreditación autonómica</span><span class="t-en">self-service · regional accreditation</span></span></td>
-          <td data-h="Private security?" data-h-es="¿Seguridad privada?"><span class="v v-inc"><span class="t-es">NO</span><span class="t-en">NO</span></span></td>
+          <td data-h="Sector" data-h-es="Sector" data-h-ca="Sector"><span class="sn"><span class="t-es">Controlador de acceso</span><span class="t-en">Access controller</span><span class="t-ca">Controlador d'accés</span></span><span class="sd"><span class="t-es">Admisión y aforo en espectáculos</span><span class="t-en">Admission &amp; capacity at events</span><span class="t-ca">Admissió i aforament en espectacles</span></span></td>
+          <td data-h="Legal regime" data-h-es="Régimen legal" data-h-ca="Règim legal"><span class="t-es">Régimen autonómico de espectáculos</span><span class="t-en">Regional entertainment-venue regime</span><span class="t-ca">Règim autonòmic d'espectacles</span></td>
+          <td data-h="How it's engaged" data-h-es="Cómo se contrata" data-h-ca="Com es contracta"><span class="v v-val"><span class="t-es">self-service · acreditación autonómica</span><span class="t-en">self-service · regional accreditation</span><span class="t-ca">self-service · acreditació autonòmica</span></span></td>
+          <td data-h="Private security?" data-h-es="¿Seguridad privada?" data-h-ca="Seguretat privada?"><span class="v v-inc"><span class="t-es">NO</span><span class="t-en">NO</span><span class="t-ca">NO</span></span></td>
         </tr>
         <tr>
-          <td data-h="Sector" data-h-es="Sector"><span class="sn"><span class="t-es">Personal auxiliar</span><span class="t-en">Auxiliary staff</span></span><span class="sd"><span class="t-es">Recepción · conserjería · control administrativo</span><span class="t-en">Reception · concierge · administrative control</span></span></td>
-          <td data-h="Legal regime" data-h-es="Régimen legal"><span class="t-es">Art. 6.2 · "personal auxiliar análogo"</span><span class="t-en">Art. 6.2 · "analogous auxiliary staff"</span></td>
-          <td data-h="How it's engaged" data-h-es="Cómo se contrata"><span class="v v-val"><span class="t-es">self-service · fuera del ámbito de la ley</span><span class="t-en">self-service · outside the law's scope</span></span></td>
-          <td data-h="Private security?" data-h-es="¿Seguridad privada?"><span class="v v-inc"><span class="t-es">NO</span><span class="t-en">NO</span></span></td>
+          <td data-h="Sector" data-h-es="Sector" data-h-ca="Sector"><span class="sn"><span class="t-es">Personal auxiliar</span><span class="t-en">Auxiliary staff</span><span class="t-ca">Personal auxiliar</span></span><span class="sd"><span class="t-es">Recepción · conserjería · control administrativo</span><span class="t-en">Reception · concierge · administrative control</span><span class="t-ca">Recepció · consergeria · control administratiu</span></span></td>
+          <td data-h="Legal regime" data-h-es="Régimen legal" data-h-ca="Règim legal"><span class="t-es">Art. 6.2 · "personal auxiliar análogo"</span><span class="t-en">Art. 6.2 · "analogous auxiliary staff"</span><span class="t-ca">Art. 6.2 · «personal auxiliar anàleg»</span></td>
+          <td data-h="How it's engaged" data-h-es="Cómo se contrata" data-h-ca="Com es contracta"><span class="v v-val"><span class="t-es">self-service · fuera del ámbito de la ley</span><span class="t-en">self-service · outside the law's scope</span><span class="t-ca">self-service · fora de l'àmbit de la llei</span></span></td>
+          <td data-h="Private security?" data-h-es="¿Seguridad privada?" data-h-ca="Seguretat privada?"><span class="v v-inc"><span class="t-es">NO</span><span class="t-en">NO</span><span class="t-ca">NO</span></span></td>
         </tr>
         <tr>
-          <td data-h="Sector" data-h-es="Sector"><span class="sn"><span class="t-es">Cuerpos del Estado</span><span class="t-en">State forces</span></span><span class="sd"><span class="t-es">En preparación</span><span class="t-en">In preparation</span></span></td>
-          <td data-h="Legal regime" data-h-es="Régimen legal"><span class="mono">: </span></td>
-          <td data-h="How it's engaged" data-h-es="Cómo se contrata"><span class="mono">: </span></td>
-          <td data-h="Private security?" data-h-es="¿Seguridad privada?"><span class="v v-marg"><span class="t-es">Pronto</span><span class="t-en">Soon</span></span></td>
+          <td data-h="Sector" data-h-es="Sector" data-h-ca="Sector"><span class="sn"><span class="t-es">Cuerpos del Estado</span><span class="t-en">State forces</span><span class="t-ca">Cossos de l'Estat</span></span><span class="sd"><span class="t-es">En preparación</span><span class="t-en">In preparation</span><span class="t-ca">En preparació</span></span></td>
+          <td data-h="Legal regime" data-h-es="Régimen legal" data-h-ca="Règim legal"><span class="mono">: </span></td>
+          <td data-h="How it's engaged" data-h-es="Cómo se contrata" data-h-ca="Com es contracta"><span class="mono">: </span></td>
+          <td data-h="Private security?" data-h-es="¿Seguridad privada?" data-h-ca="Seguretat privada?"><span class="v v-marg"><span class="t-es">Pronto</span><span class="t-en">Soon</span><span class="t-ca">Aviat</span></span></td>
         </tr>
       </tbody>
     </table>
 
     <div class="truth reveal">
-      <span class="tl grad-text"><span class="t-es">Honestidad como arquitectura</span><span class="t-en">Honesty as architecture</span></span>
+      <span class="tl grad-text"><span class="t-es">Honestidad como arquitectura</span><span class="t-en">Honesty as architecture</span><span class="t-ca">Honestedat com a arquitectura</span></span>
       <p class="t-es">El controlador de acceso (régimen autonómico de espectáculos) y el personal auxiliar (art. 6.2) <b>no son seguridad privada</b>, y el motor lo sabe: cada sector lleva su régimen, y el gate legal <b>exime</b> a los que la ley no obliga (sin autorización estatal, sin contrato del art. 20.1). Cada servicio compone además una calculadora distinta y una tabla de asignación propia; un cliente puede pedir <b>varios a la vez</b> para un evento, y cada uno conserva intacta su maquinaria legal.</p>
-      <p class="t-en">Access control (regional entertainment regime) and auxiliary staff (art. 6.2) <b>are not private security</b>, and the engine knows it: each sector carries its regime, and the legal gate <b>exempts</b> those the law doesn't bind (no state authorization, no art. 20.1 contract). Each service also composes a distinct calculator and its own assignment table; a client can request <b>several at once</b> for one event, and each keeps its legal machinery intact.</p>
+      <p class="t-en">Access control (regional entertainment regime) and auxiliary staff (art. 6.2) <b>are not private security</b>, and the engine knows it: each sector carries its regime, and the legal gate <b>exempts</b> those the law doesn't bind (no state authorization, no art. 20.1 contract). Each service also composes a distinct calculator and its own assignment table; a client can request <b>several at once</b> for one event, and each keeps its legal machinery intact.</p><p class="t-ca">El controlador d'accés (règim autonòmic d'espectacles) i el personal auxiliar (art. 6.2) <b>no són seguretat privada</b>, i el motor ho sap: cada sector porta el seu règim, i el gate legal <b>eximeix</b> els que la llei no obliga (sense autorització estatal, sense contracte de l'art. 20.1). Cada servei compon a més una calculadora diferent i una taula d'assignació pròpia; un client en pot demanar <b>diversos alhora</b> per a un esdeveniment, i cadascun conserva intacta la seva maquinària legal.</p>
     </div>
   </div>
 </section>
@@ -864,11 +888,11 @@ body{overflow:hidden}
 <section id="flujo">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">El invariante más fino · designar &ne; asignar</span><span class="t-en">The finest invariant · designate &ne; assign</span></div>
+      <div class="eyebrow"><span class="t-es">El invariante más fino · designar &ne; asignar</span><span class="t-en">The finest invariant · designate &ne; assign</span><span class="t-ca">L'invariant més fi · designar &ne; assignar</span></div>
       <h2 class="t-es">Quien consta autorizado ante la Administración es quien presta el servicio</h2>
-      <h2 class="t-en">Whoever is on record as authorized is whoever provides the service</h2>
+      <h2 class="t-en">Whoever is on record as authorized is whoever provides the service</h2><h2 class="t-ca">Qui consta autoritzat davant l'Administració és qui presta el servei</h2>
       <p class="t-es">La protección de personas exige autorización específica para cada contratación, con la identidad de los profesionales concretos. Eso obliga a <strong>separar el dato legal del permiso de datos</strong>: nombrar a alguien en el expediente <strong>no</strong> le da acceso; darle acceso exige reserva pagada <strong>y</strong> que conste en ese expediente. Tocar el equipo caduca el expediente y bloquea cobro y prestación.</p>
-      <p class="t-en">Personal protection requires a specific authorization for each engagement, naming the concrete professionals. That forces a split between the <strong>legal fact and the data permission</strong>: naming someone in the file does <strong>not</strong> grant access; granting access requires a paid booking <strong>and</strong> that they're on that file. Touching the team expires the file and blocks charging and provision.</p>
+      <p class="t-en">Personal protection requires a specific authorization for each engagement, naming the concrete professionals. That forces a split between the <strong>legal fact and the data permission</strong>: naming someone in the file does <strong>not</strong> grant access; granting access requires a paid booking <strong>and</strong> that they're on that file. Touching the team expires the file and blocks charging and provision.</p><p class="t-ca">La protecció de persones exigeix autorització específica per a cada contractació, amb la identitat dels professionals concrets. Això obliga a <strong>separar la dada legal del permís de dades</strong>: anomenar algú a l'expedient <strong>no</strong> li dona accés; donar-li accés exigeix reserva pagada <strong>i</strong> que consti en aquell expedient. Tocar l'equip caduca l'expedient i bloqueja cobrament i prestació.</p>
     </div>
 
     <div class="engine reveal">
@@ -915,48 +939,48 @@ body{overflow:hidden}
 
         <!-- nodes -->
         <rect class="dg-rect" x="26" y="54" width="176" height="66" rx="12" stroke="#22d3ff" stroke-width="1.7"/>
-        <text x="114" y="82" text-anchor="middle" class="dg-title t-es">SOLICITUD</text><text x="114" y="82" text-anchor="middle" class="dg-title t-en">REQUEST</text>
-        <text x="114" y="100" text-anchor="middle" class="dg-sub t-es">el cliente pide</text><text x="114" y="100" text-anchor="middle" class="dg-sub t-en">the client asks</text>
+        <text x="114" y="82" text-anchor="middle" class="dg-title t-es">SOLICITUD</text><text x="114" y="82" text-anchor="middle" class="dg-title t-en">REQUEST</text><text x="114" y="82" text-anchor="middle" class="dg-title t-ca">SOL·LICITUD</text>
+        <text x="114" y="100" text-anchor="middle" class="dg-sub t-es">el cliente pide</text><text x="114" y="100" text-anchor="middle" class="dg-sub t-en">the client asks</text><text x="114" y="100" text-anchor="middle" class="dg-sub t-ca">el client demana</text>
         <rect class="dg-rect dg-glow" x="262" y="54" width="214" height="66" rx="12" stroke="#9b5cff" stroke-width="2" style="color:#9b5cff"/>
-        <text x="369" y="82" text-anchor="middle" class="dg-title t-es">DESIGNAR</text><text x="369" y="82" text-anchor="middle" class="dg-title t-en">DESIGNATE</text>
-        <text x="369" y="100" text-anchor="middle" class="dg-sub t-es">dato legal · NO da acceso</text><text x="369" y="100" text-anchor="middle" class="dg-sub t-en">legal fact · grants NO access</text>
+        <text x="369" y="82" text-anchor="middle" class="dg-title t-es">DESIGNAR</text><text x="369" y="82" text-anchor="middle" class="dg-title t-en">DESIGNATE</text><text x="369" y="82" text-anchor="middle" class="dg-title t-ca">DESIGNAR</text>
+        <text x="369" y="100" text-anchor="middle" class="dg-sub t-es">dato legal · NO da acceso</text><text x="369" y="100" text-anchor="middle" class="dg-sub t-en">legal fact · grants NO access</text><text x="369" y="100" text-anchor="middle" class="dg-sub t-ca">dada legal · NO dona accés</text>
         <rect class="dg-rect" x="560" y="54" width="214" height="66" rx="12" stroke="#22d3ff" stroke-width="1.7"/>
-        <text x="667" y="82" text-anchor="middle" class="dg-title t-es">AUTORIZAR</text><text x="667" y="82" text-anchor="middle" class="dg-title t-en">AUTHORIZE</text>
-        <text x="667" y="100" text-anchor="middle" class="dg-sub t-es">ante la Administración · equipo completo</text><text x="667" y="100" text-anchor="middle" class="dg-sub t-en">before the Administration · full team</text>
+        <text x="667" y="82" text-anchor="middle" class="dg-title t-es">AUTORIZAR</text><text x="667" y="82" text-anchor="middle" class="dg-title t-en">AUTHORIZE</text><text x="667" y="82" text-anchor="middle" class="dg-title t-ca">AUTORITZAR</text>
+        <text x="667" y="100" text-anchor="middle" class="dg-sub t-es">ante la Administración · equipo completo</text><text x="667" y="100" text-anchor="middle" class="dg-sub t-en">before the Administration · full team</text><text x="667" y="100" text-anchor="middle" class="dg-sub t-ca">davant l'Administració · equip complet</text>
         <rect class="dg-rect" x="858" y="54" width="178" height="66" rx="12" stroke="#22d3ff" stroke-width="1.7"/>
-        <text x="947" y="82" text-anchor="middle" class="dg-title t-es">CONTRATO + COMUNICAR</text><text x="947" y="82" text-anchor="middle" class="dg-title t-en">CONTRACT + NOTIFY</text>
-        <text x="947" y="100" text-anchor="middle" class="dg-sub t-es">por escrito · comunicado antes</text><text x="947" y="100" text-anchor="middle" class="dg-sub t-en">in writing · notified beforehand</text>
+        <text x="947" y="82" text-anchor="middle" class="dg-title t-es">CONTRATO + COMUNICAR</text><text x="947" y="82" text-anchor="middle" class="dg-title t-en">CONTRACT + NOTIFY</text><text x="947" y="82" text-anchor="middle" class="dg-title t-ca">CONTRACTE + COMUNICAR</text>
+        <text x="947" y="100" text-anchor="middle" class="dg-sub t-es">por escrito · comunicado antes</text><text x="947" y="100" text-anchor="middle" class="dg-sub t-en">in writing · notified beforehand</text><text x="947" y="100" text-anchor="middle" class="dg-sub t-ca">per escrit · comunicat abans</text>
         <rect class="dg-rect dg-pulse" x="848" y="268" width="188" height="76" rx="12" stroke="#ff5d7a" stroke-width="1.9" style="color:#ff5d7a"/>
-        <text x="942" y="294" text-anchor="middle" class="dg-title t-es">PAGAR SEÑAL</text><text x="942" y="294" text-anchor="middle" class="dg-title t-en">PAY DEPOSIT</text>
-        <text x="942" y="312" text-anchor="middle" class="dg-sub t-es">bloqueado sin autorización</text><text x="942" y="312" text-anchor="middle" class="dg-sub t-en">blocked without authorization</text>
-        <text x="942" y="330" text-anchor="middle" class="dg-sub t-es">recálculo en el servidor</text><text x="942" y="330" text-anchor="middle" class="dg-sub t-en">server-side recompute</text>
+        <text x="942" y="294" text-anchor="middle" class="dg-title t-es">PAGAR SEÑAL</text><text x="942" y="294" text-anchor="middle" class="dg-title t-en">PAY DEPOSIT</text><text x="942" y="294" text-anchor="middle" class="dg-title t-ca">PAGAR SENYAL</text>
+        <text x="942" y="312" text-anchor="middle" class="dg-sub t-es">bloqueado sin autorización</text><text x="942" y="312" text-anchor="middle" class="dg-sub t-en">blocked without authorization</text><text x="942" y="312" text-anchor="middle" class="dg-sub t-ca">bloquejat sense autorització</text>
+        <text x="942" y="330" text-anchor="middle" class="dg-sub t-es">recálculo en el servidor</text><text x="942" y="330" text-anchor="middle" class="dg-sub t-en">server-side recompute</text><text x="942" y="330" text-anchor="middle" class="dg-sub t-ca">recàlcul al servidor</text>
         <text x="1026" y="286" text-anchor="end" class="dg-badge" fill="#ff5d7a">&#128274;</text>
         <rect class="dg-rect dg-glow" x="558" y="268" width="214" height="76" rx="12" stroke="#9b5cff" stroke-width="2" style="color:#9b5cff"/>
-        <text x="665" y="298" text-anchor="middle" class="dg-title t-es">ASIGNAR</text><text x="665" y="298" text-anchor="middle" class="dg-title t-en">ASSIGN</text>
-        <text x="665" y="316" text-anchor="middle" class="dg-sub t-es">la llave de lectura de datos</text><text x="665" y="316" text-anchor="middle" class="dg-sub t-en">the data-read key</text>
-        <text x="665" y="332" text-anchor="middle" class="dg-sub t-es">exige pagado + designado</text><text x="665" y="332" text-anchor="middle" class="dg-sub t-en">requires paid + designated</text>
+        <text x="665" y="298" text-anchor="middle" class="dg-title t-es">ASIGNAR</text><text x="665" y="298" text-anchor="middle" class="dg-title t-en">ASSIGN</text><text x="665" y="298" text-anchor="middle" class="dg-title t-ca">ASSIGNAR</text>
+        <text x="665" y="316" text-anchor="middle" class="dg-sub t-es">la llave de lectura de datos</text><text x="665" y="316" text-anchor="middle" class="dg-sub t-en">the data-read key</text><text x="665" y="316" text-anchor="middle" class="dg-sub t-ca">la clau de lectura de dades</text>
+        <text x="665" y="332" text-anchor="middle" class="dg-sub t-es">exige pagado + designado</text><text x="665" y="332" text-anchor="middle" class="dg-sub t-en">requires paid + designated</text><text x="665" y="332" text-anchor="middle" class="dg-sub t-ca">exigeix pagat + designat</text>
         <rect class="dg-rect" x="150" y="254" width="330" height="104" rx="13" stroke="url(#dg-grad)" stroke-width="2.4"/>
-        <text x="315" y="282" text-anchor="middle" class="dg-title t-es">PRESTAR &mdash; el gate</text><text x="315" y="282" text-anchor="middle" class="dg-title t-en">PROVIDE &mdash; the gate</text>
-        <text x="315" y="302" text-anchor="middle" class="dg-sub t-es">solo si: autorizado &and; contrato comunicado</text><text x="315" y="302" text-anchor="middle" class="dg-sub t-en">only if: authorized &and; contract notified</text>
-        <text x="315" y="320" text-anchor="middle" class="dg-sub t-es">&and; asignados &sube; designados &and; equipo completo</text><text x="315" y="320" text-anchor="middle" class="dg-sub t-en">&and; assigned &sube; designated &and; full team</text>
-        <text x="315" y="342" text-anchor="middle" class="dg-badge t-es" fill="#9bff57">un solo predicado, en un solo sitio</text><text x="315" y="342" text-anchor="middle" class="dg-badge t-en" fill="#9bff57">one predicate, in one place</text>
+        <text x="315" y="282" text-anchor="middle" class="dg-title t-es">PRESTAR &mdash; el gate</text><text x="315" y="282" text-anchor="middle" class="dg-title t-en">PROVIDE &mdash; the gate</text><text x="315" y="282" text-anchor="middle" class="dg-title t-ca">PRESTAR &mdash; el gate</text>
+        <text x="315" y="302" text-anchor="middle" class="dg-sub t-es">solo si: autorizado &and; contrato comunicado</text><text x="315" y="302" text-anchor="middle" class="dg-sub t-en">only if: authorized &and; contract notified</text><text x="315" y="302" text-anchor="middle" class="dg-sub t-ca">només si: autoritzat &and; contracte comunicat</text>
+        <text x="315" y="320" text-anchor="middle" class="dg-sub t-es">&and; asignados &sube; designados &and; equipo completo</text><text x="315" y="320" text-anchor="middle" class="dg-sub t-en">&and; assigned &sube; designated &and; full team</text><text x="315" y="320" text-anchor="middle" class="dg-sub t-ca">&and; assignats &sube; designats &and; equip complet</text>
+        <text x="315" y="342" text-anchor="middle" class="dg-badge t-es" fill="#9bff57">un solo predicado, en un solo sitio</text><text x="315" y="342" text-anchor="middle" class="dg-badge t-en" fill="#9bff57">one predicate, in one place</text><text x="315" y="342" text-anchor="middle" class="dg-badge t-ca" fill="#9bff57">un sol predicat, en un sol lloc</text>
         <rect class="dg-rect" x="200" y="441" width="230" height="58" rx="12" stroke="#5dff9b" stroke-width="1.8"/>
-        <text x="315" y="466" text-anchor="middle" class="dg-title t-es">COMPLETAR</text><text x="315" y="466" text-anchor="middle" class="dg-title t-en">COMPLETE</text>
-        <text x="315" y="484" text-anchor="middle" class="dg-sub t-es">servicio prestado + cierre</text><text x="315" y="484" text-anchor="middle" class="dg-sub t-en">service provided + close</text>
+        <text x="315" y="466" text-anchor="middle" class="dg-title t-es">COMPLETAR</text><text x="315" y="466" text-anchor="middle" class="dg-title t-en">COMPLETE</text><text x="315" y="466" text-anchor="middle" class="dg-title t-ca">COMPLETAR</text>
+        <text x="315" y="484" text-anchor="middle" class="dg-sub t-es">servicio prestado + cierre</text><text x="315" y="484" text-anchor="middle" class="dg-sub t-en">service provided + close</text><text x="315" y="484" text-anchor="middle" class="dg-sub t-ca">servei prestat + tancament</text>
         <text x="428" y="459" text-anchor="end" class="dg-badge" fill="#5dff9b">&#10003;</text>
 
         <text x="530" y="600" text-anchor="middle" class="dg-loop t-es">&#8635; tocar el equipo caduca el expediente &rarr; bloquea cobro y prestación</text>
-        <text x="530" y="600" text-anchor="middle" class="dg-loop t-en">&#8635; touching the team expires the file &rarr; blocks charging and provision</text>
+        <text x="530" y="600" text-anchor="middle" class="dg-loop t-en">&#8635; touching the team expires the file &rarr; blocks charging and provision</text><text x="530" y="600" text-anchor="middle" class="dg-loop t-ca">&#8635; tocar l'equip caduca l'expedient &rarr; bloqueja cobrament i prestació</text>
       </svg>
     </div>
-    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span></p>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span><span class="t-ca">Pessiga per apropar i llegir el detall &#8596;</span></p>
     <p class="engine-cap reveal t-es"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Etiquetas <b>conceptuales</b>, no el esquema real. El invariante rector: <b>quien consta autorizado ante la Administración == quien presta el servicio.</b> Los sectores self-service (vigilancia, controlador, auxiliar) saltan el trámite de autorización; la protección de personas no.</p>
-    <p class="engine-cap reveal t-en"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><b>Conceptual</b> labels, not the real schema. The governing invariant: <b>whoever is on record as authorized == whoever provides the service.</b> The self-service sectors (guarding, access control, auxiliary) skip the authorization step; personal protection doesn't.</p>
+    <p class="engine-cap reveal t-en"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><b>Conceptual</b> labels, not the real schema. The governing invariant: <b>whoever is on record as authorized == whoever provides the service.</b> The self-service sectors (guarding, access control, auxiliary) skip the authorization step; personal protection doesn't.</p><p class="engine-cap reveal t-ca"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Etiquetes <b>conceptuals</b>, no l'esquema real. L'invariant rector: <b>qui consta autoritzat davant l'Administració == qui presta el servei.</b> Els sectors self-service (vigilància, controlador, auxiliar) salten el tràmit d'autorització; la protecció de persones no.</p>
     <div class="legend">
-      <span class="t-es"><span class="sw" style="background:#9b5cff"></span><b>concepto clave</b> (dato / llave)</span><span class="t-en"><span class="sw" style="background:#9b5cff"></span><b>key concept</b> (fact / key)</span>
-      <span class="t-es"><span class="sw" style="background:#22d3ff"></span><b>en trámite</b></span><span class="t-en"><span class="sw" style="background:#22d3ff"></span><b>in progress</b></span>
-      <span class="t-es"><span class="sw" style="background:#ff5d7a"></span><b>gate / bloqueado</b></span><span class="t-en"><span class="sw" style="background:#ff5d7a"></span><b>gate / blocked</b></span>
-      <span class="t-es"><span class="sw" style="background:#5dff9b"></span><b>completado</b></span><span class="t-en"><span class="sw" style="background:#5dff9b"></span><b>completed</b></span>
+      <span class="t-es"><span class="sw" style="background:#9b5cff"></span><b>concepto clave</b> (dato / llave)</span><span class="t-en"><span class="sw" style="background:#9b5cff"></span><b>key concept</b> (fact / key)</span><span class="t-ca"><span class="sw" style="background:#9b5cff"></span><b>concepte clau</b> (dada / clau)</span>
+      <span class="t-es"><span class="sw" style="background:#22d3ff"></span><b>en trámite</b></span><span class="t-en"><span class="sw" style="background:#22d3ff"></span><b>in progress</b></span><span class="t-ca"><span class="sw" style="background:#22d3ff"></span><b>en tràmit</b></span>
+      <span class="t-es"><span class="sw" style="background:#ff5d7a"></span><b>gate / bloqueado</b></span><span class="t-en"><span class="sw" style="background:#ff5d7a"></span><b>gate / blocked</b></span><span class="t-ca"><span class="sw" style="background:#ff5d7a"></span><b>gate / bloquejat</b></span>
+      <span class="t-es"><span class="sw" style="background:#5dff9b"></span><b>completado</b></span><span class="t-en"><span class="sw" style="background:#5dff9b"></span><b>completed</b></span><span class="t-ca"><span class="sw" style="background:#5dff9b"></span><b>completat</b></span>
     </div>
   </div>
 </section>
@@ -966,63 +990,63 @@ body{overflow:hidden}
 <section id="mando">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">El back-office</span><span class="t-en">The back-office</span></div>
+      <div class="eyebrow"><span class="t-es">El back-office</span><span class="t-en">The back-office</span><span class="t-ca">El back-office</span></div>
       <h2 class="t-es">El Centro de Mando: una empresa como software</h2>
-      <h2 class="t-en">The Command Center: a company as software</h2>
+      <h2 class="t-en">The Command Center: a company as software</h2><h2 class="t-ca">El Centre de Comandament: una empresa com a programari</h2>
       <p class="t-es">No es un panel de admin: son <strong>ocho departamentos</strong>, cada uno un área de negocio con su propia lógica, girando alrededor del ciclo de vida de la reserva. Un solo dev construyó el back-office entero de una empresa de seguridad.</p>
-      <p class="t-en">It's not an admin panel: it's <strong>eight departments</strong>, each a business area with its own logic, spinning around the booking lifecycle. One dev built the whole back-office of a security company.</p>
+      <p class="t-en">It's not an admin panel: it's <strong>eight departments</strong>, each a business area with its own logic, spinning around the booking lifecycle. One dev built the whole back-office of a security company.</p><p class="t-ca">No és un panell d'admin: són <strong>vuit departaments</strong>, cadascun una àrea de negoci amb la seva pròpia lògica, girant al voltant del cicle de vida de la reserva. Un sol dev va construir el back-office sencer d'una empresa de seguretat.</p>
     </div>
 
     <div class="cockpit">
       <div class="reveal">
         <div class="stage" aria-hidden="true">
           <div class="orbit"></div>
-          <div class="hub"><b class="grad-text"><span class="t-es">Centro de<br>Mando</span><span class="t-en">Command<br>Center</span></b><span class="t-es">8 áreas</span><span class="t-en">8 areas</span></div>
+          <div class="hub"><b class="grad-text"><span class="t-es">Centro de<br>Mando</span><span class="t-en">Command<br>Center</span><span class="t-ca">Centre de<br>Comandament</span></b><span class="t-es">8 áreas</span><span class="t-en">8 areas</span><span class="t-ca">8 àrees</span></div>
           <div class="ring">
-            <div class="nd" style="--a:0deg"><div class="bubble"><span class="num grad-text">1</span><span class="nm"><span class="t-es">Operac.</span><span class="t-en">Ops</span></span></div></div>
-            <div class="nd" style="--a:45deg"><div class="bubble"><span class="num grad-text">2</span><span class="nm"><span class="t-es">Profes.</span><span class="t-en">Pros</span></span></div></div>
-            <div class="nd" style="--a:90deg"><div class="bubble"><span class="num grad-text">3</span><span class="nm"><span class="t-es">Miembros</span><span class="t-en">Members</span></span></div></div>
-            <div class="nd" style="--a:135deg"><div class="bubble"><span class="num grad-text">4</span><span class="nm"><span class="t-es">Financ.</span><span class="t-en">Finance</span></span></div></div>
+            <div class="nd" style="--a:0deg"><div class="bubble"><span class="num grad-text">1</span><span class="nm"><span class="t-es">Operac.</span><span class="t-en">Ops</span><span class="t-ca">Operac.</span></span></div></div>
+            <div class="nd" style="--a:45deg"><div class="bubble"><span class="num grad-text">2</span><span class="nm"><span class="t-es">Profes.</span><span class="t-en">Pros</span><span class="t-ca">Profes.</span></span></div></div>
+            <div class="nd" style="--a:90deg"><div class="bubble"><span class="num grad-text">3</span><span class="nm"><span class="t-es">Miembros</span><span class="t-en">Members</span><span class="t-ca">Membres</span></span></div></div>
+            <div class="nd" style="--a:135deg"><div class="bubble"><span class="num grad-text">4</span><span class="nm"><span class="t-es">Financ.</span><span class="t-en">Finance</span><span class="t-ca">Financ.</span></span></div></div>
             <div class="nd" style="--a:180deg"><div class="bubble"><span class="num grad-text">5</span><span class="nm">Legal</span></div></div>
             <div class="nd" style="--a:225deg"><div class="bubble"><span class="num grad-text">6</span><span class="nm">CRM</span></div></div>
             <div class="nd" style="--a:270deg"><div class="bubble"><span class="num grad-text">7</span><span class="nm">RRHH</span></div></div>
-            <div class="nd" style="--a:315deg"><div class="bubble"><span class="num grad-text">8</span><span class="nm"><span class="t-es">Ciber</span><span class="t-en">Cyber</span></span></div></div>
+            <div class="nd" style="--a:315deg"><div class="bubble"><span class="num grad-text">8</span><span class="nm"><span class="t-es">Ciber</span><span class="t-en">Cyber</span><span class="t-ca">Ciber</span></span></div></div>
           </div>
         </div>
-        <div class="stage-note"><span class="t-es">pasa el ratón por un departamento para resaltarlo</span><span class="t-en">hover a department to highlight it</span></div>
+        <div class="stage-note"><span class="t-es">pasa el ratón por un departamento para resaltarlo</span><span class="t-en">hover a department to highlight it</span><span class="t-ca">passa el ratolí per un departament per ressaltar-lo</span></div>
       </div>
 
       <div class="reveal">
         <div class="stations">
-          <div class="st"><div class="stt grad-text">1 <span class="t-es">OPERACIONES</span><span class="t-en">OPERATIONS</span></div><h4><span class="t-es">El ciclo de la reserva</span><span class="t-en">The booking cycle</span></h4><p><span class="t-es">Máquina de estados, verificar, asignar, arrancar el servicio.</span><span class="t-en">State machine, verify, assign, start the service.</span></p></div>
-          <div class="st"><div class="stt grad-text">2 <span class="t-es">PROFESIONALES</span><span class="t-en">PROFESSIONALS</span></div><h4><span class="t-es">Verificar habilitados</span><span class="t-en">Vetting the licensed</span></h4><p><span class="t-es">Documento en bucket privado; el admin lo ve por URL firmada efímera.</span><span class="t-en">Document in a private bucket; admin views it via a short-lived signed URL.</span></p></div>
-          <div class="st"><div class="stt grad-text">3 <span class="t-es">MIEMBROS</span><span class="t-en">MEMBERS</span></div><h4><span class="t-es">El equipo interno</span><span class="t-en">The internal team</span></h4><p><span class="t-es">Altas del back-office y su matriz de permisos por departamento.</span><span class="t-en">Back-office members and their per-department permission matrix.</span></p></div>
-          <div class="st"><div class="stt grad-text">4 <span class="t-es">FINANCIERO</span><span class="t-en">FINANCE</span></div><h4><span class="t-es">Ingresos honestos</span><span class="t-en">Honest revenue</span></h4><p><span class="t-es">Solo cuenta lo cobrado real (no el sembrado); costes, márgenes, proyección.</span><span class="t-en">Only real charges count (not seeded); costs, margins, projection.</span></p></div>
-          <div class="st"><div class="stt grad-text">5 <span class="t-es">LEGAL</span><span class="t-en">LEGAL</span></div><h4><span class="t-es">Normativa + expedientes</span><span class="t-en">Regulation + files</span></h4><p><span class="t-es">Watchlist de normas, registro de riesgos, contratos y autorizaciones.</span><span class="t-en">Rules watchlist, risk registry, contracts and authorizations.</span></p></div>
-          <div class="st"><div class="stt grad-text">6 <span class="t-es">CRM</span><span class="t-en">CRM</span></div><h4><span class="t-es">Relación con el cliente</span><span class="t-en">Client relationship</span></h4><p><span class="t-es">Tickets y conversaciones de doble cara, aisladas del profesional.</span><span class="t-en">Two-sided tickets and threads, isolated from the professional.</span></p></div>
-          <div class="st"><div class="stt grad-text">7 <span class="t-es">RRHH</span><span class="t-en">HR</span></div><h4><span class="t-es">Personal contratado</span><span class="t-en">Contracted staff</span></h4><p><span class="t-es">Contratos laborales + el candado: nadie presta sin contrato vigente.</span><span class="t-en">Employment contracts + the lock: no one provides without a live contract.</span></p></div>
-          <div class="st"><div class="stt grad-text">8 <span class="t-es">CIBERSEGURIDAD</span><span class="t-en">CYBERSECURITY</span></div><h4><span class="t-es">Postura en vivo</span><span class="t-en">Live posture</span></h4><p><span class="t-es">Checks evaluados contra el estado real del sistema, no hardcodeados.</span><span class="t-en">Checks evaluated against the system's real state, not hardcoded.</span></p></div>
+          <div class="st"><div class="stt grad-text">1 <span class="t-es">OPERACIONES</span><span class="t-en">OPERATIONS</span><span class="t-ca">OPERACIONS</span></div><h4><span class="t-es">El ciclo de la reserva</span><span class="t-en">The booking cycle</span><span class="t-ca">El cicle de la reserva</span></h4><p><span class="t-es">Máquina de estados, verificar, asignar, arrancar el servicio.</span><span class="t-en">State machine, verify, assign, start the service.</span><span class="t-ca">Màquina d'estats, verificar, assignar, arrencar el servei.</span></p></div>
+          <div class="st"><div class="stt grad-text">2 <span class="t-es">PROFESIONALES</span><span class="t-en">PROFESSIONALS</span><span class="t-ca">PROFESSIONALS</span></div><h4><span class="t-es">Verificar habilitados</span><span class="t-en">Vetting the licensed</span><span class="t-ca">Verificar habilitats</span></h4><p><span class="t-es">Documento en bucket privado; el admin lo ve por URL firmada efímera.</span><span class="t-en">Document in a private bucket; admin views it via a short-lived signed URL.</span><span class="t-ca">Document en bucket privat; l'admin el veu per URL signada efímera.</span></p></div>
+          <div class="st"><div class="stt grad-text">3 <span class="t-es">MIEMBROS</span><span class="t-en">MEMBERS</span><span class="t-ca">MEMBRES</span></div><h4><span class="t-es">El equipo interno</span><span class="t-en">The internal team</span><span class="t-ca">L'equip intern</span></h4><p><span class="t-es">Altas del back-office y su matriz de permisos por departamento.</span><span class="t-en">Back-office members and their per-department permission matrix.</span><span class="t-ca">Altes del back-office i la seva matriu de permisos per departament.</span></p></div>
+          <div class="st"><div class="stt grad-text">4 <span class="t-es">FINANCIERO</span><span class="t-en">FINANCE</span><span class="t-ca">FINANCER</span></div><h4><span class="t-es">Ingresos honestos</span><span class="t-en">Honest revenue</span><span class="t-ca">Ingressos honestos</span></h4><p><span class="t-es">Solo cuenta lo cobrado real (no el sembrado); costes, márgenes, proyección.</span><span class="t-en">Only real charges count (not seeded); costs, margins, projection.</span><span class="t-ca">Només compta el cobrat real (no el sembrat); costos, marges, projecció.</span></p></div>
+          <div class="st"><div class="stt grad-text">5 <span class="t-es">LEGAL</span><span class="t-en">LEGAL</span><span class="t-ca">LEGAL</span></div><h4><span class="t-es">Normativa + expedientes</span><span class="t-en">Regulation + files</span><span class="t-ca">Normativa + expedients</span></h4><p><span class="t-es">Watchlist de normas, registro de riesgos, contratos y autorizaciones.</span><span class="t-en">Rules watchlist, risk registry, contracts and authorizations.</span><span class="t-ca">Watchlist de normes, registre de riscos, contractes i autoritzacions.</span></p></div>
+          <div class="st"><div class="stt grad-text">6 <span class="t-es">CRM</span><span class="t-en">CRM</span><span class="t-ca">CRM</span></div><h4><span class="t-es">Relación con el cliente</span><span class="t-en">Client relationship</span><span class="t-ca">Relació amb el client</span></h4><p><span class="t-es">Tickets y conversaciones de doble cara, aisladas del profesional.</span><span class="t-en">Two-sided tickets and threads, isolated from the professional.</span><span class="t-ca">Tickets i converses de doble cara, aïllades del professional.</span></p></div>
+          <div class="st"><div class="stt grad-text">7 <span class="t-es">RRHH</span><span class="t-en">HR</span><span class="t-ca">RRHH</span></div><h4><span class="t-es">Personal contratado</span><span class="t-en">Contracted staff</span><span class="t-ca">Personal contractat</span></h4><p><span class="t-es">Contratos laborales + el candado: nadie presta sin contrato vigente.</span><span class="t-en">Employment contracts + the lock: no one provides without a live contract.</span><span class="t-ca">Contractes laborals + el pany: ningú presta sense contracte vigent.</span></p></div>
+          <div class="st"><div class="stt grad-text">8 <span class="t-es">CIBERSEGURIDAD</span><span class="t-en">CYBERSECURITY</span><span class="t-ca">CIBERSEGURETAT</span></div><h4><span class="t-es">Postura en vivo</span><span class="t-en">Live posture</span><span class="t-ca">Postura en viu</span></h4><p><span class="t-es">Checks evaluados contra el estado real del sistema, no hardcodeados.</span><span class="t-en">Checks evaluated against the system's real state, not hardcoded.</span><span class="t-ca">Checks avaluats contra l'estat real del sistema, no hardcodejats.</span></p></div>
         </div>
-        <a class="demo-link grad-text" href="https://sekuracom.vercel.app/" target="_blank" rel="noopener"><span class="t-es">Recórrelo en la demo en vivo</span><span class="t-en">Walk it in the live demo</span> &rarr;</a>
+        <a class="demo-link grad-text" href="https://sekuracom.vercel.app/" target="_blank" rel="noopener"><span class="t-es">Recórrelo en la demo en vivo</span><span class="t-en">Walk it in the live demo</span><span class="t-ca">Recorre'l a la demo en viu</span> &rarr;</a>
       </div>
     </div>
 
     <div class="video vp reveal" id="vpBox" style="margin-top:48px" data-hero="SEKURA-centro-de-mando.mp4">
       <video id="vpVideo" src="SEKURA-centro-de-mando.mp4" poster="../assets/poster-sekura.jpg"
              muted loop playsinline preload="metadata"></video>
-      <span class="vp-tag"><span class="t-es">vista previa · centro de mando</span><span class="t-en">preview · command centre</span></span>
+      <span class="vp-tag"><span class="t-es">vista previa · centro de mando</span><span class="t-en">preview · command centre</span><span class="t-ca">vista prèvia · centre de comandament</span></span>
       <button class="vp-ov" id="vpBtn" type="button">
         <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
-        <span class="vt"><span class="t-es">Centro de mando · 1:28</span><span class="t-en">Command centre · 1:28</span></span>
-        <span class="vs"><span class="t-es">Sin voz: la plataforma real con los rótulos en pantalla. Pasa el ratón para verla; pulsa para reproducirla desde el principio con controles.</span><span class="t-en">No voice-over: the real platform with on-screen captions. Hover to watch it; click to play it from the start with controls.</span></span>
+        <span class="vt"><span class="t-es">Centro de mando · 1:28</span><span class="t-en">Command centre · 1:28</span><span class="t-ca">Centre de comandament · 1:28</span></span>
+        <span class="vs"><span class="t-es">Sin voz: la plataforma real con los rótulos en pantalla. Pasa el ratón para verla; pulsa para reproducirla desde el principio con controles.</span><span class="t-en">No voice-over: the real platform with on-screen captions. Hover to watch it; click to play it from the start with controls.</span><span class="t-ca">Sense veu: la plataforma real amb els rètols a la pantalla. Passa el ratolí per veure-la; prem per reproduir-la des del principi amb controls.</span></span>
       </button>
     </div>
-    <p class="video-note"><span class="t-es">Recorrido por los 8 departamentos <b>operando</b>: se avanza una reserva y se cambia un permiso en vivo · <b>datos de ejemplo</b>, sin PII real.</span><span class="t-en">Tour of the 8 departments <b>in operation</b>: a booking is advanced and a permission toggled live · <b>sample data</b>, no real PII.</span></p>
+    <p class="video-note"><span class="t-es">Recorrido por los 8 departamentos <b>operando</b>: se avanza una reserva y se cambia un permiso en vivo · <b>datos de ejemplo</b>, sin PII real.</span><span class="t-en">Tour of the 8 departments <b>in operation</b>: a booking is advanced and a permission toggled live · <b>sample data</b>, no real PII.</span><span class="t-ca">Recorregut pels 8 departaments <b>operant</b>: s'avança una reserva i es canvia un permís en viu · <b>dades d'exemple</b>, sense PII real.</span></p>
 
     <div class="truth reveal">
-      <span class="tl grad-text"><span class="t-es">Honestidad del RBAC</span><span class="t-en">RBAC honesty</span></span>
+      <span class="tl grad-text"><span class="t-es">Honestidad del RBAC</span><span class="t-en">RBAC honesty</span><span class="t-ca">Honestedat del RBAC</span></span>
       <p class="t-es">El acceso se resuelve con <b>doble gate fail-closed</b> (¿es del back-office? · ¿tiene ese departamento?), reusando las mismas queries en la página, la acción y la UI para que no puedan contradecirse. Y una honestidad que está en los propios comentarios del código: es RBAC de <b>capa-app</b> (el panel lee con una clave de servicio que salta la RLS), así que <b>jamás lo vendo como "permisos aislados en la base de datos"</b>. Un noveno tab, <b>Roadmap</b>, es un mapa de solo lectura del pipe entero que dice, por reserva real, qué la bloquea, reusando los mismos predicados del servidor, nunca reimplementándolos.</p>
-      <p class="t-en">Access is resolved with a <b>fail-closed double gate</b> (in the back-office? · has that department?), reusing the same queries in the page, the action and the UI so they can't contradict each other. And an honesty written in the code's own comments: it's <b>app-layer</b> RBAC (the panel reads with a service key that bypasses RLS), so <b>I never sell it as "permissions isolated in the database"</b>. A ninth tab, <b>Roadmap</b>, is a read-only map of the whole pipe that says, per real booking, what blocks it, reusing the server's own predicates, never reimplementing them.</p>
+      <p class="t-en">Access is resolved with a <b>fail-closed double gate</b> (in the back-office? · has that department?), reusing the same queries in the page, the action and the UI so they can't contradict each other. And an honesty written in the code's own comments: it's <b>app-layer</b> RBAC (the panel reads with a service key that bypasses RLS), so <b>I never sell it as "permissions isolated in the database"</b>. A ninth tab, <b>Roadmap</b>, is a read-only map of the whole pipe that says, per real booking, what blocks it, reusing the server's own predicates, never reimplementing them.</p><p class="t-ca">L'accés es resol amb <b>doble gate fail-closed</b> (és del back-office? · té aquell departament?), reutilitzant les mateixes queries a la pàgina, l'acció i la UI perquè no es puguin contradir. I una honestedat que és als mateixos comentaris del codi: és RBAC de <b>capa-app</b> (el panell llegeix amb una clau de servei que salta la RLS), així que <b>mai el venc com a «permisos aïllats a la base de dades»</b>. Un novè tab, <b>Roadmap</b>, és un mapa de només lectura del pipe sencer que diu, per reserva real, què la bloqueja, reutilitzant els mateixos predicats del servidor, mai reimplementant-los.</p>
     </div>
   </div>
 </section>
@@ -1032,11 +1056,11 @@ body{overflow:hidden}
 <section id="defensa">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Confidencialidad como feature</span><span class="t-en">Confidentiality as a feature</span></div>
+      <div class="eyebrow"><span class="t-es">Confidencialidad como feature</span><span class="t-en">Confidentiality as a feature</span><span class="t-ca">Confidencialitat com a feature</span></div>
       <h2 class="t-es">Siete capas que asumen que la anterior pudo fallar</h2>
-      <h2 class="t-en">Seven layers that assume the previous one could fail</h2>
+      <h2 class="t-en">Seven layers that assume the previous one could fail</h2><h2 class="t-ca">Set capes que assumeixen que l'anterior va poder fallar</h2>
       <p class="t-es">Es un servicio de protección: la identidad, la ubicación y la agenda del cliente son PII cuya fuga es <strong>catastrófica</strong>. Por eso "no filtrar" es un requisito de diseño, no un extra, y en ningún punto se confía en el navegador.</p>
-      <p class="t-en">It's a protection service: the client's identity, location and schedule are PII whose leak is <strong>catastrophic</strong>. So "don't leak" is a design requirement, not an extra, and at no point is the browser trusted.</p>
+      <p class="t-en">It's a protection service: the client's identity, location and schedule are PII whose leak is <strong>catastrophic</strong>. So "don't leak" is a design requirement, not an extra, and at no point is the browser trusted.</p><p class="t-ca">És un servei de protecció: la identitat, la ubicació i l'agenda del client són PII la fuita de la qual és <strong>catastròfica</strong>. Per això «no filtrar» és un requisit de disseny, no un extra, i en cap punt es confia en el navegador.</p>
     </div>
 
     <div class="engine reveal">
@@ -1053,58 +1077,58 @@ body{overflow:hidden}
         <circle cx="92" cy="50" r="6" fill="#22d3ff" color="#22d3ff" class="dg-glow"/>
         <rect class="dg-rect" x="140" y="24" width="740" height="52" rx="12" stroke="#22d3ff" stroke-width="1.7"/>
         <text x="164" y="47" class="dg-title" style="fill:#22d3ff">1</text>
-        <text x="188" y="47" class="dg-title t-es">INPUTS DEL CLIENTE</text><text x="188" y="47" class="dg-title t-en">CLIENT INPUTS</text>
-        <text x="856" y="55" text-anchor="end" class="dg-sub t-es">nunca el total, solo los datos</text><text x="856" y="55" text-anchor="end" class="dg-sub t-en">never the total, only the inputs</text>
+        <text x="188" y="47" class="dg-title t-es">INPUTS DEL CLIENTE</text><text x="188" y="47" class="dg-title t-en">CLIENT INPUTS</text><text x="188" y="47" class="dg-title t-ca">INPUTS DEL CLIENT</text>
+        <text x="856" y="55" text-anchor="end" class="dg-sub t-es">nunca el total, solo los datos</text><text x="856" y="55" text-anchor="end" class="dg-sub t-en">never the total, only the inputs</text><text x="856" y="55" text-anchor="end" class="dg-sub t-ca">mai el total, només les dades</text>
         <!-- layer 2 -->
         <circle cx="92" cy="130" r="6" fill="#22d3ff" color="#22d3ff" class="dg-glow"/>
         <rect class="dg-rect" x="140" y="104" width="740" height="52" rx="12" stroke="#22d3ff" stroke-width="1.7"/>
         <text x="164" y="127" class="dg-title" style="fill:#22d3ff">2</text>
-        <text x="188" y="127" class="dg-title t-es">PRECIO RECALCULADO EN SERVIDOR</text><text x="188" y="127" class="dg-title t-en">PRICE RECOMPUTED SERVER-SIDE</text>
-        <text x="856" y="135" text-anchor="end" class="dg-sub t-es">aborta si no cuadra</text><text x="856" y="135" text-anchor="end" class="dg-sub t-en">aborts if it doesn't match</text>
+        <text x="188" y="127" class="dg-title t-es">PRECIO RECALCULADO EN SERVIDOR</text><text x="188" y="127" class="dg-title t-en">PRICE RECOMPUTED SERVER-SIDE</text><text x="188" y="127" class="dg-title t-ca">PREU RECALCULAT AL SERVIDOR</text>
+        <text x="856" y="135" text-anchor="end" class="dg-sub t-es">aborta si no cuadra</text><text x="856" y="135" text-anchor="end" class="dg-sub t-en">aborts if it doesn't match</text><text x="856" y="135" text-anchor="end" class="dg-sub t-ca">avorta si no quadra</text>
         <!-- layer 3 -->
         <circle cx="92" cy="210" r="6" fill="#9b5cff" color="#9b5cff" class="dg-glow"/>
         <rect class="dg-rect dg-glow" x="140" y="184" width="740" height="52" rx="12" stroke="#9b5cff" stroke-width="1.9" style="color:#9b5cff"/>
         <text x="164" y="207" class="dg-title" style="fill:#bd9bff">3</text>
-        <text x="188" y="207" class="dg-title t-es">GATE DE AUTORIZACIÓN · fail-closed</text><text x="188" y="207" class="dg-title t-en">AUTHORIZATION GATE · fail-closed</text>
-        <text x="856" y="215" text-anchor="end" class="dg-sub t-es">un predicado, tres puntos del flujo</text><text x="856" y="215" text-anchor="end" class="dg-sub t-en">one predicate, three points of the flow</text>
+        <text x="188" y="207" class="dg-title t-es">GATE DE AUTORIZACIÓN · fail-closed</text><text x="188" y="207" class="dg-title t-en">AUTHORIZATION GATE · fail-closed</text><text x="188" y="207" class="dg-title t-ca">GATE D'AUTORITZACIÓ · fail-closed</text>
+        <text x="856" y="215" text-anchor="end" class="dg-sub t-es">un predicado, tres puntos del flujo</text><text x="856" y="215" text-anchor="end" class="dg-sub t-en">one predicate, three points of the flow</text><text x="856" y="215" text-anchor="end" class="dg-sub t-ca">un predicat, tres punts del flux</text>
         <!-- layer 4 -->
         <circle cx="92" cy="290" r="6" fill="#9b5cff" color="#9b5cff" class="dg-glow"/>
         <rect class="dg-rect dg-glow" x="140" y="264" width="740" height="52" rx="12" stroke="#9b5cff" stroke-width="1.9" style="color:#9b5cff"/>
         <text x="164" y="287" class="dg-title" style="fill:#bd9bff">4</text>
-        <text x="188" y="287" class="dg-title t-es">WEBHOOK FIRMADO + IDEMPOTENTE</text><text x="188" y="287" class="dg-title t-en">SIGNED + IDEMPOTENT WEBHOOK</text>
-        <text x="856" y="295" text-anchor="end" class="dg-sub t-es">la única autoridad del cobro</text><text x="856" y="295" text-anchor="end" class="dg-sub t-en">the only authority on the charge</text>
+        <text x="188" y="287" class="dg-title t-es">WEBHOOK FIRMADO + IDEMPOTENTE</text><text x="188" y="287" class="dg-title t-en">SIGNED + IDEMPOTENT WEBHOOK</text><text x="188" y="287" class="dg-title t-ca">WEBHOOK SIGNAT + IDEMPOTENT</text>
+        <text x="856" y="295" text-anchor="end" class="dg-sub t-es">la única autoridad del cobro</text><text x="856" y="295" text-anchor="end" class="dg-sub t-en">the only authority on the charge</text><text x="856" y="295" text-anchor="end" class="dg-sub t-ca">l'única autoritat del cobrament</text>
         <!-- layer 5 -->
         <circle cx="92" cy="370" r="6" fill="#7bb0ff" color="#7bb0ff" class="dg-glow"/>
         <rect class="dg-rect" x="140" y="344" width="740" height="52" rx="12" stroke="url(#dg-grad)" stroke-width="1.9"/>
         <text x="164" y="367" class="dg-title" style="fill:#9bff57">5</text>
-        <text x="188" y="367" class="dg-title t-es">RLS POR FILA</text><text x="188" y="367" class="dg-title t-en">ROW-LEVEL SECURITY</text>
-        <text x="856" y="375" text-anchor="end" class="dg-sub t-es">cada rol ve solo lo suyo</text><text x="856" y="375" text-anchor="end" class="dg-sub t-en">each role sees only its own</text>
+        <text x="188" y="367" class="dg-title t-es">RLS POR FILA</text><text x="188" y="367" class="dg-title t-en">ROW-LEVEL SECURITY</text><text x="188" y="367" class="dg-title t-ca">RLS PER FILA</text>
+        <text x="856" y="375" text-anchor="end" class="dg-sub t-es">cada rol ve solo lo suyo</text><text x="856" y="375" text-anchor="end" class="dg-sub t-en">each role sees only its own</text><text x="856" y="375" text-anchor="end" class="dg-sub t-ca">cada rol veu només el seu</text>
         <!-- layer 6 -->
         <circle cx="92" cy="450" r="6" fill="#9bff57" color="#9bff57" class="dg-glow"/>
         <rect class="dg-rect" x="140" y="424" width="740" height="52" rx="12" stroke="url(#dg-grad)" stroke-width="1.9"/>
         <text x="164" y="447" class="dg-title" style="fill:#9bff57">6</text>
-        <text x="188" y="447" class="dg-title t-es">PERMISO POR COLUMNA</text><text x="188" y="447" class="dg-title t-en">COLUMN-LEVEL GRANTS</text>
-        <text x="856" y="455" text-anchor="end" class="dg-sub t-es">la PII no se concede a la sesión</text><text x="856" y="455" text-anchor="end" class="dg-sub t-en">PII isn't granted to the session</text>
+        <text x="188" y="447" class="dg-title t-es">PERMISO POR COLUMNA</text><text x="188" y="447" class="dg-title t-en">COLUMN-LEVEL GRANTS</text><text x="188" y="447" class="dg-title t-ca">PERMÍS PER COLUMNA</text>
+        <text x="856" y="455" text-anchor="end" class="dg-sub t-es">la PII no se concede a la sesión</text><text x="856" y="455" text-anchor="end" class="dg-sub t-en">PII isn't granted to the session</text><text x="856" y="455" text-anchor="end" class="dg-sub t-ca">la PII no es concedeix a la sessió</text>
         <!-- layer 7 -->
         <circle cx="92" cy="530" r="6" fill="#5dff9b" color="#5dff9b" class="dg-glow"/>
         <rect class="dg-rect" x="140" y="504" width="740" height="52" rx="12" stroke="#5dff9b" stroke-width="1.8"/>
         <text x="164" y="527" class="dg-title" style="fill:#5dff9b">7</text>
-        <text x="188" y="527" class="dg-title t-es">STORAGE PRIVADO + URL FIRMADA</text><text x="188" y="527" class="dg-title t-en">PRIVATE STORAGE + SIGNED URL</text>
-        <text x="856" y="535" text-anchor="end" class="dg-sub t-es">efímera · nunca pública</text><text x="856" y="535" text-anchor="end" class="dg-sub t-en">ephemeral · never public</text>
+        <text x="188" y="527" class="dg-title t-es">STORAGE PRIVADO + URL FIRMADA</text><text x="188" y="527" class="dg-title t-en">PRIVATE STORAGE + SIGNED URL</text><text x="188" y="527" class="dg-title t-ca">STORAGE PRIVAT + URL SIGNADA</text>
+        <text x="856" y="535" text-anchor="end" class="dg-sub t-es">efímera · nunca pública</text><text x="856" y="535" text-anchor="end" class="dg-sub t-en">ephemeral · never public</text><text x="856" y="535" text-anchor="end" class="dg-sub t-ca">efímera · mai pública</text>
         <!-- vault -->
         <rect class="dg-rect dg-glow" x="300" y="580" width="360" height="56" rx="13" stroke="#5dff9b" stroke-width="2.2" style="color:#5dff9b"/>
-        <text x="416" y="604" text-anchor="middle" class="dg-title t-es">PII PROTEGIDA</text><text x="416" y="604" text-anchor="middle" class="dg-title t-en">PII PROTECTED</text>
-        <text x="416" y="622" text-anchor="middle" class="dg-sub t-es">identidad · ubicación · agenda</text><text x="416" y="622" text-anchor="middle" class="dg-sub t-en">identity · location · schedule</text>
+        <text x="416" y="604" text-anchor="middle" class="dg-title t-es">PII PROTEGIDA</text><text x="416" y="604" text-anchor="middle" class="dg-title t-en">PII PROTECTED</text><text x="416" y="604" text-anchor="middle" class="dg-title t-ca">PII PROTEGIDA</text>
+        <text x="416" y="622" text-anchor="middle" class="dg-sub t-es">identidad · ubicación · agenda</text><text x="416" y="622" text-anchor="middle" class="dg-sub t-en">identity · location · schedule</text><text x="416" y="622" text-anchor="middle" class="dg-sub t-ca">identitat · ubicació · agenda</text>
         <text x="640" y="600" text-anchor="end" class="dg-badge" fill="#5dff9b">&#128274;</text>
       </svg>
     </div>
-    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span></p>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span><span class="t-ca">Pessiga per apropar i llegir el detall &#8596;</span></p>
     <p class="engine-cap reveal t-es"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>El detalle que lo hace serio: se descubrió que un permiso de tabla completa dejaba a un profesional asignado leer PII del cliente por el API directo <b>aunque ninguna pantalla la mostrara</b>; el fix estrechó el permiso a la unión exacta de columnas que la app usa. Dos costuras independientes (precio y pago) y la firma del gate se cambió <b>a propósito para romper el build</b> en sus tres call-sites, para que nadie se olvide de uno.</p>
-    <p class="engine-cap reveal t-en"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>The detail that makes it serious: a full-table grant was found to let an assigned professional read client PII via the direct API <b>even though no screen showed it</b>; the fix narrowed the grant to the exact union of columns the app uses. Two independent seams (price and payment), and the gate's signature was changed <b>on purpose to break the build</b> across its three call-sites, so nobody forgets one.</p>
+    <p class="engine-cap reveal t-en"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>The detail that makes it serious: a full-table grant was found to let an assigned professional read client PII via the direct API <b>even though no screen showed it</b>; the fix narrowed the grant to the exact union of columns the app uses. Two independent seams (price and payment), and the gate's signature was changed <b>on purpose to break the build</b> across its three call-sites, so nobody forgets one.</p><p class="engine-cap reveal t-ca"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>El detall que ho fa seriós: es va descobrir que un permís de taula completa deixava un professional assignat llegir PII del client per l'API directe <b>encara que cap pantalla la mostrés</b>; el fix va estrènyer el permís a la unió exacta de columnes que l'app fa servir. Dues costures independents (preu i pagament) i la signatura del gate es va canviar <b>a propòsit per trencar el build</b> als seus tres call-sites, perquè ningú se n'oblidi de cap.</p>
     <div class="truth reveal">
-      <span class="tl grad-text"><span class="t-es">Verificado, no confiado</span><span class="t-en">Verified, not trusted</span></span>
+      <span class="tl grad-text"><span class="t-es">Verificado, no confiado</span><span class="t-en">Verified, not trusted</span><span class="t-ca">Verificat, no confiat</span></span>
       <p class="t-es">Un escolta asignado a un servicio <b>no puede</b> ver la identidad del cliente ni la de otros profesionales, y no es una promesa: es una <b>suite de tests por rol</b> que corre contra una base de datos real y distingue "cero filas por RLS" de "permiso denegado por columna", dos modos de fallo que un test perezoso confundiría. La postura de seguridad se <b>lee en vivo</b> (¿RLS activa en toda tabla? ¿buckets privados? ¿unicidad del cobro?), nunca se afirma.</p>
-      <p class="t-en">A bodyguard assigned to a service <b>cannot</b> see the client's identity or other professionals', and it's not a promise: it's a <b>per-role test suite</b> that runs against a real database and distinguishes "zero rows by RLS" from "permission denied by column", two failure modes a lazy test would conflate. The security posture is <b>read live</b> (RLS on every table? private buckets? charge uniqueness?), never asserted.</p>
+      <p class="t-en">A bodyguard assigned to a service <b>cannot</b> see the client's identity or other professionals', and it's not a promise: it's a <b>per-role test suite</b> that runs against a real database and distinguishes "zero rows by RLS" from "permission denied by column", two failure modes a lazy test would conflate. The security posture is <b>read live</b> (RLS on every table? private buckets? charge uniqueness?), never asserted.</p><p class="t-ca">Un escorta assignat a un servei <b>no pot</b> veure la identitat del client ni la d'altres professionals, i no és una promesa: és una <b>suite de tests per rol</b> que corre contra una base de dades real i distingeix «zero files per RLS» de «permís denegat per columna», dos modes de fallada que un test mandrós confondria. La postura de seguretat es <b>llegeix en viu</b> (RLS activa a tota taula? buckets privats? unicitat del cobrament?), mai s'afirma.</p>
     </div>
   </div>
 </section>
@@ -1114,52 +1138,52 @@ body{overflow:hidden}
 <section id="legal">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">El motor legal</span><span class="t-en">The legal engine</span></div>
+      <div class="eyebrow"><span class="t-es">El motor legal</span><span class="t-en">The legal engine</span><span class="t-ca">El motor legal</span></div>
       <h2 class="t-es">Un sistema que se prohíbe dictaminar cumplimiento</h2>
-      <h2 class="t-en">A system that forbids itself from ruling on compliance</h2>
+      <h2 class="t-en">A system that forbids itself from ruling on compliance</h2><h2 class="t-ca">Un sistema que es prohibeix dictaminar compliment</h2>
       <p class="t-es">El cumplimiento es una opinión jurídica; no se verifica por ejecución. El motor legal solo detecta <strong>hechos con fuente</strong>: que una norma cambió, o que el código trata un dato que la Política de Privacidad no declara. Cada hallazgo lleva su artículo del BOE y su cita, y un registro de riesgos donde <strong>"mitigado" nunca es "resuelto"</strong>.</p>
-      <p class="t-en">Compliance is a legal opinion; it isn't verified by execution. The legal engine only detects <strong>sourced facts</strong>: that a rule changed, or that the code handles data the Privacy Policy doesn't declare. Every finding carries its BOE article and citation, and a risk registry where <strong>"mitigated" is never "resolved"</strong>.</p>
+      <p class="t-en">Compliance is a legal opinion; it isn't verified by execution. The legal engine only detects <strong>sourced facts</strong>: that a rule changed, or that the code handles data the Privacy Policy doesn't declare. Every finding carries its BOE article and citation, and a risk registry where <strong>"mitigated" is never "resolved"</strong>.</p><p class="t-ca">El compliment és una opinió jurídica; no es verifica per execució. El motor legal només detecta <strong>fets amb font</strong>: que una norma va canviar, o que el codi tracta una dada que la Política de Privacitat no declara. Cada troballa porta el seu article del BOE i la seva cita, i un registre de riscos on <strong>«mitigat» mai és «resolt»</strong>.</p>
     </div>
 
     <table class="stbl reveal">
       <thead><tr>
-        <th><span class="t-es">Hallazgo (registro de riesgos)</span><span class="t-en">Finding (risk registry)</span></th>
-        <th><span class="t-es">Fuente</span><span class="t-en">Source</span></th>
-        <th><span class="t-es">Estado honesto</span><span class="t-en">Honest status</span></th>
+        <th><span class="t-es">Hallazgo (registro de riesgos)</span><span class="t-en">Finding (risk registry)</span><span class="t-ca">Troballa (registre de riscos)</span></th>
+        <th><span class="t-es">Fuente</span><span class="t-en">Source</span><span class="t-ca">Font</span></th>
+        <th><span class="t-es">Estado honesto</span><span class="t-en">Honest status</span><span class="t-ca">Estat honest</span></th>
       </tr></thead>
       <tbody>
         <tr>
-          <td data-h="Finding" data-h-es="Hallazgo"><span class="sn"><span class="t-es">Empresa de seguridad, no "marketplace"</span><span class="t-en">Security company, not a "marketplace"</span></span><span class="sd"><span class="t-es">Estos servicios solo puede prestarlos una empresa autorizada → pivote de modelo.</span><span class="t-en">Only an authorized company may provide these services → model pivot.</span></span></td>
-          <td data-h="Source" data-h-es="Fuente" class="mono"><span class="t-es">Ley 5/2014 art. 5.2 · BOE</span><span class="t-en">Law 5/2014 art. 5.2 · BOE</span></td>
-          <td data-h="Status" data-h-es="Estado"><span class="v v-val"><span class="t-es">verificado en el BOE</span><span class="t-en">verified in the BOE</span></span></td>
+          <td data-h="Finding" data-h-es="Hallazgo" data-h-ca="Troballa"><span class="sn"><span class="t-es">Empresa de seguridad, no "marketplace"</span><span class="t-en">Security company, not a "marketplace"</span><span class="t-ca">Empresa de seguretat, no «marketplace»</span></span><span class="sd"><span class="t-es">Estos servicios solo puede prestarlos una empresa autorizada → pivote de modelo.</span><span class="t-en">Only an authorized company may provide these services → model pivot.</span><span class="t-ca">Aquests serveis només els pot prestar una empresa autoritzada → pivot de model.</span></span></td>
+          <td data-h="Source" data-h-es="Fuente" data-h-ca="Font" class="mono"><span class="t-es">Ley 5/2014 art. 5.2 · BOE</span><span class="t-en">Law 5/2014 art. 5.2 · BOE</span><span class="t-ca">Ley 5/2014 art. 5.2 · BOE</span></td>
+          <td data-h="Status" data-h-es="Estado" data-h-ca="Estat"><span class="v v-val"><span class="t-es">verificado en el BOE</span><span class="t-en">verified in the BOE</span><span class="t-ca">verificat al BOE</span></span></td>
         </tr>
         <tr>
-          <td data-h="Finding" data-h-es="Hallazgo"><span class="sn"><span class="t-es">Autorización por contratación</span><span class="t-en">Per-engagement authorization</span></span><span class="sd"><span class="t-es">La protección de personas exige autorización estatal nominal antes de prestar.</span><span class="t-en">Personal protection requires a named state authorization before providing.</span></span></td>
-          <td data-h="Source" data-h-es="Fuente" class="mono"><span class="t-es">RD 2364/1994 art. 27 · BOE</span><span class="t-en">RD 2364/1994 art. 27 · BOE</span></td>
-          <td data-h="Status" data-h-es="Estado"><span class="v v-res"><span class="t-es">encajado en el flujo</span><span class="t-en">encoded in the flow</span></span></td>
+          <td data-h="Finding" data-h-es="Hallazgo" data-h-ca="Troballa"><span class="sn"><span class="t-es">Autorización por contratación</span><span class="t-en">Per-engagement authorization</span><span class="t-ca">Autorització per contractació</span></span><span class="sd"><span class="t-es">La protección de personas exige autorización estatal nominal antes de prestar.</span><span class="t-en">Personal protection requires a named state authorization before providing.</span><span class="t-ca">La protecció de persones exigeix autorització estatal nominal abans de prestar.</span></span></td>
+          <td data-h="Source" data-h-es="Fuente" data-h-ca="Font" class="mono"><span class="t-es">RD 2364/1994 art. 27 · BOE</span><span class="t-en">RD 2364/1994 art. 27 · BOE</span><span class="t-ca">RD 2364/1994 art. 27 · BOE</span></td>
+          <td data-h="Status" data-h-es="Estado" data-h-ca="Estat"><span class="v v-res"><span class="t-es">encajado en el flujo</span><span class="t-en">encoded in the flow</span><span class="t-ca">encaixat al flux</span></span></td>
         </tr>
         <tr>
-          <td data-h="Finding" data-h-es="Hallazgo"><span class="sn"><span class="t-es">Sectores que no son "seguridad"</span><span class="t-en">Sectors that aren't "security"</span></span><span class="sd"><span class="t-es">Controlador y auxiliar → riesgo de objeto social exclusivo.</span><span class="t-en">Access control &amp; auxiliary → exclusive-corporate-purpose risk.</span></span></td>
-          <td data-h="Source" data-h-es="Fuente" class="mono"><span class="t-es">art. 6.2 / 19.1.a · BOE</span><span class="t-en">art. 6.2 / 19.1.a · BOE</span></td>
-          <td data-h="Status" data-h-es="Estado"><span class="v v-inc"><span class="t-es">abierto · para el abogado</span><span class="t-en">open · for the lawyer</span></span></td>
+          <td data-h="Finding" data-h-es="Hallazgo" data-h-ca="Troballa"><span class="sn"><span class="t-es">Sectores que no son "seguridad"</span><span class="t-en">Sectors that aren't "security"</span><span class="t-ca">Sectors que no són «seguretat»</span></span><span class="sd"><span class="t-es">Controlador y auxiliar → riesgo de objeto social exclusivo.</span><span class="t-en">Access control &amp; auxiliary → exclusive-corporate-purpose risk.</span><span class="t-ca">Controlador i auxiliar → risc d'objecte social exclusiu.</span></span></td>
+          <td data-h="Source" data-h-es="Fuente" data-h-ca="Font" class="mono"><span class="t-es">art. 6.2 / 19.1.a · BOE</span><span class="t-en">art. 6.2 / 19.1.a · BOE</span><span class="t-ca">art. 6.2 / 19.1.a · BOE</span></td>
+          <td data-h="Status" data-h-es="Estado" data-h-ca="Estat"><span class="v v-inc"><span class="t-es">abierto · para el abogado</span><span class="t-en">open · for the lawyer</span><span class="t-ca">obert · per a l'advocat</span></span></td>
         </tr>
         <tr>
-          <td data-h="Finding" data-h-es="Hallazgo"><span class="sn"><span class="t-es">PII declarada en Privacidad</span><span class="t-en">PII declared in the Privacy Policy</span></span><span class="sd"><span class="t-es">Cada tratamiento nuevo se declara; la versión legal la fija el servidor.</span><span class="t-en">Every new processing is declared; the legal version is server-pinned.</span></span></td>
-          <td data-h="Source" data-h-es="Fuente" class="mono"><span class="t-es">RGPD 6.1 · AEPD</span><span class="t-en">GDPR 6.1 · AEPD</span></td>
-          <td data-h="Status" data-h-es="Estado"><span class="v v-val"><span class="t-es">verificable en código</span><span class="t-en">verifiable in code</span></span></td>
+          <td data-h="Finding" data-h-es="Hallazgo" data-h-ca="Troballa"><span class="sn"><span class="t-es">PII declarada en Privacidad</span><span class="t-en">PII declared in the Privacy Policy</span><span class="t-ca">PII declarada a Privacitat</span></span><span class="sd"><span class="t-es">Cada tratamiento nuevo se declara; la versión legal la fija el servidor.</span><span class="t-en">Every new processing is declared; the legal version is server-pinned.</span><span class="t-ca">Cada tractament nou es declara; la versió legal la fixa el servidor.</span></span></td>
+          <td data-h="Source" data-h-es="Fuente" data-h-ca="Font" class="mono"><span class="t-es">RGPD 6.1 · AEPD</span><span class="t-en">GDPR 6.1 · AEPD</span><span class="t-ca">RGPD 6.1 · AEPD</span></td>
+          <td data-h="Status" data-h-es="Estado" data-h-ca="Estat"><span class="v v-val"><span class="t-es">verificable en código</span><span class="t-en">verifiable in code</span><span class="t-ca">verificable en codi</span></span></td>
         </tr>
         <tr>
-          <td data-h="Finding" data-h-es="Hallazgo"><span class="sn"><span class="t-es">Licencia · RC · aval · Nº de Registro</span><span class="t-en">License · liability · bond · registry no.</span></span><span class="sd"><span class="t-es">Requisitos de empresa de seguridad (trámite societario), no suscritos aún.</span><span class="t-en">Security-company requirements (corporate steps), not yet in place.</span></span></td>
-          <td data-h="Source" data-h-es="Fuente" class="mono"><span class="t-es">Ley 5/2014 art. 19-20 · BOE</span><span class="t-en">Law 5/2014 art. 19-20 · BOE</span></td>
-          <td data-h="Status" data-h-es="Estado"><span class="v v-kill"><span class="t-es">pendiente · placeholder honesto</span><span class="t-en">pending · honest placeholder</span></span></td>
+          <td data-h="Finding" data-h-es="Hallazgo" data-h-ca="Troballa"><span class="sn"><span class="t-es">Licencia · RC · aval · Nº de Registro</span><span class="t-en">License · liability · bond · registry no.</span><span class="t-ca">Llicència · RC · aval · Nº de Registre</span></span><span class="sd"><span class="t-es">Requisitos de empresa de seguridad (trámite societario), no suscritos aún.</span><span class="t-en">Security-company requirements (corporate steps), not yet in place.</span><span class="t-ca">Requisits d'empresa de seguretat (tràmit societari), no subscrits encara.</span></span></td>
+          <td data-h="Source" data-h-es="Fuente" data-h-ca="Font" class="mono"><span class="t-es">Ley 5/2014 art. 19-20 · BOE</span><span class="t-en">Law 5/2014 art. 19-20 · BOE</span><span class="t-ca">Ley 5/2014 art. 19-20 · BOE</span></td>
+          <td data-h="Status" data-h-es="Estado" data-h-ca="Estat"><span class="v v-kill"><span class="t-es">pendiente · placeholder honesto</span><span class="t-en">pending · honest placeholder</span><span class="t-ca">pendent · placeholder honest</span></span></td>
         </tr>
       </tbody>
     </table>
 
     <div class="truth reveal">
-      <span class="tl grad-text"><span class="t-es">Cita o calla</span><span class="t-en">Cite or stay silent</span></span>
+      <span class="tl grad-text"><span class="t-es">Cita o calla</span><span class="t-en">Cite or stay silent</span><span class="t-ca">Cita o calla</span></span>
       <p class="t-es">Ningún agente afirma que SEKURA "cumple": el dictamen lo firma un abogado. Cada norma vigilada y cada hallazgo llevan <b>URL oficial (BOE / EUR-Lex / AEPD) y cita literal</b>, fetcheada en la corrida; sin fuente verificada, no se reporta. La regla nació de un fallo real: un agente de este equipo <b>se inventó un hecho legal</b> y casi entra en material de inversor. La watchlist que barre la rutina mensual es <b>la misma</b> que ve el inversor, no pueden divergir. Y sobre el estatus, sin adornos: <b>MVP · Stripe test · licencia y Nº de Registro en trámite</b> (placeholder honesto, no inventado).</p>
-      <p class="t-en">No agent claims SEKURA "complies": the ruling is a lawyer's. Every watched rule and every finding carries an <b>official URL (BOE / EUR-Lex / AEPD) and a literal citation</b>, fetched during the run; without a verified source, it isn't reported. The rule was born from a real failure: an agent on this team <b>invented a legal fact</b> and nearly reached investor material. The watchlist the monthly routine sweeps is <b>the same</b> the investor sees: they can't diverge. And on status, unadorned: <b>MVP · Stripe test · license and registry number pending</b> (an honest placeholder, not invented).</p>
+      <p class="t-en">No agent claims SEKURA "complies": the ruling is a lawyer's. Every watched rule and every finding carries an <b>official URL (BOE / EUR-Lex / AEPD) and a literal citation</b>, fetched during the run; without a verified source, it isn't reported. The rule was born from a real failure: an agent on this team <b>invented a legal fact</b> and nearly reached investor material. The watchlist the monthly routine sweeps is <b>the same</b> the investor sees: they can't diverge. And on status, unadorned: <b>MVP · Stripe test · license and registry number pending</b> (an honest placeholder, not invented).</p><p class="t-ca">Cap agent afirma que SEKURA «compleix»: el dictamen el signa un advocat. Cada norma vigilada i cada troballa porten <b>URL oficial (BOE / EUR-Lex / AEPD) i cita literal</b>, fetchada a la correguda; sense font verificada, no es reporta. La regla va néixer d'una fallada real: un agent d'aquest equip <b>es va inventar un fet legal</b> i gairebé entra en material d'inversor. La watchlist que escombra la rutina mensual és <b>la mateixa</b> que veu l'inversor, no poden divergir. I sobre l'estatus, sense adorns: <b>MVP · Stripe test · llicència i Nº de Registre en tràmit</b> (placeholder honest, no inventat).</p>
     </div>
   </div>
 </section>
@@ -1169,68 +1193,68 @@ body{overflow:hidden}
 <section id="registro">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">El registro de incidentes</span><span class="t-en">The incident ledger</span></div>
+      <div class="eyebrow"><span class="t-es">El registro de incidentes</span><span class="t-en">The incident ledger</span><span class="t-ca">El registre d'incidents</span></div>
       <h2 class="t-es">Bugs que cacé en mi propio sistema, y qué aprendí de cada uno</h2>
-      <h2 class="t-en">Bugs I caught in my own system, and what each one taught me</h2>
+      <h2 class="t-en">Bugs I caught in my own system, and what each one taught me</h2><h2 class="t-ca">Bugs que vaig caçar al meu propi sistema, i què vaig aprendre de cadascun</h2>
       <p class="t-es">No presumo de no tener bugs. Presumo de un <strong>sistema que los caza</strong>: un registro append-only donde cada incidente se convierte en una regla que la próxima sesión aplica sola. Estos son reales, del propio proyecto (23 en total), contados <strong>a nivel de patrón</strong>, sin exponer el esquema.</p>
-      <p class="t-en">I don't brag about having no bugs. I brag about a <strong>system that catches them</strong>: an append-only ledger where each incident becomes a rule the next session applies on its own. These are real, from the project (23 total), told <strong>at the pattern level</strong>: no schema exposed.</p>
+      <p class="t-en">I don't brag about having no bugs. I brag about a <strong>system that catches them</strong>: an append-only ledger where each incident becomes a rule the next session applies on its own. These are real, from the project (23 total), told <strong>at the pattern level</strong>: no schema exposed.</p><p class="t-ca">No presumeixo de no tenir bugs. Presumeixo d'un <strong>sistema que els caça</strong>: un registre append-only on cada incident es converteix en una regla que la sessió següent aplica sola. Aquests són reals, del mateix projecte (23 en total), explicats <strong>a nivell de patró</strong>, sense exposar l'esquema.</p>
     </div>
 
     <table class="stbl reveal">
       <thead><tr>
-        <th><span class="t-es">Incidente</span><span class="t-en">Incident</span></th>
-        <th><span class="t-es">Qué era</span><span class="t-en">What it was</span></th>
-        <th><span class="t-es">Evidencia</span><span class="t-en">Evidence</span></th>
-        <th><span class="t-es">Veredicto</span><span class="t-en">Verdict</span></th>
+        <th><span class="t-es">Incidente</span><span class="t-en">Incident</span><span class="t-ca">Incident</span></th>
+        <th><span class="t-es">Qué era</span><span class="t-en">What it was</span><span class="t-ca">Què era</span></th>
+        <th><span class="t-es">Evidencia</span><span class="t-en">Evidence</span><span class="t-ca">Evidència</span></th>
+        <th><span class="t-es">Veredicto</span><span class="t-en">Verdict</span><span class="t-ca">Veredicte</span></th>
       </tr></thead>
       <tbody>
         <tr>
-          <td data-h="Incident" data-h-es="Incidente"><span class="sn"><span class="t-es">El gate que reabría su propio agujero</span><span class="t-en">The gate that reopened its own hole</span></span><span class="sd"><span class="t-es">Un gate nuevo debía impedir prestar sin equipo.</span><span class="t-en">A new gate was meant to block provision without a team.</span></span></td>
-          <td data-h="What it was" data-h-es="Qué era"><span class="t-es">Con nadie designado, comparaba 0 == 0 y daba luz verde &rarr; se podía cobrar y prestar un servicio con <strong>cero</strong> profesionales. Más un fail-open por un dato ausente que el compilador no ve.</span><span class="t-en">With nobody designated, it compared 0 == 0 and went green &rarr; you could charge and provide a service with <strong>zero</strong> professionals. Plus a fail-open on a missing value the compiler can't see.</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">reproducido ejecutando el predicado real + 2.º pase</span><span class="t-en">reproduced by running the real predicate + 2nd pass</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-val"><span class="t-es">cazado pre-push</span><span class="t-en">caught pre-push</span></span></td>
+          <td data-h="Incident" data-h-es="Incidente" data-h-ca="Incident"><span class="sn"><span class="t-es">El gate que reabría su propio agujero</span><span class="t-en">The gate that reopened its own hole</span><span class="t-ca">El gate que reobria el seu propi forat</span></span><span class="sd"><span class="t-es">Un gate nuevo debía impedir prestar sin equipo.</span><span class="t-en">A new gate was meant to block provision without a team.</span><span class="t-ca">Un gate nou havia d'impedir prestar sense equip.</span></span></td>
+          <td data-h="What it was" data-h-es="Qué era" data-h-ca="Què era"><span class="t-es">Con nadie designado, comparaba 0 == 0 y daba luz verde &rarr; se podía cobrar y prestar un servicio con <strong>cero</strong> profesionales. Más un fail-open por un dato ausente que el compilador no ve.</span><span class="t-en">With nobody designated, it compared 0 == 0 and went green &rarr; you could charge and provide a service with <strong>zero</strong> professionals. Plus a fail-open on a missing value the compiler can't see.</span><span class="t-ca">Sense ningú designat, comparava 0 == 0 i donava llum verda &rarr; es podia cobrar i prestar un servei amb <strong>zero</strong> professionals. Més un fail-open per una dada absent que el compilador no veu.</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">reproducido ejecutando el predicado real + 2.º pase</span><span class="t-en">reproduced by running the real predicate + 2nd pass</span><span class="t-ca">reproduït executant el predicat real + 2n pas</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-val"><span class="t-es">cazado pre-push</span><span class="t-en">caught pre-push</span><span class="t-ca">caçat pre-push</span></span></td>
         </tr>
         <tr>
-          <td data-h="Incident" data-h-es="Incidente"><span class="sn"><span class="t-es">Recursión en las reglas de acceso</span><span class="t-en">Recursion in the access rules</span></span><span class="sd"><span class="t-es">Dos tablas que se referenciaban en círculo.</span><span class="t-en">Two tables referencing each other in a loop.</span></span></td>
-          <td data-h="What it was" data-h-es="Qué era"><span class="t-es">La primera auditoría de seguridad <strong>no la vio</strong>. Apareció en el segundo pase independiente; se rompió con funciones de definición segura.</span><span class="t-en">The first security audit <strong>missed it</strong>. It surfaced on the independent second pass; broken with security-definer functions.</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">cubierto luego por la suite RLS real</span><span class="t-en">later covered by the real RLS suite</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-marg"><span class="t-es">doble pase</span><span class="t-en">double pass</span></span></td>
+          <td data-h="Incident" data-h-es="Incidente" data-h-ca="Incident"><span class="sn"><span class="t-es">Recursión en las reglas de acceso</span><span class="t-en">Recursion in the access rules</span><span class="t-ca">Recursió a les regles d'accés</span></span><span class="sd"><span class="t-es">Dos tablas que se referenciaban en círculo.</span><span class="t-en">Two tables referencing each other in a loop.</span><span class="t-ca">Dues taules que es referenciaven en cercle.</span></span></td>
+          <td data-h="What it was" data-h-es="Qué era" data-h-ca="Què era"><span class="t-es">La primera auditoría de seguridad <strong>no la vio</strong>. Apareció en el segundo pase independiente; se rompió con funciones de definición segura.</span><span class="t-en">The first security audit <strong>missed it</strong>. It surfaced on the independent second pass; broken with security-definer functions.</span><span class="t-ca">La primera auditoria de seguretat <strong>no la va veure</strong>. Va aparèixer al segon pas independent; es va trencar amb funcions de definició segura.</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">cubierto luego por la suite RLS real</span><span class="t-en">later covered by the real RLS suite</span><span class="t-ca">cobert després per la suite RLS real</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-marg"><span class="t-es">doble pase</span><span class="t-en">double pass</span><span class="t-ca">doble pas</span></span></td>
         </tr>
         <tr>
-          <td data-h="Incident" data-h-es="Incidente"><span class="sn"><span class="t-es">Fuga de datos por una función expuesta</span><span class="t-en">Data leak via an exposed function</span></span><span class="sd"><span class="t-es">Una función consultable por API saltaba el cero-grant.</span><span class="t-en">An API-callable function bypassed the zero-grant.</span></span></td>
-          <td data-h="What it was" data-h-es="Qué era"><span class="t-es">Al crearse, concedía permiso al público por defecto: cualquier usuario autenticado podía sondear estatus de personal (PII) por una vía lateral, saltándose el blindaje de la tabla.</span><span class="t-en">On creation it granted the public by default: any authenticated user could probe staff status (PII) through a side channel, bypassing the table's lockdown.</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">test que asierta permiso denegado por esa vía</span><span class="t-en">test asserting permission denied by that path</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-val"><span class="t-es">cazado + test</span><span class="t-en">caught + test</span></span></td>
+          <td data-h="Incident" data-h-es="Incidente" data-h-ca="Incident"><span class="sn"><span class="t-es">Fuga de datos por una función expuesta</span><span class="t-en">Data leak via an exposed function</span><span class="t-ca">Fuita de dades per una funció exposada</span></span><span class="sd"><span class="t-es">Una función consultable por API saltaba el cero-grant.</span><span class="t-en">An API-callable function bypassed the zero-grant.</span><span class="t-ca">Una funció consultable per API saltava el zero-grant.</span></span></td>
+          <td data-h="What it was" data-h-es="Qué era" data-h-ca="Què era"><span class="t-es">Al crearse, concedía permiso al público por defecto: cualquier usuario autenticado podía sondear estatus de personal (PII) por una vía lateral, saltándose el blindaje de la tabla.</span><span class="t-en">On creation it granted the public by default: any authenticated user could probe staff status (PII) through a side channel, bypassing the table's lockdown.</span><span class="t-ca">En crear-se, concedia permís al públic per defecte: qualsevol usuari autenticat podia sondejar estat de personal (PII) per una via lateral, saltant-se el blindatge de la taula.</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">test que asierta permiso denegado por esa vía</span><span class="t-en">test asserting permission denied by that path</span><span class="t-ca">test que asserta permís denegat per aquella via</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-val"><span class="t-es">cazado + test</span><span class="t-en">caught + test</span><span class="t-ca">caçat + test</span></span></td>
         </tr>
         <tr>
-          <td data-h="Incident" data-h-es="Incidente"><span class="sn"><span class="t-es">La red de seguridad estaba apagada</span><span class="t-en">The safety net was off</span></span><span class="sd"><span class="t-es">La CI llevaba 12 corridas en rojo desde la primera.</span><span class="t-en">CI had been red for 12 runs since the first.</span></span></td>
-          <td data-h="What it was" data-h-es="Qué era"><span class="t-es">En local siempre pasaba (hay secretos) y el despliegue va por su cuenta &rarr; nadie lo notó. El check automático no protegía nada. Se descubrió al <strong>mirar el panel de verdad</strong>.</span><span class="t-en">Locally it always passed (secrets present) and deploy is independent &rarr; nobody noticed. The automatic check protected nothing. Found by <strong>actually looking at the panel</strong>.</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">registro de la corrida fallida &rarr; verde en la #13/#14</span><span class="t-en">failed-run log &rarr; green on #13/#14</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-inc"><span class="t-es">reactivada + regla</span><span class="t-en">re-armed + rule</span></span></td>
+          <td data-h="Incident" data-h-es="Incidente" data-h-ca="Incident"><span class="sn"><span class="t-es">La red de seguridad estaba apagada</span><span class="t-en">The safety net was off</span><span class="t-ca">La xarxa de seguretat estava apagada</span></span><span class="sd"><span class="t-es">La CI llevaba 12 corridas en rojo desde la primera.</span><span class="t-en">CI had been red for 12 runs since the first.</span><span class="t-ca">La CI portava 12 corregudes en vermell des de la primera.</span></span></td>
+          <td data-h="What it was" data-h-es="Qué era" data-h-ca="Què era"><span class="t-es">En local siempre pasaba (hay secretos) y el despliegue va por su cuenta &rarr; nadie lo notó. El check automático no protegía nada. Se descubrió al <strong>mirar el panel de verdad</strong>.</span><span class="t-en">Locally it always passed (secrets present) and deploy is independent &rarr; nobody noticed. The automatic check protected nothing. Found by <strong>actually looking at the panel</strong>.</span><span class="t-ca">En local sempre passava (hi ha secrets) i el desplegament va pel seu compte &rarr; ningú ho va notar. El check automàtic no protegia res. Es va descobrir en <strong>mirar el panell de veritat</strong>.</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">registro de la corrida fallida &rarr; verde en la #13/#14</span><span class="t-en">failed-run log &rarr; green on #13/#14</span><span class="t-ca">registre de la correguda fallida &rarr; verd a la #13/#14</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-inc"><span class="t-es">reactivada + regla</span><span class="t-en">re-armed + rule</span><span class="t-ca">reactivada + regla</span></span></td>
         </tr>
         <tr>
-          <td data-h="Incident" data-h-es="Incidente"><span class="sn"><span class="t-es">El invariante sobre la tabla que documenta</span><span class="t-en">The invariant on the documenting table</span></span><span class="sd"><span class="t-es">Se blindó el registro, no lo que concede el acceso.</span><span class="t-en">The record was locked, not what grants access.</span></span></td>
-          <td data-h="What it was" data-h-es="Qué era"><span class="t-es">Se podía autorizar a una persona y prestar con otra: el gate miraba la tabla que <strong>documenta</strong> la decisión, no la que de verdad la <strong>ejecuta</strong>.</span><span class="t-en">You could authorize one person and provide with another: the gate watched the table that <strong>documents</strong> the decision, not the one that actually <strong>executes</strong> it.</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">gate movido a donde ocurre (+ trigger en BD)</span><span class="t-en">gate moved to where it happens (+ DB trigger)</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-res"><span class="t-es">&rarr; regla</span><span class="t-en">&rarr; rule</span></span></td>
+          <td data-h="Incident" data-h-es="Incidente" data-h-ca="Incident"><span class="sn"><span class="t-es">El invariante sobre la tabla que documenta</span><span class="t-en">The invariant on the documenting table</span><span class="t-ca">L'invariant sobre la taula que documenta</span></span><span class="sd"><span class="t-es">Se blindó el registro, no lo que concede el acceso.</span><span class="t-en">The record was locked, not what grants access.</span><span class="t-ca">Es va blindar el registre, no el que concedeix l'accés.</span></span></td>
+          <td data-h="What it was" data-h-es="Qué era" data-h-ca="Què era"><span class="t-es">Se podía autorizar a una persona y prestar con otra: el gate miraba la tabla que <strong>documenta</strong> la decisión, no la que de verdad la <strong>ejecuta</strong>.</span><span class="t-en">You could authorize one person and provide with another: the gate watched the table that <strong>documents</strong> the decision, not the one that actually <strong>executes</strong> it.</span><span class="t-ca">Es podia autoritzar una persona i prestar amb una altra: el gate mirava la taula que <strong>documenta</strong> la decisió, no la que de veritat l'<strong>executa</strong>.</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">gate movido a donde ocurre (+ trigger en BD)</span><span class="t-en">gate moved to where it happens (+ DB trigger)</span><span class="t-ca">gate mogut on passa (+ trigger a BD)</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-res"><span class="t-es">&rarr; regla</span><span class="t-en">&rarr; rule</span><span class="t-ca">&rarr; regla</span></span></td>
         </tr>
         <tr>
-          <td data-h="Incident" data-h-es="Incidente"><span class="sn"><span class="t-es">La etapa que no se parece a las demás</span><span class="t-en">The stage unlike the others</span></span><span class="sd"><span class="t-es">Dos etapas "sellaban una versión"; la tercera era una fecha.</span><span class="t-en">Two stages "sealed a version"; the third was a date.</span></span></td>
-          <td data-h="What it was" data-h-es="Qué era"><span class="t-es">El invariante se puso en las etapas que <strong>se parecen</strong> y se olvidó en la que no (comunicar), que quedó como un booleano rancio &rarr; se prestaba con la versión que la Administración nunca vio.</span><span class="t-en">The invariant went on the stages that <strong>look alike</strong> and was forgotten on the one that doesn't (notify), left as a stale boolean &rarr; provision with a version the Administration never saw.</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">enumerar las etapas por EFECTO, no por forma</span><span class="t-en">enumerate stages by EFFECT, not by shape</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-res"><span class="t-es">&rarr; regla</span><span class="t-en">&rarr; rule</span></span></td>
+          <td data-h="Incident" data-h-es="Incidente" data-h-ca="Incident"><span class="sn"><span class="t-es">La etapa que no se parece a las demás</span><span class="t-en">The stage unlike the others</span><span class="t-ca">L'etapa que no s'assembla a les altres</span></span><span class="sd"><span class="t-es">Dos etapas "sellaban una versión"; la tercera era una fecha.</span><span class="t-en">Two stages "sealed a version"; the third was a date.</span><span class="t-ca">Dues etapes «segellaven una versió»; la tercera era una data.</span></span></td>
+          <td data-h="What it was" data-h-es="Qué era" data-h-ca="Què era"><span class="t-es">El invariante se puso en las etapas que <strong>se parecen</strong> y se olvidó en la que no (comunicar), que quedó como un booleano rancio &rarr; se prestaba con la versión que la Administración nunca vio.</span><span class="t-en">The invariant went on the stages that <strong>look alike</strong> and was forgotten on the one that doesn't (notify), left as a stale boolean &rarr; provision with a version the Administration never saw.</span><span class="t-ca">L'invariant es va posar a les etapes que <strong>s'assemblen</strong> i es va oblidar a la que no (comunicar), que va quedar com un booleà ranci &rarr; es prestava amb la versió que l'Administració no va veure mai.</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">enumerar las etapas por EFECTO, no por forma</span><span class="t-en">enumerate stages by EFFECT, not by shape</span><span class="t-ca">enumerar les etapes per EFECTE, no per forma</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-res"><span class="t-es">&rarr; regla</span><span class="t-en">&rarr; rule</span><span class="t-ca">&rarr; regla</span></span></td>
         </tr>
         <tr>
-          <td data-h="Incident" data-h-es="Incidente"><span class="sn"><span class="t-es">Verde en local, denegado en runtime</span><span class="t-en">Green locally, denied at runtime</span></span><span class="sd"><span class="t-es">Un permiso por columnas no cubría la columna del filtro.</span><span class="t-en">A column grant missed the column in the filter.</span></span></td>
-          <td data-h="What it was" data-h-es="Qué era"><span class="t-es">Compilador, tests y build en verde; la base de datos exige permiso sobre <strong>toda</strong> columna referenciada, incluidas las del WHERE. Un fallback honesto casi ocultó el fallo en una página pública.</span><span class="t-en">Compiler, tests and build all green; the database requires permission on <strong>every</strong> referenced column, including those in the WHERE. An honest fallback nearly hid the failure on a public page.</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">solo lo vio la corrida contra la BD real</span><span class="t-en">only the run against the real DB saw it</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-inc"><span class="t-es">verde local &ne; runtime</span><span class="t-en">green local &ne; runtime</span></span></td>
+          <td data-h="Incident" data-h-es="Incidente" data-h-ca="Incident"><span class="sn"><span class="t-es">Verde en local, denegado en runtime</span><span class="t-en">Green locally, denied at runtime</span><span class="t-ca">Verd en local, denegat en runtime</span></span><span class="sd"><span class="t-es">Un permiso por columnas no cubría la columna del filtro.</span><span class="t-en">A column grant missed the column in the filter.</span><span class="t-ca">Un permís per columnes no cobria la columna del filtre.</span></span></td>
+          <td data-h="What it was" data-h-es="Qué era" data-h-ca="Què era"><span class="t-es">Compilador, tests y build en verde; la base de datos exige permiso sobre <strong>toda</strong> columna referenciada, incluidas las del WHERE. Un fallback honesto casi ocultó el fallo en una página pública.</span><span class="t-en">Compiler, tests and build all green; the database requires permission on <strong>every</strong> referenced column, including those in the WHERE. An honest fallback nearly hid the failure on a public page.</span><span class="t-ca">Compilador, tests i build en verd; la base de dades exigeix permís sobre <strong>tota</strong> columna referenciada, incloses les del WHERE. Un fallback honest gairebé va amagar la fallada en una pàgina pública.</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">solo lo vio la corrida contra la BD real</span><span class="t-en">only the run against the real DB saw it</span><span class="t-ca">només ho va veure la correguda contra la BD real</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-inc"><span class="t-es">verde local &ne; runtime</span><span class="t-en">green local &ne; runtime</span><span class="t-ca">verd local &ne; runtime</span></span></td>
         </tr>
         <tr>
-          <td data-h="Incident" data-h-es="Incidente"><span class="sn"><span class="t-es">Un "admin" que abría PII a todos</span><span class="t-en">An "admin" that opened PII to all</span></span><span class="sd"><span class="t-es">Una regla de cinturón exponía texto libre del cliente.</span><span class="t-en">A belt-and-suspenders rule exposed the client's free text.</span></span></td>
-          <td data-h="What it was" data-h-es="Qué era"><span class="t-es">Como todo el back-office comparte el mismo rol técnico, una regla basada en "es admin" abría la PII más sensible a <strong>cualquier</strong> miembro por su propio token, saltándose el permiso fino por departamento.</span><span class="t-en">Since the whole back-office shares one technical role, a rule based on "is admin" opened the most sensitive PII to <strong>any</strong> member via their own token, bypassing the fine-grained departmental permission.</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">cero-grant-a-admin; nunca desplegado</span><span class="t-en">zero-grant-to-admin; never shipped</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-val"><span class="t-es">cazado pre-push</span><span class="t-en">caught pre-push</span></span></td>
+          <td data-h="Incident" data-h-es="Incidente" data-h-ca="Incident"><span class="sn"><span class="t-es">Un "admin" que abría PII a todos</span><span class="t-en">An "admin" that opened PII to all</span><span class="t-ca">Un «admin» que obria PII a tothom</span></span><span class="sd"><span class="t-es">Una regla de cinturón exponía texto libre del cliente.</span><span class="t-en">A belt-and-suspenders rule exposed the client's free text.</span><span class="t-ca">Una regla de cinturó exposava text lliure del client.</span></span></td>
+          <td data-h="What it was" data-h-es="Qué era" data-h-ca="Què era"><span class="t-es">Como todo el back-office comparte el mismo rol técnico, una regla basada en "es admin" abría la PII más sensible a <strong>cualquier</strong> miembro por su propio token, saltándose el permiso fino por departamento.</span><span class="t-en">Since the whole back-office shares one technical role, a rule based on "is admin" opened the most sensitive PII to <strong>any</strong> member via their own token, bypassing the fine-grained departmental permission.</span><span class="t-ca">Com que tot el back-office comparteix el mateix rol tècnic, una regla basada en «és admin» obria la PII més sensible a <strong>qualsevol</strong> membre pel seu propi token, saltant-se el permís fi per departament.</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">cero-grant-a-admin; nunca desplegado</span><span class="t-en">zero-grant-to-admin; never shipped</span><span class="t-ca">zero-grant-a-admin; mai desplegat</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-val"><span class="t-es">cazado pre-push</span><span class="t-en">caught pre-push</span><span class="t-ca">caçat pre-push</span></span></td>
         </tr>
       </tbody>
     </table>
@@ -1242,11 +1266,11 @@ body{overflow:hidden}
 <section id="juicio">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">La prueba de que el juicio es humano</span><span class="t-en">Proof the judgment is human</span></div>
+      <div class="eyebrow"><span class="t-es">La prueba de que el juicio es humano</span><span class="t-en">Proof the judgment is human</span><span class="t-ca">La prova que el judici és humà</span></div>
       <h2 class="t-es">Cómo un gate que yo mismo escribí reabría el agujero que cerraba</h2>
-      <h2 class="t-en">How a gate I wrote myself reopened the hole it was closing</h2>
+      <h2 class="t-en">How a gate I wrote myself reopened the hole it was closing</h2><h2 class="t-ca">Com un gate que jo mateix vaig escriure reobria el forat que tancava</h2>
       <p class="t-es">Probar los valores <strong>degenerados</strong> de tu propio gate (el conjunto vacío, el dato ausente) justo cuando todos los tests están en verde. Esa es la señal que un escéptico cree imposible en un perfil construido con IA.</p>
-      <p class="t-en">Testing the <strong>degenerate</strong> values of your own gate (the empty set, the missing value) right when every test is green. That's the signal a skeptic assumes is impossible in an AI-built profile.</p>
+      <p class="t-en">Testing the <strong>degenerate</strong> values of your own gate (the empty set, the missing value) right when every test is green. That's the signal a skeptic assumes is impossible in an AI-built profile.</p><p class="t-ca">Provar els valors <strong>degenerats</strong> del teu propi gate (el conjunt buit, la dada absent) just quan tots els tests estan en verd. Aquest és el senyal que un escèptic creu impossible en un perfil construït amb IA.</p>
     </div>
     <div class="sb">
       <div class="sb-code reveal t-es">
@@ -1280,7 +1304,7 @@ if (value <span class="b">=== null</span>) ...   <span class="cm">// does NOT co
 
 <span class="cm"># verified by running the real predicate:</span>
 degenerate cases <span class="a">(empty · missing · odd enum)</span> &rarr; tests
-</div>
+</div><div class="sb-code reveal t-ca"><span class="cm"># un gate nou havia d'impedir prestar sense equip…</span> version_designada = <span class="r">0</span> <span class="cm">// ningú designat encara</span> version_sellada = <span class="r">0</span> <span class="cm">// es va segellar "0"</span> gate: <span class="r">0 == 0</span> &rarr; <span class="g">true</span> <span class="cm">// llum VERDA</span> <span class="cm"># &rarr; cobrar i PRESTAR amb ZERO professionals</span> <span class="cm"># (el mateix forat que venia a tancar)</span> <span class="cm"># i un fail-open: la dada absent arriba com a…</span> if (valor <span class="b">=== null</span>) ... <span class="cm">// NO cobreix "undefined"</span> <span class="cm"># el compilador no ho caça: el tipus s'AFIRMA</span> <span class="cm"># verificat executant el predicat real:</span> casos degenerats <span class="a">(buit · absent · enum rar)</span> &rarr; tests</div>
       <div class="sb-body reveal t-es">
         <p>Sospeché <em>del caso feliz</em>. Los 14 tests del gate estaban en verde, pero todos fijaban el mismo caso cómodo, así que ninguno tocaba el conjunto vacío ni el dato ausente. Un fixture que solo genera el caso bueno es un <strong>punto ciego, no cobertura</strong>.</p>
         <p>Lo <strong>reproduje ejecutando el predicado real</strong> (no leído de un informe) y un segundo pase de auditoría lo confirmó. Cerré las tres puertas y añadí tests de los casos degenerados.</p>
@@ -1290,7 +1314,7 @@ degenerate cases <span class="a">(empty · missing · odd enum)</span> &rarr; te
         <p>I got suspicious <em>of the happy path</em>. The gate's 14 tests were green, but all pinned the same comfortable case, so none touched the empty set or the missing value. A fixture that only builds the good case is a <strong>blind spot, not coverage</strong>.</p>
         <p>I <strong>reproduced it by running the real predicate</strong> (not read from a report) and a second audit pass confirmed it. I closed all three doors and added tests for the degenerate cases.</p>
         <p class="sb-kicker"><strong>Testing your own gate's degenerate values, not the happy path, is what transfers to a team.</strong></p>
-      </div>
+      </div><div class="sb-body reveal t-ca"><p>Vaig sospitar <em>del cas feliç</em>. Els 14 tests del gate estaven en verd, però tots fixaven el mateix cas còmode, així que cap tocava el conjunt buit ni la dada absent. Un fixture que només genera el cas bo és un <strong>punt cec, no cobertura</strong>.</p> <p>El vaig <strong>reproduir executant el predicat real</strong> (no llegit d'un informe) i un segon pas d'auditoria ho va confirmar. Vaig tancar les tres portes i vaig afegir tests dels casos degenerats.</p> <p class="sb-kicker"><strong>Provar els valors degenerats del teu propi gate, no el cas feliç, és el que es transfereix a un equip.</strong></p></div>
     </div>
   </div>
 </section>
@@ -1300,11 +1324,11 @@ degenerate cases <span class="a">(empty · missing · odd enum)</span> &rarr; te
 <section id="juicio2">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">La segunda lección incómoda</span><span class="t-en">The second uncomfortable lesson</span></div>
+      <div class="eyebrow"><span class="t-es">La segunda lección incómoda</span><span class="t-en">The second uncomfortable lesson</span><span class="t-ca">La segona lliçó incòmoda</span></div>
       <h2 class="t-es">Mi red de seguridad llevaba semanas apagada, y verde no significaba verde</h2>
-      <h2 class="t-en">My safety net had been off for weeks, and green didn't mean green</h2>
+      <h2 class="t-en">My safety net had been off for weeks, and green didn't mean green</h2><h2 class="t-ca">La meva xarxa de seguretat portava setmanes apagada, i verd no volia dir verd</h2>
       <p class="t-es">La verificación automática es inútil si nadie mira si <strong>de verdad</strong> corre. La mía llevaba 12 corridas en rojo desde la primera, tapada por dos coincidencias.</p>
-      <p class="t-en">Automatic verification is useless if nobody checks it <strong>actually</strong> runs. Mine had been red for 12 runs since the first, hidden by two coincidences.</p>
+      <p class="t-en">Automatic verification is useless if nobody checks it <strong>actually</strong> runs. Mine had been red for 12 runs since the first, hidden by two coincidences.</p><p class="t-ca">La verificació automàtica és inútil si ningú mira si <strong>de veritat</strong> corre. La meva portava 12 corregudes en vermell des de la primera, tapada per dues coincidències.</p>
     </div>
     <div class="sb">
       <div class="sb-code reveal t-es">
@@ -1336,7 +1360,7 @@ cause: a secret read at module <span class="a">IMPORT</span> time
        (no secret in CI, by design)
 
 <span class="cm"># fix in 2 layers &rarr;</span> <span class="g">#13, #14 green</span>
-</div>
+</div><div class="sb-code reveal t-ca"><span class="cm"># la xarxa de seguretat automàtica (CI)…</span> corregudes verdes: <span class="r">0 / 12</span> <span class="cm">// VERMELL des de la #1</span> <span class="cm"># ningú ho va veure, per dues coincidències:</span> local <span class="g">passa</span> <span class="cm">// hi ha secrets &rarr; sempre verd</span> deploy <span class="b">puja</span> <span class="cm">// independent &rarr; tapa el símptoma</span> <span class="cm"># vaig mirar el panell de VERITAT:</span> $ ci status &rarr; <span class="r">collecting page data … FAILED</span> causa: un secret llegit en <span class="a">IMPORTAR</span> un mòdul (a CI no hi ha secret, per disseny) <span class="cm"># fix en 2 capes &rarr;</span> <span class="g">#13, #14 verdes</span></div>
       <div class="sb-body reveal t-es">
         <p>Doce corridas en rojo y nadie lo notó: en local hay secretos, así que <strong>siempre</strong> pasaba; y el despliegue va por su cuenta, así que la demo seguía subiendo y <strong>tapaba el síntoma</strong>. La causa: un secreto que se leía al <em>importar</em> un módulo, y en la CI no hay secreto a propósito.</p>
         <p>No apareció hasta que <strong>miré el panel de verdad</strong> en lugar de asumir que estaba verde. Se convirtió en regla: verifica en el modo plano (como corre la CI), y <strong>vigila el estado REAL</strong>, no el que supones.</p>
@@ -1346,7 +1370,7 @@ cause: a secret read at module <span class="a">IMPORT</span> time
         <p>Twelve red runs and nobody noticed: locally there are secrets, so it <strong>always</strong> passed; and deploy runs on its own, so the demo kept shipping and <strong>hid the symptom</strong>. The cause: a secret read at <em>import</em> time, and CI has no secret on purpose.</p>
         <p>It didn't show until I <strong>looked at the real panel</strong> instead of assuming green. It became a rule: verify in the bare mode (as CI runs), and <strong>watch the REAL state</strong>, not the one you assume.</p>
         <p class="sb-kicker"><strong>Watching the real state, not assuming it: that transfers.</strong></p>
-      </div>
+      </div><div class="sb-body reveal t-ca"><p>Dotze corregudes en vermell i ningú ho va notar: en local hi ha secrets, així que <strong>sempre</strong> passava; i el desplegament va pel seu compte, així que la demo seguia pujant i <strong>tapava el símptoma</strong>. La causa: un secret que es llegia en <em>importar</em> un mòdul, i a la CI no hi ha secret a propòsit.</p> <p>No va aparèixer fins que <strong>vaig mirar el panell de veritat</strong> en lloc d'assumir que estava verd. Es va convertir en regla: verifica en el mode pla (com corre la CI), i <strong>vigila l'estat REAL</strong>, no el que suposes.</p> <p class="sb-kicker"><strong>Vigilar l'estat real, no assumir-lo: això es transfereix.</strong></p></div>
     </div>
   </div>
 </section>
@@ -1356,11 +1380,11 @@ cause: a secret read at module <span class="a">IMPORT</span> time
 <section id="metodo">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span></div>
+      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span><span class="t-ca">Com treballo amb IA</span></div>
       <h2 class="t-es">Un sistema inmune: la IA construye, un panel escéptico ataca</h2>
-      <h2 class="t-en">An immune system: AI builds, a skeptical panel attacks</h2>
+      <h2 class="t-en">An immune system: AI builds, a skeptical panel attacks</h2><h2 class="t-ca">Un sistema immune: la IA construeix, un panell escèptic ataca</h2>
       <p class="t-es">No le pido a la IA una respuesta. Orquesto flotas de agentes que se auditan entre sí: uno propone un cambio, otros intentan refutarlo por lentes distintas, y un asiento de síntesis <strong>re-deriva cada veredicto del código</strong>. Un cambio sensible solo pasa si resiste el ataque, y cada fallo que se cuela se convierte en un anticuerpo.</p>
-      <p class="t-en">I don't ask the AI for an answer. I orchestrate fleets of agents that audit each other: one proposes a change, others try to refute it through distinct lenses, and a synthesis seat <strong>re-derives every verdict from the code</strong>. A sensitive change ships only if it withstands the attack, and every failure that slips through becomes an antibody.</p>
+      <p class="t-en">I don't ask the AI for an answer. I orchestrate fleets of agents that audit each other: one proposes a change, others try to refute it through distinct lenses, and a synthesis seat <strong>re-derives every verdict from the code</strong>. A sensitive change ships only if it withstands the attack, and every failure that slips through becomes an antibody.</p><p class="t-ca">No li demano a la IA una resposta. Orquestro flotes d'agents que s'auditen entre si: un proposa un canvi, altres intenten refutar-lo per lents diferents, i un seient de síntesi <strong>re-deriva cada veredicte del codi</strong>. Un canvi sensible només passa si resisteix l'atac, i cada fallada que s'escola es converteix en un anticòs.</p>
     </div>
     <div class="engine reveal" style="margin-bottom:34px">
       <svg viewBox="0 0 1080 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Adversarial multi-agent verification loop">
@@ -1390,50 +1414,50 @@ cause: a secret read at module <span class="a">IMPORT</span> time
         <circle r="3.2" fill="#37e0ff" color="#37e0ff" class="dg-particle dg-glow"><animateMotion dur="3.4s" repeatCount="indefinite" path="M840,238 C720,418 250,418 116,238"/></circle>
         <circle r="3.2" fill="#37e0ff" color="#37e0ff" class="dg-particle dg-glow"><animateMotion dur="3.4s" begin="1.7s" repeatCount="indefinite" path="M840,238 C720,418 250,418 116,238"/></circle>
         <text x="540" y="406" text-anchor="middle" class="dg-loop t-es">cada fallo &rarr; el registro de incidentes &rarr; una regla que previene el próximo</text>
-        <text x="540" y="406" text-anchor="middle" class="dg-loop t-en">every failure &rarr; the incident ledger &rarr; a rule that prevents the next</text>
+        <text x="540" y="406" text-anchor="middle" class="dg-loop t-en">every failure &rarr; the incident ledger &rarr; a rule that prevents the next</text><text x="540" y="406" text-anchor="middle" class="dg-loop t-ca">cada fallada &rarr; el registre d'incidents &rarr; una regla que evita la següent</text>
         <text x="578" y="26" text-anchor="middle" class="dg-el t-es" style="fill:#ff7a9c;font-weight:700">ATAQUE ADVERSARIAL · lentes disjuntas intentan refutar</text>
-        <text x="578" y="26" text-anchor="middle" class="dg-el t-en" style="fill:#ff7a9c;font-weight:700">ADVERSARIAL ATTACK · disjoint lenses try to refute</text>
+        <text x="578" y="26" text-anchor="middle" class="dg-el t-en" style="fill:#ff7a9c;font-weight:700">ADVERSARIAL ATTACK · disjoint lenses try to refute</text><text x="578" y="26" text-anchor="middle" class="dg-el t-ca" style="fill:#ff7a9c;font-weight:700">ATAC ADVERSARIAL · lents disjuntes intenten refutar</text>
         <rect class="dg-rect" x="28" y="170" width="176" height="68" rx="12" stroke="#9b5cff" stroke-width="1.8"/>
-        <text x="116" y="196" text-anchor="middle" class="dg-title t-es">UN CAMBIO</text><text x="116" y="196" text-anchor="middle" class="dg-title t-en">A CHANGE</text>
-        <text x="116" y="214" text-anchor="middle" class="dg-sub t-es">se propone</text><text x="116" y="214" text-anchor="middle" class="dg-sub t-en">is proposed</text>
+        <text x="116" y="196" text-anchor="middle" class="dg-title t-es">UN CAMBIO</text><text x="116" y="196" text-anchor="middle" class="dg-title t-en">A CHANGE</text><text x="116" y="196" text-anchor="middle" class="dg-title t-ca">UN CANVI</text>
+        <text x="116" y="214" text-anchor="middle" class="dg-sub t-es">se propone</text><text x="116" y="214" text-anchor="middle" class="dg-sub t-en">is proposed</text><text x="116" y="214" text-anchor="middle" class="dg-sub t-ca">es proposa</text>
         <rect class="dg-rect" x="236" y="180" width="148" height="50" rx="11" stroke="#22d3ff" stroke-width="1.7"/>
-        <text x="310" y="200" text-anchor="middle" class="dg-title t-es">CALIBRAR</text><text x="310" y="200" text-anchor="middle" class="dg-title t-en">CALIBRATE</text>
-        <text x="310" y="217" text-anchor="middle" class="dg-sub t-es">por superficie, no por líneas</text><text x="310" y="217" text-anchor="middle" class="dg-sub t-en">by surface, not by lines</text>
+        <text x="310" y="200" text-anchor="middle" class="dg-title t-es">CALIBRAR</text><text x="310" y="200" text-anchor="middle" class="dg-title t-en">CALIBRATE</text><text x="310" y="200" text-anchor="middle" class="dg-title t-ca">CALIBRAR</text>
+        <text x="310" y="217" text-anchor="middle" class="dg-sub t-es">por superficie, no por líneas</text><text x="310" y="217" text-anchor="middle" class="dg-sub t-en">by surface, not by lines</text><text x="310" y="217" text-anchor="middle" class="dg-sub t-ca">per superfície, no per línies</text>
         <rect class="dg-rect dg-pulse" x="418" y="38" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
         <text x="482" y="59" text-anchor="middle" class="dg-title">RBAC</text>
-        <text x="482" y="74" text-anchor="middle" class="dg-sub t-es">privilegios</text><text x="482" y="74" text-anchor="middle" class="dg-sub t-en">privileges</text>
+        <text x="482" y="74" text-anchor="middle" class="dg-sub t-es">privilegios</text><text x="482" y="74" text-anchor="middle" class="dg-sub t-en">privileges</text><text x="482" y="74" text-anchor="middle" class="dg-sub t-ca">privilegis</text>
         <rect class="dg-rect dg-pulse" x="602" y="38" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
         <text x="666" y="59" text-anchor="middle" class="dg-title">RLS · PII</text>
-        <text x="666" y="74" text-anchor="middle" class="dg-sub t-es">aislamiento por rol</text><text x="666" y="74" text-anchor="middle" class="dg-sub t-en">role isolation</text>
+        <text x="666" y="74" text-anchor="middle" class="dg-sub t-es">aislamiento por rol</text><text x="666" y="74" text-anchor="middle" class="dg-sub t-en">role isolation</text><text x="666" y="74" text-anchor="middle" class="dg-sub t-ca">aïllament per rol</text>
         <rect class="dg-rect dg-pulse" x="418" y="328" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
-        <text x="482" y="349" text-anchor="middle" class="dg-title t-es">PAGOS</text><text x="482" y="349" text-anchor="middle" class="dg-title t-en">PAYMENTS</text>
-        <text x="482" y="364" text-anchor="middle" class="dg-sub t-es">precio · estados</text><text x="482" y="364" text-anchor="middle" class="dg-sub t-en">price · states</text>
+        <text x="482" y="349" text-anchor="middle" class="dg-title t-es">PAGOS</text><text x="482" y="349" text-anchor="middle" class="dg-title t-en">PAYMENTS</text><text x="482" y="349" text-anchor="middle" class="dg-title t-ca">PAGAMENTS</text>
+        <text x="482" y="364" text-anchor="middle" class="dg-sub t-es">precio · estados</text><text x="482" y="364" text-anchor="middle" class="dg-sub t-en">price · states</text><text x="482" y="364" text-anchor="middle" class="dg-sub t-ca">preu · estats</text>
         <rect class="dg-rect dg-pulse" x="602" y="328" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
-        <text x="666" y="349" text-anchor="middle" class="dg-title t-es">HONESTIDAD</text><text x="666" y="349" text-anchor="middle" class="dg-title t-en">HONESTY</text>
-        <text x="666" y="364" text-anchor="middle" class="dg-sub t-es">cifras vs fuente</text><text x="666" y="364" text-anchor="middle" class="dg-sub t-en">figures vs source</text>
+        <text x="666" y="349" text-anchor="middle" class="dg-title t-es">HONESTIDAD</text><text x="666" y="349" text-anchor="middle" class="dg-title t-en">HONESTY</text><text x="666" y="349" text-anchor="middle" class="dg-title t-ca">HONESTEDAT</text>
+        <text x="666" y="364" text-anchor="middle" class="dg-sub t-es">cifras vs fuente</text><text x="666" y="364" text-anchor="middle" class="dg-sub t-en">figures vs source</text><text x="666" y="364" text-anchor="middle" class="dg-sub t-ca">xifres vs font</text>
         <rect class="dg-rect dg-pulse" x="500" y="170" width="156" height="68" rx="12" stroke="url(#mv-grad)" stroke-width="2.2"/>
-        <text x="578" y="196" text-anchor="middle" class="dg-title t-es">EL CAMBIO</text><text x="578" y="196" text-anchor="middle" class="dg-title t-en">THE CHANGE</text>
-        <text x="578" y="214" text-anchor="middle" class="dg-sub t-es">bajo ataque</text><text x="578" y="214" text-anchor="middle" class="dg-sub t-en">under attack</text>
+        <text x="578" y="196" text-anchor="middle" class="dg-title t-es">EL CAMBIO</text><text x="578" y="196" text-anchor="middle" class="dg-title t-en">THE CHANGE</text><text x="578" y="196" text-anchor="middle" class="dg-title t-ca">EL CANVI</text>
+        <text x="578" y="214" text-anchor="middle" class="dg-sub t-es">bajo ataque</text><text x="578" y="214" text-anchor="middle" class="dg-sub t-en">under attack</text><text x="578" y="214" text-anchor="middle" class="dg-sub t-ca">sota atac</text>
         <rect class="dg-rect" x="760" y="170" width="160" height="68" rx="12" stroke="#a273ff" stroke-width="1.9"/>
-        <text x="840" y="192" text-anchor="middle" class="dg-title t-es">SÍNTESIS</text><text x="840" y="192" text-anchor="middle" class="dg-title t-en">SYNTHESIS</text>
-        <text x="840" y="210" text-anchor="middle" class="dg-sub t-es">re-deriva del código</text><text x="840" y="210" text-anchor="middle" class="dg-sub t-en">re-derives from code</text>
-        <text x="840" y="226" text-anchor="middle" class="dg-sub t-es">show your work</text><text x="840" y="226" text-anchor="middle" class="dg-sub t-en">show your work</text>
+        <text x="840" y="192" text-anchor="middle" class="dg-title t-es">SÍNTESIS</text><text x="840" y="192" text-anchor="middle" class="dg-title t-en">SYNTHESIS</text><text x="840" y="192" text-anchor="middle" class="dg-title t-ca">SÍNTESI</text>
+        <text x="840" y="210" text-anchor="middle" class="dg-sub t-es">re-deriva del código</text><text x="840" y="210" text-anchor="middle" class="dg-sub t-en">re-derives from code</text><text x="840" y="210" text-anchor="middle" class="dg-sub t-ca">re-deriva del codi</text>
+        <text x="840" y="226" text-anchor="middle" class="dg-sub t-es">show your work</text><text x="840" y="226" text-anchor="middle" class="dg-sub t-en">show your work</text><text x="840" y="226" text-anchor="middle" class="dg-sub t-ca">show your work</text>
         <rect class="dg-rect" x="946" y="92" width="124" height="54" rx="11" stroke="#5dff9b" stroke-width="1.8"/>
-        <text x="1008" y="114" text-anchor="middle" class="dg-title t-es">SEGURO</text><text x="1008" y="114" text-anchor="middle" class="dg-title t-en">SAFE</text>
+        <text x="1008" y="114" text-anchor="middle" class="dg-title t-es">SEGURO</text><text x="1008" y="114" text-anchor="middle" class="dg-title t-en">SAFE</text><text x="1008" y="114" text-anchor="middle" class="dg-title t-ca">SEGUR</text>
         <text x="1008" y="131" text-anchor="middle" class="dg-sub">&#8594; push</text>
         <text x="1058" y="109" text-anchor="end" class="dg-badge" fill="#5dff9b">&#10003;</text>
         <rect class="dg-rect" x="946" y="256" width="124" height="54" rx="11" stroke="#ff5d7a" stroke-width="1.8"/>
-        <text x="1008" y="278" text-anchor="middle" class="dg-title t-es">BLOQUEA</text><text x="1008" y="278" text-anchor="middle" class="dg-title t-en">BLOCK</text>
-        <text x="1008" y="295" text-anchor="middle" class="dg-sub t-es">hallazgo &rarr; ledger</text><text x="1008" y="295" text-anchor="middle" class="dg-sub t-en">finding &rarr; ledger</text>
+        <text x="1008" y="278" text-anchor="middle" class="dg-title t-es">BLOQUEA</text><text x="1008" y="278" text-anchor="middle" class="dg-title t-en">BLOCK</text><text x="1008" y="278" text-anchor="middle" class="dg-title t-ca">BLOQUEJA</text>
+        <text x="1008" y="295" text-anchor="middle" class="dg-sub t-es">hallazgo &rarr; ledger</text><text x="1008" y="295" text-anchor="middle" class="dg-sub t-en">finding &rarr; ledger</text><text x="1008" y="295" text-anchor="middle" class="dg-sub t-ca">troballa &rarr; ledger</text>
         <text x="1058" y="273" text-anchor="end" class="dg-badge" fill="#ff5d7a">&#10007;</text>
       </svg>
     </div>
-    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span></p>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span><span class="t-ca">Pessiga per apropar i llegir el detall &#8596;</span></p>
     <p class="engine-cap reveal t-es">Un cambio sensible pasa solo si <b>resiste el ataque</b>. El juicio es de la síntesis que re-deriva del código, no de un agente que "reporta OK".</p>
-    <p class="engine-cap reveal t-en">A sensitive change ships only if it <b>withstands the attack</b>. Judgment belongs to the synthesis that re-derives from code, not to an agent that "reports OK".</p>
+    <p class="engine-cap reveal t-en">A sensitive change ships only if it <b>withstands the attack</b>. Judgment belongs to the synthesis that re-derives from code, not to an agent that "reports OK".</p><p class="engine-cap reveal t-ca">Un canvi sensible passa només si <b>resisteix l'atac</b>. El judici és de la síntesi que re-deriva del codi, no d'un agent que «reporta OK».</p>
     <div class="mgrid">
-      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg><span class="t-es">Los 3 loops</span><span class="t-en">The 3 loops</span></h4><p><span class="t-es">Cambios, Seguridad y Legal: atacan tres verdades distintas. Todo cambio se descompone con un agente que <span class="hl">lee el código real</span>; se verifica por <span class="hl">ejecución, no por informe</span>. Ningún "reportó que está OK" cierra nada.</span><span class="t-en">Changes, Security and Legal: they attack three distinct truths. Every change is decomposed by an agent that <span class="hl">reads the real code</span>; verified by <span class="hl">execution, not report</span>. No "it reported OK" closes anything.</span></p></div>
-      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="t-es">El que no puede citar, calla</span><span class="t-en">Who can't cite, stays silent</span></h4><p><span class="t-es">Un hecho sin fuente es una <span class="hl">mentira plausible</span>. El pivote legal se verificó <span class="hl">literalmente en el BOE</span>, no de memoria: una vez un agente se inventó un hecho legal, y por eso todo dato lleva su fuente o no entra.</span><span class="t-en">A fact without a source is a <span class="hl">plausible lie</span>. The legal pivot was verified <span class="hl">literally in the BOE</span>, not from memory, once an agent invented a legal fact, so now every claim carries its source or it doesn't ship.</span></p></div>
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg><span class="t-es">Los 3 loops</span><span class="t-en">The 3 loops</span><span class="t-ca">Els 3 loops</span></h4><p><span class="t-es">Cambios, Seguridad y Legal: atacan tres verdades distintas. Todo cambio se descompone con un agente que <span class="hl">lee el código real</span>; se verifica por <span class="hl">ejecución, no por informe</span>. Ningún "reportó que está OK" cierra nada.</span><span class="t-en">Changes, Security and Legal: they attack three distinct truths. Every change is decomposed by an agent that <span class="hl">reads the real code</span>; verified by <span class="hl">execution, not report</span>. No "it reported OK" closes anything.</span><span class="t-ca">Canvis, Seguretat i Legal: ataquen tres veritats diferents. Tot canvi es descompon amb un agent que <span class="hl">llegeix el codi real</span>; es verifica per <span class="hl">execució, no per informe</span>. Cap «va reportar que està OK» tanca res.</span></p></div>
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="t-es">El que no puede citar, calla</span><span class="t-en">Who can't cite, stays silent</span><span class="t-ca">El qui no pot citar, calla</span></h4><p><span class="t-es">Un hecho sin fuente es una <span class="hl">mentira plausible</span>. El pivote legal se verificó <span class="hl">literalmente en el BOE</span>, no de memoria: una vez un agente se inventó un hecho legal, y por eso todo dato lleva su fuente o no entra.</span><span class="t-en">A fact without a source is a <span class="hl">plausible lie</span>. The legal pivot was verified <span class="hl">literally in the BOE</span>, not from memory, once an agent invented a legal fact, so now every claim carries its source or it doesn't ship.</span><span class="t-ca">Un fet sense font és una <span class="hl">mentida plausible</span>. El pivot legal es va verificar <span class="hl">literalment al BOE</span>, no de memòria: un cop un agent es va inventar un fet legal, i per això tota dada porta la seva font o no hi entra.</span></p></div>
     </div>
 
 
@@ -1463,18 +1487,18 @@ $ /seed-review <span class="b">handoff.md</span>
   blind      <span class="b">&#9998;</span>  it tested a proxy, not the real goal
 
 <span class="cm"># arbitration &rarr;</span> <span class="g">EXECUTE WITH EDITS</span>  <span class="cm">// fixed before touching anything</span>
-</div>
+</div><div class="sb-code t-ca"><span class="cm"># exemple real: revisió d'un handoff entre sessions</span> $ /seed-review <span class="b">handoff.md</span> <span class="a">agent CEC</span> <span class="cm">// no veu el pla &rarr; deriva l'objectiu des de la font</span> <span class="a">2-4 crítics</span> <span class="cm">// en paral·lel, mandat: REFUTAR</span> crític #1 <span class="r">&#10007;</span> una xifra no està avalada pel repo crític #2 <span class="r">&#10007;</span> el pla descriu un estat desactualitzat cec <span class="b">&#9998;</span> provava un proxy, no l'objectiu real <span class="cm"># arbitratge &rarr;</span> <span class="g">EXECUTAR AMB EDICIONS</span> <span class="cm">// es corregeix abans de tocar res</span></div>
     </div>
     <p class="engine-cap reveal t-es">La flota no es teoría: corre en cada handoff. Un agente <b>ciego</b> reconstruye el objetivo desde la fuente más upstream; varios críticos atacan con el mandato de <b>refutar</b>. Lo que cae, se corrige <b>antes</b> de tocar nada. Esta misma página pasó por ese filtro.</p>
-    <p class="engine-cap reveal t-en">The fleet isn't theory: it runs on every handoff. A <b>blind</b> agent rebuilds the goal from the most upstream source; several critics attack, mandated to <b>refute</b>. What falls gets fixed <b>before</b> touching anything. This very page went through that filter.</p>
+    <p class="engine-cap reveal t-en">The fleet isn't theory: it runs on every handoff. A <b>blind</b> agent rebuilds the goal from the most upstream source; several critics attack, mandated to <b>refute</b>. What falls gets fixed <b>before</b> touching anything. This very page went through that filter.</p><p class="engine-cap reveal t-ca">La flota no és teoria: corre en cada handoff. Un agent <b>cec</b> reconstrueix l'objectiu des de la font més upstream; diversos crítics ataquen amb el mandat de <b>refutar</b>. El que cau, es corregeix <b>abans</b> de tocar res. Aquesta mateixa pàgina va passar per aquell filtre.</p>
 
     <div class="truth reveal" style="margin-top:30px">
-      <span class="tl grad-text"><span class="t-es">El límite, y cómo lo estrecho</span><span class="t-en">The limit, and how I narrow it</span></span>
+      <span class="tl grad-text"><span class="t-es">El límite, y cómo lo estrecho</span><span class="t-en">The limit, and how I narrow it</span><span class="t-ca">El límit, i com l'estrenyo</span></span>
       <p class="t-es">Las lentes agénticas comparten los mismos priors: cazan <b>falsos positivos</b>, pero no el <b>falso negativo</b> de una medición mala o un requisito omitido: eso ninguna cantidad de agentes lo ve. Lo estrecho así: el <b>gate humano</b> (yo pruebo en el navegador cada fase) y convirtiendo cada punto ciego en una <b>lente reutilizable</b>. Por eso existe el registro de incidentes: cada fallo se promueve a una regla dura que la próxima sesión aplica sola, con un único escritor y un conjunto inmutable que ningún auto-proceso toca. Irreducible: la primera vez que aparece un sesgo nuevo, sigue haciendo falta un humano.</p>
-      <p class="t-en">The agentic lenses share the same priors: they kill <b>false positives</b>, but not the <b>false negative</b> of a bad measurement or a missing requirement, no number of agents sees that. I narrow it like this: the <b>human gate</b> (I test every phase in the browser) and turning each blind spot into a <b>reusable lens</b>. That's why the incident ledger exists: every failure is promoted to a hard rule the next session applies on its own, with a single writer and an immutable set no auto-process touches. Irreducible: the first time a new bias appears, it still takes a human.</p>
+      <p class="t-en">The agentic lenses share the same priors: they kill <b>false positives</b>, but not the <b>false negative</b> of a bad measurement or a missing requirement, no number of agents sees that. I narrow it like this: the <b>human gate</b> (I test every phase in the browser) and turning each blind spot into a <b>reusable lens</b>. That's why the incident ledger exists: every failure is promoted to a hard rule the next session applies on its own, with a single writer and an immutable set no auto-process touches. Irreducible: the first time a new bias appears, it still takes a human.</p><p class="t-ca">Les lents agèntiques comparteixen els mateixos priors: cacen <b>falsos positius</b>, però no el <b>fals negatiu</b> d'una mesura dolenta o un requisit omès: això cap quantitat d'agents ho veu. L'estrenyo així: el <b>gate humà</b> (jo provo al navegador cada fase) i convertint cada punt cec en una <b>lent reutilitzable</b>. Per això existeix el registre d'incidents: cada fallada es promou a una regla dura que la sessió següent aplica sola, amb un únic escriptor i un conjunt immutable que cap auto-procés toca. Irreductible: la primera vegada que apareix un biaix nou, encara cal un humà.</p>
     </div>
 
-    <p class="bridge reveal"><span class="t-es">El resto del método (la refutación en lentes disjuntas, el invariante que vive en un solo sitio) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (refutation through disjoint lenses, the invariant that lives in one single place) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
+    <p class="bridge reveal"><span class="t-es">El resto del método (la refutación en lentes disjuntas, el invariante que vive en un solo sitio) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (refutation through disjoint lenses, the invariant that lives in one single place) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span><span class="t-ca">La resta del mètode (la refutació en lents disjuntes, l'invariant que viu en un sol lloc) és el mateix als cinc sistemes i està explicat una vegada: <a href="../index.html#metodo">a l'índex</a>.</span></p>
   </div>
 </section>
 
@@ -1485,19 +1509,19 @@ $ /seed-review <span class="b">handoff.md</span>
 <section id="contacto">
   <div class="wrap">
     <div class="contact reveal">
-      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span></div>
+      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span><span class="t-ca">Disponible per treballar</span></div>
       <h2 class="t-es">Cojo un problema difuso y regulado, lo descompongo y orquesto IA para construir cada pieza, sin perder el rigor.</h2>
-      <h2 class="t-en">I take a fuzzy, regulated problem, break it down and orchestrate AI to build every piece, without losing the rigor.</h2>
+      <h2 class="t-en">I take a fuzzy, regulated problem, break it down and orchestrate AI to build every piece, without losing the rigor.</h2><h2 class="t-ca">Agafo un problema difús i regulat, el descomponc i orquestro IA per construir cada peça, sense perdre el rigor.</h2>
       <p class="t-es">Si buscas a alguien para applied-AI, automatización o forward-deployed engineering, que no se engaña con sus propios resultados, hablemos.</p>
-      <p class="t-en">If you're looking for someone in applied-AI, automation or forward-deployed engineering who doesn't fool themselves with their own results, let's talk.</p>
+      <p class="t-en">If you're looking for someone in applied-AI, automation or forward-deployed engineering who doesn't fool themselves with their own results, let's talk.</p><p class="t-ca">Si busques algú per a applied-AI, automatització o forward-deployed engineering, que no s'enganya amb els seus propis resultats, parlem-ne.</p>
       <div class="cta">
         <a href="mailto:diegollr98@gmail.com" class="btn btn-primary">diegollr98@gmail.com</a>
-        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span></button>
+        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span><span class="t-ca">copiar</span></button>
         <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
         <a href="https://github.com/diegollr98-design" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
-        <a href="https://sekuracom.vercel.app/" target="_blank" rel="noopener" class="btn btn-ghost"><span class="t-es">Demo en vivo</span><span class="t-en">Live demo</span></a>
-        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span></a>
-        <!-- Repositorio: privado a propósito (startup con business angels). Re-añadir solo si algún día hay repo público → <a href="URL_DEL_REPO" target="_blank" rel="noopener" class="btn btn-ghost"><span class="t-es">Repositorio</span><span class="t-en">Repository</span></a> -->
+        <a href="https://sekuracom.vercel.app/" target="_blank" rel="noopener" class="btn btn-ghost"><span class="t-es">Demo en vivo</span><span class="t-en">Live demo</span><span class="t-ca">Demo en viu</span></a>
+        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span><span class="t-ca">Tornar a l'índex</span></a>
+        <!-- Repositorio: privado a propósito (startup con business angels). Re-añadir solo si algún día hay repo público → <a href="URL_DEL_REPO" target="_blank" rel="noopener" class="btn btn-ghost"><span class="t-es">Repositorio</span><span class="t-en">Repository</span><span class="t-ca">Repositori</span></a> -->
       </div>
     </div>
   </div>
@@ -1505,7 +1529,7 @@ $ /seed-review <span class="b">handoff.md</span>
 
 <footer class="wrap">
   <span>SEKURA · <span class="hl">Diego</span> · 2026</span>
-  <span><span class="t-es">Construido con IA · sin formación técnica previa · MVP (Stripe test)</span><span class="t-en">Built with AI · no prior technical background · MVP (Stripe test)</span></span>
+  <span><span class="t-es">Construido con IA · sin formación técnica previa · MVP (Stripe test)</span><span class="t-en">Built with AI · no prior technical background · MVP (Stripe test)</span><span class="t-ca">Construït amb IA · sense formació tècnica prèvia · MVP (Stripe test)</span></span>
 </footer>
   </div>
   </div>
@@ -1513,21 +1537,41 @@ $ /seed-review <span class="b">handoff.md</span>
   <div class="tw-ac" id="twAc" role="listbox" aria-label="Comandos"></div>
   <form class="tw-prompt" id="twForm" autocomplete="off">
     <span class="twp-u" aria-hidden="true">diego@portfolio</span><span class="twp-d" id="twPath" aria-hidden="true">:~</span><span class="twp-s" aria-hidden="true">$</span>
-    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span></label>
+    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span><span class="t-ca">Comanda</span></label>
     <input id="twIn" type="text" spellcheck="false" autocapitalize="off"
-           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands">
+           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands" data-ph-ca="fes clic per veure les comandes">
     <span class="twp-car" aria-hidden="true">&#9611;</span>
   </form>
 
 
 <script>
 /* ── language toggle ── */
+/* [INC-JS-04] Quita TODA clase `lang-*` en vez de enumerar 'lang-es','lang-en'.
+   Una lista tecleada describe el marcado desde fuera y se desfasa sola: es la misma
+   clase que `var COLS=7` ([INC-JS-01]). Con `lang-ca` sin quitar, la secuencia
+   es -> ca -> es dejaba `class="lang-ca lang-es"`, que casa las reglas de ocultacion
+   de DOS idiomas a la vez: pagina EN BLANCO, `<h1>` vacio, 0 errores de consola. */
+/* Tres spans, uno por idioma: el CSS elige, igual que en el resto de la pagina. Vive
+   junto a twSoloLang porque es chasis: cualquier sitio donde el JS PINTE texto bilingue
+   necesita emitir los TRES, o en el idioma sin rama el widget sale VACIO ([INC-JS-06]). */
+function TRI(es, en, ca){
+  /* la clase se COMPONE a proposito: `_pares()` de eval_portfolio cuenta
+     `class="t-xx"` sobre el HTML crudo, y un literal aqui dentro sumaria un bloque
+     fantasma por idioma en las 6 paginas. */
+  var w = function(l, t){ return '<span class="t-'+l+'">'+t+'</span>'; };
+  return w('es', es) + w('en', en) + w('ca', ca);
+}
+function twSoloLang(el, l){
+  if(!el) return;
+  for(var i=el.classList.length-1; i>=0; i--){
+    if(el.classList[i].indexOf('lang-')===0) el.classList.remove(el.classList[i]);
+  }
+  el.classList.add('lang-'+l);
+}
 function setLang(l){
   document.documentElement.lang=l;
-  document.documentElement.classList.remove('lang-es','lang-en');
-  document.documentElement.classList.add('lang-'+l);
-  document.body.classList.remove('lang-es','lang-en');
-  document.body.classList.add('lang-'+l);
+  twSoloLang(document.documentElement, l);
+  twSoloLang(document.body, l);
   document.querySelectorAll('[data-lang-btn]').forEach(function(b){
     b.setAttribute('aria-pressed', String(b.dataset.langBtn===l));
   });
@@ -1689,7 +1733,7 @@ window.__cmds=[
   {g:'abrir',ic:'↗',es:'Caso · RESELLERMASTER',en:'Case · RESELLERMASTER',c:'open resellermaster',k:'resellermaster resellermaster',url:'../RESELLERMASTER/RESELLERMASTER.html'},
   {g:'hacer',ic:'✉',es:'Escribirme un email',en:'Write me an email',c:'/mail',k:'email correo mail escribir write contacto contact',url:MAIL},
   {g:'hacer',ic:'↗',es:'Abrir mi LinkedIn',en:'Open my LinkedIn',c:'open linkedin',k:'linkedin perfil profile red social',url:LI,blank:true},
-  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') setLang(document.documentElement.lang==='en'?'es':'en'); }}
+  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') (function(){var v=[].map.call(document.querySelectorAll('#langList li'),function(x){return x.dataset.v;});if(!v.length)return;var i=v.indexOf(document.documentElement.lang);setLang(v[(i+1)%v.length]);})(); }}
 ];
 window.__runCmd=function(c){
   if(c.fn){ c.fn(); return; }
@@ -1700,10 +1744,8 @@ window.__runCmd=function(c){
 /* ── language toggle ── */
 function setLang(l){
   document.documentElement.lang=l;
-  document.documentElement.classList.remove('lang-es','lang-en');
-  document.documentElement.classList.add('lang-'+l);
-  document.body.classList.remove('lang-es','lang-en');
-  document.body.classList.add('lang-'+l);
+  twSoloLang(document.documentElement, l);
+  twSoloLang(document.body, l);
   /* el desplegable tiene que reflejar el cambio venga de donde venga:
      tambien lo dispara el comando /lang de la paleta */
   var cur=document.getElementById('langCur');
@@ -1838,7 +1880,8 @@ var SC=document.getElementById('twBody');
   var form=document.getElementById('twForm'), inp=document.getElementById('twIn');
   var con=document.getElementById('twCon'), ac=document.getElementById('twAc');
   if(!form) return;
-  function lang(){ return document.documentElement.lang==='en'?'en':'es'; }
+  function lang(){ var l=document.documentElement.lang;
+                   return (l==='en'||l==='ca') ? l : 'es'; }
   function norm(t){ return (t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
   inp.placeholder=inp.getAttribute('data-ph-'+lang())||'';
 
@@ -1848,7 +1891,7 @@ var SC=document.getElementById('twBody');
     var l=lang(), qn=norm(q.trim());
     return (window.__cmds||[]).filter(function(c){
       if(!qn) return true;
-      var hay=norm((c.c||'')+' '+c[l]+' '+c.k+' '+c.g);
+      var hay=norm((c.c||'')+' '+(c[l]||c.es)+' '+c.k+' '+c.g);
       return qn.split(/\s+/).every(function(w){ return hay.indexOf(w)>-1; });
     });
   }
@@ -1858,10 +1901,8 @@ var SC=document.getElementById('twBody');
     var l=lang();
     ac.innerHTML=hits.map(function(c,n){
       return '<div class="it" role="option" aria-selected="'+(n===0)+'" data-i="'+n+'">'+
-             '<span class="c">'+(c.c||'')+'</span><span class="l">'+c[l]+'</span></div>';
-    }).join('')+'<div class="hint">'+(l==='en'
-        ?'tab completes · ↑↓ moves · ↵ runs'
-        :'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
+             '<span class="c">'+(c.c||'')+'</span><span class="l">'+(c[l]||c.es)+'</span></div>';
+    }).join('')+'<div class="hint">'+({en:'tab completes · ↑↓ moves · ↵ runs',ca:'tab completa · ↑↓ mou · ↵ executa'}[l]||'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
     items=[].slice.call(ac.querySelectorAll('.it')); sel=0;
     items.forEach(function(el){
       el.addEventListener('click',function(){ runHit(hits[+el.dataset.i],false); });
@@ -1914,7 +1955,7 @@ var SC=document.getElementById('twBody');
        no hizo nada porque el campo se vacia de golpe */
     if(visible && c.c){ inp.value=c.c; }
     setTimeout(function(){
-      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+c[l]+'</span>','echo');
+      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+(c[l]||c.es)+'</span>','echo');
       inp.value='';
       if(window.__runCmd) window.__runCmd(c);
     }, visible && c.c ? 130 : 0);
@@ -1925,13 +1966,13 @@ var SC=document.getElementById('twBody');
     var G={ir:{es:'ir a',en:'go to'},abrir:{es:'abrir caso',en:'open case'},hacer:{es:'acciones',en:'actions'}};
     var html='';
     Object.keys(by).forEach(function(g){
-      html+='<div class="dim">'+(G[g]?G[g][l]:g)+'</div><table>'+
-        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+c[l]+'</td></tr>'; }).join('')+
+      html+='<div class="dim">'+(G[g]?(G[g][l]||G[g].es):g)+'</div><table>'+
+        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+(c[l]||c.es)+'</td></tr>'; }).join('')+
         '</table>';
     });
-    html+='<div class="dim">'+(l==='en'?'also':'además')+
-      '</div><table><tr><td>help</td><td>'+(l==='en'?'this list':'esta lista')+
-      '</td></tr><tr><td>clear</td><td>'+(l==='en'?'clear the console':'limpia la consola')+
+    html+='<div class="dim">'+(({en:'also',ca:'a més'}[l]||'además'))+
+      '</div><table><tr><td>help</td><td>'+(({en:'this list',ca:'aquesta llista'}[l]||'esta lista'))+
+      '</td></tr><tr><td>clear</td><td>'+(({en:'clear the console',ca:'neteja la consola'}[l]||'limpia la consola'))+
       '</td></tr></table>';
     line(html, '', TTL_LONG);
   }
@@ -1991,8 +2032,8 @@ var SC=document.getElementById('twBody');
     var hit=hits[ac.classList.contains('on')?sel:0];
     if(!hit){
       line('<b>$</b> '+q,'echo');
-      line('<span class="ko">'+(l==='en'?'command not found':'orden no encontrada')+
-           '</span> <span class="dim">· '+(l==='en'?'hit tab to list them':'pulsa tab para verlos')+'</span>');
+      line('<span class="ko">'+(({en:'command not found',ca:'ordre no trobada'}[l]||'orden no encontrada'))+
+           '</span> <span class="dim">· '+(({en:'hit tab to list them',ca:'prem tab per llistar-los'}[l]||'pulsa tab para verlos'))+'</span>');
       inp.value=''; return;
     }
     runHit(hit,true);
@@ -2058,6 +2099,32 @@ var SC=document.getElementById('twBody');
   /* cromo de la terminal y navegacion: no son documento, no se imprimen */
   var SKIP='script,style,noscript,svg,title,.progress,.tw-cmd,'+
            '#proto,#boot,.tw-con,.tw-ac,.tw-prompt,.tw-bar,.cmdk,.pcur';
+
+  /* ── el idioma INACTIVO no se imprime, y eso no es una optimizacion menor ──
+     El TreeWalker de split() no filtraba por visibilidad, asi que recorria tambien
+     el idioma en `display:none`: para cada nodo, un Range + un getClientRects() que
+     devuelve 0 rects + un span. No entraba en la busqueda binaria (la parte cara),
+     pero se pagaba igual, y build() volvia a recorrerlos para encenderlos a mano.
+     Medido en YOUTUBE con CPU x4, A/B intercalado, n=9: quitar el ingles ENTERO
+     ahorraba 226 ms de bloqueo de arranque; anadir un tercer idioma costaba 303 ms.
+     O sea ~226-300 ms POR IDIOMA OCULTO, sobre las 5 paginas de caso que ya
+     arrastran ~700 ms de deuda ([INC-PERF-01]).
+
+     No cambia el comportamiento: el texto que NO se envuelve en `.pl` no lleva
+     `opacity:0`, asi que se ve normal — que es exactamente donde acababa antes, con
+     build() marcandolo `.on` por tener caja de tamano cero. Al cambiar de idioma
+     aparece entero, igual que hoy.
+
+     Va en SKIP y no en un `closest` aparte porque asi es UNA sola llamada, y porque
+     build() debe saltarselos por el mismo motivo.
+
+     ⚠️ split() corre UNA vez (:3862) y `remeasure` NO vuelve a partir el texto —lo
+     dice su propio comentario, «carisimo»—, asi que esta lista se calcula con el
+     idioma de arranque y no caduca: los demas idiomas se quedan como texto plano
+     visible, que es su estado final de todos modos. */
+  var __lg=document.documentElement.lang||'es';
+  SKIP+=','+['es','en','ca'].filter(function(l){return l!==__lg;})
+                            .map(function(l){return '.t-'+l;}).join(',');
   /* cajas cuyo borde y fondo esperan a su primera linea: en la v4 el
      esqueleto de las tarjetas se pintaba mucho antes que su contenido */
   var BOXES='.pj,.mc,.cap,.claim,.ldg,.lex,.term,.cx-lines,.ascii-fw,'+
@@ -2529,13 +2596,24 @@ var SC=document.getElementById('twBody');
 
 (function(){ var orig=window.setLang; if(typeof orig!=="function") return;
   window.setLang=function(l){ orig(l); spy(true);
-    var L=document.documentElement.lang==="en"?"en":"es";
+    var L=document.documentElement.lang||"es";  /* [INC-SEED-02] antes: `lang==="en"?"en":"es"`, que en catalan cae al else
+       y deja el selector mostrando "ES" con la pagina en catalan. */
     var t=document.getElementById("twIn");
-    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||"";
+    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||t.getAttribute("data-ph-es")||"";
     var c=document.getElementById("langCur"); if(c) c.textContent=L.toUpperCase();
     var li=document.getElementById("langList");
     if(li) li.querySelectorAll("li").forEach(function(o){
       o.setAttribute("aria-selected", String(o.dataset.v===L)); });
+    /* [INC-JS-05] Los widgets que PINTA el JS no se re-pintaban al cambiar de idioma:
+       sus dos ganchos existian (`__railRefresh` :1823, `__quotaRefresh` :1736) pero su
+       UNICO llamador era la `setLang` pre-chasis, que esta muerta desde el port. Medido
+       sobre la version comiteada, SIN catalan de por medio: el panel de la cadena decia
+       «Alineacion» antes y despues de `setLang('en')`. O sea que un lector ingles lleva
+       leyendo ese panel en castellano desde el port, en produccion.
+       Van con guarda: en las 5 paginas que no tienen esos widgets no hacen nada, y asi
+       el chasis sigue siendo identico en las 6. */
+    if(window.__railRefresh) window.__railRefresh();
+    if(window.__quotaRefresh) window.__quotaRefresh();
     if(window.__printRemeasure) setTimeout(window.__printRemeasure,60);
   }; })();
 
@@ -2619,8 +2697,8 @@ var SC=document.getElementById('twBody');
 <script>
 /* ── contacto: copiar el email. Un mailto: no hace nada sin cliente de correo ── */
 (function(){
-  var T={ok:{es:'copiado',en:'copied'},base:{es:'copiar',en:'copy'}};
-  function paint(b,k){ b.innerHTML='<span class="t-es">'+T[k].es+'</span><span class="t-en">'+T[k].en+'</span>'; }
+  var T={ok:{es:'copiado',en:'copied',ca:'copiat'},base:{es:'copiar',en:'copy',ca:'copiar'}};
+  function paint(b,k){ b.innerHTML=TRI(T[k].es,T[k].en,T[k].ca); }
   Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'),function(b){
     b.addEventListener('click',function(){
       var v=b.dataset.copy, done=function(){ b.classList.add('done'); paint(b,'ok');

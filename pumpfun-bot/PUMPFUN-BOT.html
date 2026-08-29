@@ -14,6 +14,9 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Diego · Quant Research Lab · Solana">
 <meta name="twitter:card" content="summary_large_image">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ca_ES">
 <meta property="og:type" content="website">
 <meta name="author" content="Diego · Quant Research Lab">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,8 +25,18 @@
 <script>
   /* set language ASAP — no FOUC. stored pref > browser lang > es */
   (function(){try{
+    var OK={es:1,en:1,ca:1};   /* los idiomas que ESTA pagina tiene. Una pagina con catalan anade ca:1 */
     var l=localStorage.getItem('pf_lang');
-    if(!l){l=(navigator.language||'es').toLowerCase().indexOf('en')===0?'en':'es';}
+    if(!OK[l]){
+      /* [SEED §5.8] Antes preguntaba literalmente «es ingles? si no, castellano», asi que
+         un navegador en `ca-ES` aterrizaba en castellano: justo el lector para el que se
+         tradujo. Se comprueba el catalan PRIMERO porque es el mas especifico de los tres.
+         El `if(!OK[l])` final no es de adorno: una pagina que no tenga esa lengua cae al
+         castellano en vez de quedarse con las tres ocultas ([INC-JS-04]). */
+      var n=(navigator.language||'es').toLowerCase();
+      l = n.indexOf('ca')===0 ? 'ca' : (n.indexOf('en')===0 ? 'en' : 'es');
+      if(!OK[l]) l='es';
+    }
     document.documentElement.lang=l;
     document.documentElement.className='lang-'+l;
   }catch(e){}})();
@@ -62,8 +75,17 @@ img,svg{display:block}
 :focus-visible{outline:2px solid var(--g2);outline-offset:3px;border-radius:4px}
 
 /* i18n: hide the inactive language */
-html.lang-es .t-en{display:none!important}
-html.lang-en .t-es{display:none!important}
+/* Cada idioma oculta a TODOS los demas. Con solo dos reglas, anadir `t-ca` lo hacia
+   visible en castellano y en ingles a la vez. */
+html.lang-es .t-en,html.lang-es .t-ca{display:none!important}
+html.lang-en .t-es,html.lang-en .t-ca{display:none!important}
+html.lang-ca .t-es,html.lang-ca .t-en{display:none!important}
+/* [INC-TIPO-01] Inter compone `l·l` como ela geminada precompuesta y a 16 px el punt
+   volat desaparece: «cel·les» se lee «ceHes». `locl 0` desactiva esa forma
+   localizada. Medido: el `·` pasa de 1,53 px a 4,61, y el layout no se mueve
+   (docH/docW/h1 +0 a 390 y 1440, en catalan). NO lo arreglan `kern`, `liga`,
+   `dlig`, `calt` ni `ccmp`, ni cambiar el caracter por `ŀ`. */
+html.lang-ca .t-ca{font-feature-settings:'locl' 0}
 
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,6vw,40px)}
 .grad-text{background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
@@ -352,6 +374,7 @@ footer .hl{color:var(--muted2)}
   .stbl td{border:0;padding:10px 16px}
   .stbl td::before{content:attr(data-h-es);display:block;font-family:'JetBrains Mono';font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
   html.lang-en .stbl td::before{content:attr(data-h)}
+  html.lang-ca .stbl td::before{content:attr(data-h-ca)}
 }
 @media(max-width:520px){.stations{grid-template-columns:1fr}footer{flex-direction:column;text-align:center}}
 @media(prefers-reduced-motion:reduce){
@@ -718,7 +741,7 @@ body{overflow:hidden}
            ellos. La pastilla con texto vive en las otras cinco paginas. -->
       <a class="tw-mail" href="mailto:diegollr98@gmail.com" title="diegollr98@gmail.com">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
-          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span></span></a>
+          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span><span class="t-ca">Escriu-me</span></span></a>
       <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M4.98 3.5a2.5 2.5 0 11-.01 5 2.5 2.5 0 01.01-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.5 4.76 5.76V21h-4v-5.7c0-1.36-.03-3.1-1.9-3.1-1.9 0-2.19 1.47-2.19 3v5.8h-4z"/></svg>
@@ -736,12 +759,13 @@ body{overflow:hidden}
          diseño de la ventana es no usar el desplegable nativo. -->
     <div class="tw-lang">
       <button type="button" id="langBtn" aria-haspopup="listbox" aria-expanded="false">
-        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span>
+        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span><span class="sr t-ca">Idioma</span>
         <span id="langCur">ES</span><i aria-hidden="true"></i>
       </button>
       <ul class="tw-langlist" id="langList" role="listbox" hidden>
         <li role="option" data-v="es" aria-selected="true">ES</li>
         <li role="option" data-v="en" aria-selected="false">EN</li>
+        <li role="option" data-v="ca" aria-selected="false">CA</li>
       </ul>
     </div>
   </div>
@@ -752,10 +776,10 @@ body{overflow:hidden}
 <div class="wrap" id="top">
   <!-- hero -->
   <header class="hero">
-    <div class="eyebrow"><span class="t-es">AI Engineer · Solana · research cuantitativo</span><span class="t-en">AI Engineer · Solana · quantitative research</span></div>
+    <div class="eyebrow"><span class="t-es">AI Engineer · Solana · research cuantitativo</span><span class="t-en">AI Engineer · Solana · quantitative research</span><span class="t-ca">AI Engineer · Solana · research quantitatiu</span></div>
 
     <h1 class="t-es display">Construí, medí y <span class="grad-text">juzgué</span> 10 estrategias con EV honesto.</h1>
-    <h1 class="t-en display">I built, measured and <span class="grad-text">judged</span> 10 strategies on honest EV.</h1>
+    <h1 class="t-en display">I built, measured and <span class="grad-text">judged</span> 10 strategies on honest EV.</h1><h1 class="t-ca display">Vaig construir, mesurar i <span class="grad-text">jutjar</span> 10 estratègies amb EV honest.</h1>
 
     <p class="lede t-es">
       Entré a un mercado adversarial (memecoins en Solana) y, en lugar de buscar hacerme rico,
@@ -770,21 +794,21 @@ body{overflow:hidden}
       adversarial multi-agent validation and an ML + LLM scoring engine. With real data and <strong>real capital</strong>
       I proved there is no exploitable edge at this latency. Reporting that negative result with rigor is the product.
       I started not knowing how to code; I built it solo, with AI, in ~5 months.
-    </p>
+    </p><p class="lede t-ca">Vaig entrar en un mercat adversarial (memecoins a Solana) i, en comptes de buscar fer-me ric, <strong>vaig construir la infraestructura per mesurar-lo</strong>: telemetria on-chain, backtesting estadístic, validació adversarial multiagent i un motor de scoring ML + LLM. Amb dades i <strong>capital real</strong> vaig demostrar que a aquesta latència no hi ha edge explotable. Reportar aquest resultat negatiu amb rigor és el producte. Vaig començar sense saber programar; el vaig aixecar sol, amb IA, en ~5 mesos.</p>
 
     <div class="cta">
       <a href="#recorrido" class="btn btn-primary">
         <svg viewBox="0 0 24 24" fill="#08080d"><path d="M8 5v14l11-7z"/></svg>
-        <span class="t-es">Ver el recorrido</span><span class="t-en">Watch the walkthrough</span>
+        <span class="t-es">Ver el recorrido</span><span class="t-en">Watch the walkthrough</span><span class="t-ca">Veure el recorregut</span>
       </a>
-      <a href="#sistema" class="btn btn-ghost"><span class="t-es">Explorar el sistema</span><span class="t-en">Explore the system</span></a>
+      <a href="#sistema" class="btn btn-ghost"><span class="t-es">Explorar el sistema</span><span class="t-en">Explore the system</span><span class="t-ca">Explorar el sistema</span></a>
     </div>
 
     <div class="stats">
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="27" data-pre="~"></span><span class="u">K</span></div><div class="l"><span class="t-es">líneas de sistema curado · bot + cockpit</span><span class="t-en">lines of curated system · bot + cockpit</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="257"></span><span class="u">K</span></div><div class="l"><span class="t-es">líneas de research · 1.325 scripts</span><span class="t-en">lines of research · 1,325 scripts</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="0.745" data-dec="3"></span></div><div class="l"><span class="t-es">AUC del scoring · validación temporal</span><span class="t-en">scoring AUC · temporal validation</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="10"></span><span class="u">+</span></div><div class="l"><span class="t-es">estrategias medidas y juzgadas</span><span class="t-en">strategies measured and judged</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="27" data-pre="~"></span><span class="u">K</span></div><div class="l"><span class="t-es">líneas de sistema curado · bot + cockpit</span><span class="t-en">lines of curated system · bot + cockpit</span><span class="t-ca">línies de sistema curat · bot + cockpit</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="257"></span><span class="u">K</span></div><div class="l"><span class="t-es">líneas de research · 1.325 scripts</span><span class="t-en">lines of research · 1,325 scripts</span><span class="t-ca">línies de research · 1.325 scripts</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="0.745" data-dec="3"></span></div><div class="l"><span class="t-es">AUC del scoring · validación temporal</span><span class="t-en">scoring AUC · temporal validation</span><span class="t-ca">AUC del scoring · validació temporal</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="10"></span><span class="u">+</span></div><div class="l"><span class="t-es">estrategias medidas y juzgadas</span><span class="t-en">strategies measured and judged</span><span class="t-ca">estratègies mesurades i jutjades</span></div></div>
     </div>
   </header>
 </div>
@@ -810,28 +834,28 @@ body{overflow:hidden}
 <section id="recorrido">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Recorrido</span><span class="t-en">Walkthrough</span></div>
+      <div class="eyebrow"><span class="t-es">Recorrido</span><span class="t-en">Walkthrough</span><span class="t-ca">Recorregut</span></div>
       <h2 class="t-es">Un paseo por mi centro de control</h2>
-      <h2 class="t-en">A tour of my control room</h2>
+      <h2 class="t-en">A tour of my control room</h2><h2 class="t-ca">Una passejada pel meu centre de control</h2>
       <p class="t-es">Cómo el bot, los datos, los backtests y las decisiones viven en un solo lugar con <strong>una sola fuente de verdad</strong>. Sin slides: el sistema real, en marcha.</p>
-      <p class="t-en">How the bot, the data, the backtests and the decisions all live in one place with <strong>a single source of truth</strong>. No slides: the real system, running.</p>
+      <p class="t-en">How the bot, the data, the backtests and the decisions all live in one place with <strong>a single source of truth</strong>. No slides: the real system, running.</p><p class="t-ca">Com el bot, les dades, els backtests i les decisions viuen en un sol lloc amb <strong>una sola font de veritat</strong>. Sense slides: el sistema real, en marxa.</p>
     </div>
     <div class="video vp reveal" id="vpBox" data-hero="PUMPFUN-BOT-hero-90s.mp4" data-tour="PUMPFUN-BOT-tour-completo.mp4">
       <video id="vpVideo" src="PUMPFUN-BOT-hero-90s.mp4" poster="../assets/poster-pumpfun-bot.jpg"
              muted loop playsinline preload="metadata"></video>
-      <span class="vp-tag"><span class="t-es">vista previa · corte hero</span><span class="t-en">preview · hero cut</span></span>
+      <span class="vp-tag"><span class="t-es">vista previa · corte hero</span><span class="t-en">preview · hero cut</span><span class="t-ca">vista prèvia · tall hero</span></span>
       <button class="vp-ov" id="vpBtn" type="button">
         <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
-        <span class="vt"><span class="t-es">Recorrido del cockpit · 5:19</span><span class="t-en">Cockpit walkthrough · 5:19</span></span>
-        <span class="vs"><span class="t-es">Sin voz: el cockpit real con los rótulos en pantalla. Pasa el ratón para ver el corte de 90 s; pulsa para el recorrido entero.</span><span class="t-en">No voice-over: the real cockpit with on-screen captions. Hover for the 90 s cut; click for the full walkthrough.</span></span>
+        <span class="vt"><span class="t-es">Recorrido del cockpit · 5:19</span><span class="t-en">Cockpit walkthrough · 5:19</span><span class="t-ca">Recorregut del cockpit · 5:19</span></span>
+        <span class="vs"><span class="t-es">Sin voz: el cockpit real con los rótulos en pantalla. Pasa el ratón para ver el corte de 90 s; pulsa para el recorrido entero.</span><span class="t-en">No voice-over: the real cockpit with on-screen captions. Hover for the 90 s cut; click for the full walkthrough.</span><span class="t-ca">Sense veu: el cockpit real amb els rètols a la pantalla. Passa el ratolí per veure el tall de 90 s; prem per al recorregut sencer.</span></span>
       </button>
     </div>
     <div class="vp-chaps reveal" id="vpChaps" role="group" aria-label="Capítulos del recorrido">
-      <button type="button" class="vc" data-t="0"><b>01</b><span class="t-es">El cockpit y el loop cerrado</span><span class="t-en">The cockpit and the closed loop</span><b>0:00</b></button>
-      <button type="button" class="vc" data-t="102.8"><b>02</b><span class="t-es">Investigar, decidir, y el scoring</span><span class="t-en">Research, decide, and the scoring</span><b>1:42</b></button>
-      <button type="button" class="vc" data-t="224.8"><b>03</b><span class="t-es">Los loops agénticos y el bug que me cacé</span><span class="t-en">The agentic loops and the bug I caught</span><b>3:44</b></button>
+      <button type="button" class="vc" data-t="0"><b>01</b><span class="t-es">El cockpit y el loop cerrado</span><span class="t-en">The cockpit and the closed loop</span><span class="t-ca">El cockpit i el loop tancat</span><b>0:00</b></button>
+      <button type="button" class="vc" data-t="102.8"><b>02</b><span class="t-es">Investigar, decidir, y el scoring</span><span class="t-en">Research, decide, and the scoring</span><span class="t-ca">Investigar, decidir, i el scoring</span><b>1:42</b></button>
+      <button type="button" class="vc" data-t="224.8"><b>03</b><span class="t-es">Los loops agénticos y el bug que me cacé</span><span class="t-en">The agentic loops and the bug I caught</span><span class="t-ca">Els loops agèntics i el bug que em vaig caçar</span><b>3:44</b></button>
     </div>
-    <p class="video-note"><span class="t-es">Bot live · telemetría on-chain · backtests &amp; what-if · ledger de hipótesis · motor de scoring.</span><span class="t-en">Live bot · on-chain telemetry · backtests &amp; what-if · hypothesis ledger · scoring engine.</span></p>
+    <p class="video-note"><span class="t-es">Bot live · telemetría on-chain · backtests &amp; what-if · ledger de hipótesis · motor de scoring.</span><span class="t-en">Live bot · on-chain telemetry · backtests &amp; what-if · hypothesis ledger · scoring engine.</span><span class="t-ca">Bot live · telemetria on-chain · backtests &amp; what-if · ledger d'hipòtesis · motor de scoring.</span></p>
   </div>
 </section>
 
@@ -840,46 +864,46 @@ body{overflow:hidden}
 <section id="sistema">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">El sistema operativo del proyecto</span><span class="t-en">The project's operating system</span></div>
+      <div class="eyebrow"><span class="t-es">El sistema operativo del proyecto</span><span class="t-en">The project's operating system</span><span class="t-ca">El sistema operatiu del projecte</span></div>
       <h2 class="t-es">Un cockpit que cierra el loop entero</h2>
-      <h2 class="t-en">A cockpit that closes the whole loop</h2>
+      <h2 class="t-en">A cockpit that closes the whole loop</h2><h2 class="t-ca">Un cockpit que tanca el loop sencer</h2>
       <p class="t-es">No es una colección de scripts: es un centro de control que refleja el ciclo de vida completo en seis estaciones que giran como un flywheel (operar, capturar, investigar, decidir, estrategia, desplegar) y vuelven al bot.</p>
-      <p class="t-en">It's not a pile of scripts: it's a control room that mirrors the full lifecycle across six stations spinning like a flywheel (operate, capture, research, decide, strategy, deploy) and back to the bot.</p>
+      <p class="t-en">It's not a pile of scripts: it's a control room that mirrors the full lifecycle across six stations spinning like a flywheel (operate, capture, research, decide, strategy, deploy) and back to the bot.</p><p class="t-ca">No és una col·lecció de scripts: és un centre de control que reflecteix el cicle de vida complet en sis estacions que giren com un flywheel (operar, capturar, investigar, decidir, estratègia, desplegar) i tornen al bot.</p>
     </div>
 
     <div class="cockpit">
       <div class="reveal">
         <div class="stage" aria-hidden="true">
           <div class="orbit"></div>
-          <div class="hub"><b class="grad-text">pfcore</b><span class="t-es">una sola verdad</span><span class="t-en">one truth</span></div>
+          <div class="hub"><b class="grad-text">pfcore</b><span class="t-es">una sola verdad</span><span class="t-en">one truth</span><span class="t-ca">una sola veritat</span></div>
           <div class="ring">
-            <div class="nd" style="--a:0deg"><div class="bubble"><span class="num grad-text">1</span><span class="nm"><span class="t-es">Operar</span><span class="t-en">Operate</span></span></div></div>
-            <div class="nd" style="--a:60deg"><div class="bubble"><span class="num grad-text">2</span><span class="nm"><span class="t-es">Capturar</span><span class="t-en">Capture</span></span></div></div>
-            <div class="nd" style="--a:120deg"><div class="bubble"><span class="num grad-text">3</span><span class="nm"><span class="t-es">Investigar</span><span class="t-en">Research</span></span></div></div>
-            <div class="nd" style="--a:180deg"><div class="bubble"><span class="num grad-text">4</span><span class="nm"><span class="t-es">Decidir</span><span class="t-en">Decide</span></span></div></div>
-            <div class="nd" style="--a:240deg"><div class="bubble"><span class="num grad-text">5</span><span class="nm"><span class="t-es">Estrategia</span><span class="t-en">Strategy</span></span></div></div>
-            <div class="nd" style="--a:300deg"><div class="bubble"><span class="num grad-text">6</span><span class="nm"><span class="t-es">Desplegar</span><span class="t-en">Deploy</span></span></div></div>
+            <div class="nd" style="--a:0deg"><div class="bubble"><span class="num grad-text">1</span><span class="nm"><span class="t-es">Operar</span><span class="t-en">Operate</span><span class="t-ca">Operar</span></span></div></div>
+            <div class="nd" style="--a:60deg"><div class="bubble"><span class="num grad-text">2</span><span class="nm"><span class="t-es">Capturar</span><span class="t-en">Capture</span><span class="t-ca">Capturar</span></span></div></div>
+            <div class="nd" style="--a:120deg"><div class="bubble"><span class="num grad-text">3</span><span class="nm"><span class="t-es">Investigar</span><span class="t-en">Research</span><span class="t-ca">Investigar</span></span></div></div>
+            <div class="nd" style="--a:180deg"><div class="bubble"><span class="num grad-text">4</span><span class="nm"><span class="t-es">Decidir</span><span class="t-en">Decide</span><span class="t-ca">Decidir</span></span></div></div>
+            <div class="nd" style="--a:240deg"><div class="bubble"><span class="num grad-text">5</span><span class="nm"><span class="t-es">Estrategia</span><span class="t-en">Strategy</span><span class="t-ca">Estratègia</span></span></div></div>
+            <div class="nd" style="--a:300deg"><div class="bubble"><span class="num grad-text">6</span><span class="nm"><span class="t-es">Desplegar</span><span class="t-en">Deploy</span><span class="t-ca">Desplegar</span></span></div></div>
           </div>
         </div>
-        <div class="stage-note"><span class="t-es">pasa el ratón por una estación para resaltarla</span><span class="t-en">hover a station to highlight it</span></div>
+        <div class="stage-note"><span class="t-es">pasa el ratón por una estación para resaltarla</span><span class="t-en">hover a station to highlight it</span><span class="t-ca">passa el ratolí per una estació per ressaltar-la</span></div>
       </div>
 
       <div class="reveal">
         <div class="stations">
-          <div class="st"><div class="stt grad-text">1 <span class="t-es">OPERAR</span><span class="t-en">OPERATE</span></div><h4><span class="t-es">Bot en vivo</span><span class="t-en">Live bot</span></h4><p><span class="t-es">Control, salud del proceso (WS, RPC) y régimen de mercado.</span><span class="t-en">Control, process health (WS, RPC) and market regime.</span></p></div>
-          <div class="st"><div class="stt grad-text">2 <span class="t-es">CAPTURAR</span><span class="t-en">CAPTURE</span></div><h4><span class="t-es">Datos &amp; gaps</span><span class="t-en">Data &amp; gaps</span></h4><p><span class="t-es">Telemetría on-chain → datos y features, con los gaps marcados.</span><span class="t-en">On-chain telemetry → data and features, with the gaps flagged.</span></p></div>
-          <div class="st"><div class="stt grad-text">3 <span class="t-es">INVESTIGAR</span><span class="t-en">RESEARCH</span></div><h4><span class="t-es">Backtests &amp; what-if</span><span class="t-en">Backtests &amp; what-if</span></h4><p><span class="t-es">Backtest unificado + 1.325 scripts indexados y clasificados por AST (qué hace, qué lee, si escribe, si toca red) sin importarlos ni ejecutarlos, con allowlist curada de ejecución.</span><span class="t-en">Unified backtester + 1,325 scripts indexed and AST-classified (what it does, what it reads, whether it writes, whether it hits the network) without importing or running them, with a curated run allowlist.</span></p></div>
-          <div class="st"><div class="stt grad-text">4 <span class="t-es">DECIDIR</span><span class="t-en">DECIDE</span></div><h4><span class="t-es">Ledger &amp; linaje</span><span class="t-en">Ledger &amp; lineage</span></h4><p><span class="t-es">Cada hipótesis con veredicto, provenance y trazabilidad.</span><span class="t-en">Every hypothesis with verdict, provenance and traceability.</span></p></div>
-          <div class="st"><div class="stt grad-text">5 <span class="t-es">ESTRATEGIA</span><span class="t-en">STRATEGY</span></div><h4><span class="t-es">Motor de scoring</span><span class="t-en">Scoring engine</span></h4><p><span class="t-es">Scoring ML+LLM post-migración hacia un TP dinámico.</span><span class="t-en">Post-migration ML+LLM scoring toward a dynamic TP.</span></p></div>
-          <div class="st"><div class="stt grad-text">6 <span class="t-es">DESPLEGAR</span><span class="t-en">DEPLOY</span></div><h4><span class="t-es">Gates &amp; checklist</span><span class="t-en">Gates &amp; checklist</span></h4><p><span class="t-es">Gates y exits + checklist de deploy de vuelta al bot.</span><span class="t-en">Gates and exits + deploy checklist, back to the bot.</span></p></div>
+          <div class="st"><div class="stt grad-text">1 <span class="t-es">OPERAR</span><span class="t-en">OPERATE</span><span class="t-ca">OPERAR</span></div><h4><span class="t-es">Bot en vivo</span><span class="t-en">Live bot</span><span class="t-ca">Bot en viu</span></h4><p><span class="t-es">Control, salud del proceso (WS, RPC) y régimen de mercado.</span><span class="t-en">Control, process health (WS, RPC) and market regime.</span><span class="t-ca">Control, salut del procés (WS, RPC) i règim de mercat.</span></p></div>
+          <div class="st"><div class="stt grad-text">2 <span class="t-es">CAPTURAR</span><span class="t-en">CAPTURE</span><span class="t-ca">CAPTURAR</span></div><h4><span class="t-es">Datos &amp; gaps</span><span class="t-en">Data &amp; gaps</span><span class="t-ca">Dades &amp; gaps</span></h4><p><span class="t-es">Telemetría on-chain → datos y features, con los gaps marcados.</span><span class="t-en">On-chain telemetry → data and features, with the gaps flagged.</span><span class="t-ca">Telemetria on-chain → dades i features, amb els gaps marcats.</span></p></div>
+          <div class="st"><div class="stt grad-text">3 <span class="t-es">INVESTIGAR</span><span class="t-en">RESEARCH</span><span class="t-ca">INVESTIGAR</span></div><h4><span class="t-es">Backtests &amp; what-if</span><span class="t-en">Backtests &amp; what-if</span><span class="t-ca">Backtests &amp; what-if</span></h4><p><span class="t-es">Backtest unificado + 1.325 scripts indexados y clasificados por AST (qué hace, qué lee, si escribe, si toca red) sin importarlos ni ejecutarlos, con allowlist curada de ejecución.</span><span class="t-en">Unified backtester + 1,325 scripts indexed and AST-classified (what it does, what it reads, whether it writes, whether it hits the network) without importing or running them, with a curated run allowlist.</span><span class="t-ca">Backtest unificat + 1.325 scripts indexats i classificats per AST (què fa, què llegeix, si escriu, si toca xarxa) sense importar-los ni executar-los, amb allowlist curada d'execució.</span></p></div>
+          <div class="st"><div class="stt grad-text">4 <span class="t-es">DECIDIR</span><span class="t-en">DECIDE</span><span class="t-ca">DECIDIR</span></div><h4><span class="t-es">Ledger &amp; linaje</span><span class="t-en">Ledger &amp; lineage</span><span class="t-ca">Ledger &amp; llinatge</span></h4><p><span class="t-es">Cada hipótesis con veredicto, provenance y trazabilidad.</span><span class="t-en">Every hypothesis with verdict, provenance and traceability.</span><span class="t-ca">Cada hipòtesi amb veredicte, provenance i traçabilitat.</span></p></div>
+          <div class="st"><div class="stt grad-text">5 <span class="t-es">ESTRATEGIA</span><span class="t-en">STRATEGY</span><span class="t-ca">ESTRATÈGIA</span></div><h4><span class="t-es">Motor de scoring</span><span class="t-en">Scoring engine</span><span class="t-ca">Motor de scoring</span></h4><p><span class="t-es">Scoring ML+LLM post-migración hacia un TP dinámico.</span><span class="t-en">Post-migration ML+LLM scoring toward a dynamic TP.</span><span class="t-ca">Scoring ML+LLM post-migració cap a un TP dinàmic.</span></p></div>
+          <div class="st"><div class="stt grad-text">6 <span class="t-es">DESPLEGAR</span><span class="t-en">DEPLOY</span><span class="t-ca">DESPLEGAR</span></div><h4><span class="t-es">Gates &amp; checklist</span><span class="t-en">Gates &amp; checklist</span><span class="t-ca">Gates &amp; checklist</span></h4><p><span class="t-es">Gates y exits + checklist de deploy de vuelta al bot.</span><span class="t-en">Gates and exits + deploy checklist, back to the bot.</span><span class="t-ca">Gates i exits + checklist de deploy de tornada al bot.</span></p></div>
         </div>
       </div>
     </div>
 
     <div class="truth reveal">
-      <span class="tl grad-text"><span class="t-es">Una sola verdad</span><span class="t-en">One source of truth</span></span>
+      <span class="tl grad-text"><span class="t-es">Una sola verdad</span><span class="t-en">One source of truth</span><span class="t-ca">Una sola veritat</span></span>
       <p class="t-es">Cada métrica se calcula <b>una vez</b> en el núcleo (<span class="mono">pfcore</span>). El humano en Streamlit, el agente de IA por la CLI y la cara-demo pública leen <b>exactamente el mismo número</b>. Nada se recalcula en una vista.</p>
-      <p class="t-en">Every metric is computed <b>once</b> in the core (<span class="mono">pfcore</span>). The human in Streamlit, the AI agent over the CLI and the public demo face all read <b>exactly the same number</b>. Nothing is recomputed in a view.</p>
+      <p class="t-en">Every metric is computed <b>once</b> in the core (<span class="mono">pfcore</span>). The human in Streamlit, the AI agent over the CLI and the public demo face all read <b>exactly the same number</b>. Nothing is recomputed in a view.</p><p class="t-ca">Cada mètrica es calcula <b>un cop</b> al nucli (<span class="mono">pfcore</span>). L'humà a Streamlit, l'agent d'IA per la CLI i la cara-demo pública llegeixen <b>exactament el mateix número</b>. Res es recalcula en una vista.</p>
     </div>
   </div>
 </section>
@@ -889,11 +913,11 @@ body{overflow:hidden}
 <section id="scoring">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Flagship · en desarrollo</span><span class="t-en">Flagship · in progress</span></div>
+      <div class="eyebrow"><span class="t-es">Flagship · en desarrollo</span><span class="t-en">Flagship · in progress</span><span class="t-ca">Flagship · en desenvolupament</span></div>
       <h2 class="t-es">Motor de scoring híbrido LLM + ML</h2>
-      <h2 class="t-en">Hybrid LLM + ML scoring engine</h2>
+      <h2 class="t-en">Hybrid LLM + ML scoring engine</h2><h2 class="t-ca">Motor de scoring híbrid LLM + ML</h2>
       <p class="t-es">Un ensemble de tres capas que puntúa cada token recién migrado y decide entrada y salida. Un LLM mina patrones narrativos offline, un modelo ML los combina calibrado a magnitud (<strong>AUC 0.745 con split temporal</strong>), y el LLM razona los casos borde. El diagrama es la arquitectura real, viva y versionada.</p>
-      <p class="t-en">A three-layer ensemble that scores every freshly migrated token and decides entry and exit. An LLM mines narrative patterns offline, an ML model combines them calibrated to magnitude (<strong>AUC 0.745 on a temporal split</strong>), and the LLM reasons the edge cases. The diagram is the real architecture, live and versioned.</p>
+      <p class="t-en">A three-layer ensemble that scores every freshly migrated token and decides entry and exit. An LLM mines narrative patterns offline, an ML model combines them calibrated to magnitude (<strong>AUC 0.745 on a temporal split</strong>), and the LLM reasons the edge cases. The diagram is the real architecture, live and versioned.</p><p class="t-ca">Un ensemble de tres capes que puntua cada token acabat de migrar i decideix entrada i sortida. Un LLM mina patrons narratius offline, un model ML els combina calibrat a magnitud (<strong>AUC 0.745 amb split temporal</strong>), i l'LLM raona els casos límit. El diagrama és l'arquitectura real, viva i versionada.</p>
     </div>
 
     <div class="engine reveal">
@@ -938,7 +962,7 @@ body{overflow:hidden}
         <circle r="2.6" fill="#9b5cff" color="#9b5cff" class="dg-particle dg-glow"><animateMotion dur="1.4s" repeatCount="indefinite" path="M516,284 L516,330" rotate="auto"/></circle>
         <path d="M554,330 L554,284" fill="none" stroke="#22d3ff" stroke-width="1.8" opacity=".6" class="dg-flow" marker-end="url(#dg-arw)"/>
         <circle r="2.6" fill="#22d3ff" color="#22d3ff" class="dg-particle dg-glow"><animateMotion dur="1.4s" begin=".7s" repeatCount="indefinite" path="M554,330 L554,284" rotate="auto"/></circle>
-        <text x="600" y="312" class="dg-el t-es">patrones</text><text x="600" y="312" class="dg-el t-en">patterns</text>
+        <text x="600" y="312" class="dg-el t-es">patrones</text><text x="600" y="312" class="dg-el t-en">patterns</text><text x="600" y="312" class="dg-el t-ca">patrons</text>
         <path d="M660,238 C720,200 762,150 800,127" fill="none" stroke="#9b5cff" stroke-width="1.8" opacity=".6" class="dg-flow" marker-end="url(#dg-arw)"/>
         <circle r="3" fill="#9b5cff" color="#9b5cff" class="dg-particle dg-glow"><animateMotion dur="2.4s" repeatCount="indefinite" path="M660,238 C720,200 762,150 800,127" rotate="auto"/></circle>
         <circle r="3" fill="#9b5cff" color="#9b5cff" class="dg-particle dg-glow"><animateMotion dur="2.4s" begin="1.2s" repeatCount="indefinite" path="M660,238 C720,200 762,150 800,127" rotate="auto"/></circle>
@@ -954,82 +978,82 @@ body{overflow:hidden}
         <circle r="3.4" fill="#37e0ff" color="#37e0ff" class="dg-particle dg-glow"><animateMotion dur="3.2s" begin="1.07s" repeatCount="indefinite" path="M150,318 C120,540 540,584 800,520 C905,494 926,402 922,322" rotate="auto"/></circle>
         <circle r="3.4" fill="#37e0ff" color="#37e0ff" class="dg-particle dg-glow"><animateMotion dur="3.2s" begin="2.13s" repeatCount="indefinite" path="M150,318 C120,540 540,584 800,520 C905,494 926,402 922,322" rotate="auto"/></circle>
         <text x="530" y="575" text-anchor="middle" class="dg-loop t-es">⟲ el engagement en vivo realimenta el EXIT · poll cada 5s</text>
-        <text x="530" y="575" text-anchor="middle" class="dg-loop t-en">⟲ live engagement feeds the EXIT back · poll every 5s</text>
+        <text x="530" y="575" text-anchor="middle" class="dg-loop t-en">⟲ live engagement feeds the EXIT back · poll every 5s</text><text x="530" y="575" text-anchor="middle" class="dg-loop t-ca">⟲ l'engagement en viu realimenta l'EXIT · poll cada 5s</text>
 
         <!-- nodes -->
         <rect class="dg-rect" x="410" y="8" width="240" height="44" rx="11" stroke="url(#dg-grad)" stroke-width="1.9"/>
-        <text x="530" y="28" text-anchor="middle" class="dg-title t-es">1 TOKEN MIGRA</text><text x="530" y="28" text-anchor="middle" class="dg-title t-en">1 TOKEN MIGRATES</text>
-        <text x="530" y="45" text-anchor="middle" class="dg-sub t-es">límite a ~migMC (wick día-0)</text><text x="530" y="45" text-anchor="middle" class="dg-sub t-en">capped at ~migMC (day-0 wick)</text>
+        <text x="530" y="28" text-anchor="middle" class="dg-title t-es">1 TOKEN MIGRA</text><text x="530" y="28" text-anchor="middle" class="dg-title t-en">1 TOKEN MIGRATES</text><text x="530" y="28" text-anchor="middle" class="dg-title t-ca">1 TOKEN MIGRA</text>
+        <text x="530" y="45" text-anchor="middle" class="dg-sub t-es">límite a ~migMC (wick día-0)</text><text x="530" y="45" text-anchor="middle" class="dg-sub t-en">capped at ~migMC (day-0 wick)</text><text x="530" y="45" text-anchor="middle" class="dg-sub t-ca">límit a ~migMC (wick dia-0)</text>
 
         <rect class="dg-rect" x="24" y="64" width="208" height="50" rx="11" stroke="#5dff9b" stroke-width="1.7"/>
-        <text x="128" y="84" text-anchor="middle" class="dg-title t-es">ESTRUCTURAL</text><text x="128" y="84" text-anchor="middle" class="dg-title t-en">STRUCTURAL</text>
+        <text x="128" y="84" text-anchor="middle" class="dg-title t-es">ESTRUCTURAL</text><text x="128" y="84" text-anchor="middle" class="dg-title t-en">STRUCTURAL</text><text x="128" y="84" text-anchor="middle" class="dg-title t-ca">ESTRUCTURAL</text>
         <text x="128" y="101" text-anchor="middle" class="dg-sub">deplBuy · t2q · holders · migMC</text>
         <text x="223" y="79" text-anchor="end" class="dg-badge" fill="#5dff9b">✓</text>
 
         <rect class="dg-rect" x="24" y="124" width="208" height="50" rx="11" stroke="#5dff9b" stroke-width="1.7"/>
         <text x="128" y="144" text-anchor="middle" class="dg-title">SOCIAL · Telegram</text>
-        <text x="128" y="161" text-anchor="middle" class="dg-sub t-es">filtro mediana-$ · +49%</text><text x="128" y="161" text-anchor="middle" class="dg-sub t-en">median-$ filter · +49%</text>
+        <text x="128" y="161" text-anchor="middle" class="dg-sub t-es">filtro mediana-$ · +49%</text><text x="128" y="161" text-anchor="middle" class="dg-sub t-en">median-$ filter · +49%</text><text x="128" y="161" text-anchor="middle" class="dg-sub t-ca">filtre mediana-$ · +49%</text>
         <text x="223" y="139" text-anchor="end" class="dg-badge" fill="#5dff9b">✓ ★</text>
 
         <rect class="dg-rect" x="24" y="184" width="208" height="50" rx="11" stroke="#5dff9b" stroke-width="1.7"/>
-        <text x="128" y="204" text-anchor="middle" class="dg-title t-es">FORMA NARRATIVA</text><text x="128" y="204" text-anchor="middle" class="dg-title t-en">NARRATIVE SHAPE</text>
+        <text x="128" y="204" text-anchor="middle" class="dg-title t-es">FORMA NARRATIVA</text><text x="128" y="204" text-anchor="middle" class="dg-title t-en">NARRATIVE SHAPE</text><text x="128" y="204" text-anchor="middle" class="dg-title t-ca">FORMA NARRATIVA</text>
         <text x="128" y="221" text-anchor="middle" class="dg-sub">cjk · ticker · desc-U · news</text>
         <text x="223" y="199" text-anchor="end" class="dg-badge" fill="#5dff9b">✓</text>
 
         <rect class="dg-rect dg-pulse" x="24" y="268" width="208" height="50" rx="11" stroke="#22d3ff" stroke-width="1.7"/>
-        <text x="128" y="288" text-anchor="middle" class="dg-title t-es">ENGAGEMENT EN VIVO</text><text x="128" y="288" text-anchor="middle" class="dg-title t-en">LIVE ENGAGEMENT</text>
-        <text x="128" y="305" text-anchor="middle" class="dg-sub t-es">veloc. msgs TG (forward)</text><text x="128" y="305" text-anchor="middle" class="dg-sub t-en">TG msg velocity (forward)</text>
+        <text x="128" y="288" text-anchor="middle" class="dg-title t-es">ENGAGEMENT EN VIVO</text><text x="128" y="288" text-anchor="middle" class="dg-title t-en">LIVE ENGAGEMENT</text><text x="128" y="288" text-anchor="middle" class="dg-title t-ca">ENGAGEMENT EN VIU</text>
+        <text x="128" y="305" text-anchor="middle" class="dg-sub t-es">veloc. msgs TG (forward)</text><text x="128" y="305" text-anchor="middle" class="dg-sub t-en">TG msg velocity (forward)</text><text x="128" y="305" text-anchor="middle" class="dg-sub t-ca">velocitat msgs TG (forward)</text>
         <text x="223" y="283" text-anchor="end" class="dg-badge" fill="#22d3ff">FWD</text>
 
         <rect class="dg-rect" x="24" y="328" width="208" height="50" rx="11" stroke="#6b6b80" stroke-width="1.7"/>
         <text x="128" y="348" text-anchor="middle" class="dg-title">NEWS ✓ · TRENDS ✗</text>
-        <text x="128" y="365" text-anchor="middle" class="dg-sub t-es">trends = ruido (muerto)</text><text x="128" y="365" text-anchor="middle" class="dg-sub t-en">trends = noise (dead)</text>
+        <text x="128" y="365" text-anchor="middle" class="dg-sub t-es">trends = ruido (muerto)</text><text x="128" y="365" text-anchor="middle" class="dg-sub t-en">trends = noise (dead)</text><text x="128" y="365" text-anchor="middle" class="dg-sub t-ca">trends = soroll (mort)</text>
         <text x="223" y="343" text-anchor="end" class="dg-badge" fill="#6b6b80">✗</text>
 
         <rect class="dg-rect dg-pulse" x="24" y="412" width="208" height="50" rx="11" stroke="#22d3ff" stroke-width="1.7"/>
         <text x="128" y="432" text-anchor="middle" class="dg-title">BIGDOGS</text>
-        <text x="128" y="449" text-anchor="middle" class="dg-sub t-es">bigdog → AMM (re-test)</text><text x="128" y="449" text-anchor="middle" class="dg-sub t-en">bigdog → AMM (re-test)</text>
+        <text x="128" y="449" text-anchor="middle" class="dg-sub t-es">bigdog → AMM (re-test)</text><text x="128" y="449" text-anchor="middle" class="dg-sub t-en">bigdog → AMM (re-test)</text><text x="128" y="449" text-anchor="middle" class="dg-sub t-ca">bigdog → AMM (re-test)</text>
         <text x="223" y="427" text-anchor="end" class="dg-badge" fill="#22d3ff">FWD</text>
 
         <rect class="dg-rect dg-glow" x="410" y="210" width="250" height="74" rx="11" stroke="#9b5cff" stroke-width="2" style="color:#9b5cff"/>
         <text x="535" y="234" text-anchor="middle" class="dg-title">2 ML COMBINER</text>
-        <text x="535" y="253" text-anchor="middle" class="dg-sub t-es">logística · tags baratos</text><text x="535" y="253" text-anchor="middle" class="dg-sub t-en">logistic · cheap tags</text>
-        <text x="535" y="270" text-anchor="middle" class="dg-sub t-es">calibrado por quintiles Q1-Q5</text><text x="535" y="270" text-anchor="middle" class="dg-sub t-en">calibrated by quintiles Q1-Q5</text>
+        <text x="535" y="253" text-anchor="middle" class="dg-sub t-es">logística · tags baratos</text><text x="535" y="253" text-anchor="middle" class="dg-sub t-en">logistic · cheap tags</text><text x="535" y="253" text-anchor="middle" class="dg-sub t-ca">logística · tags barats</text>
+        <text x="535" y="270" text-anchor="middle" class="dg-sub t-es">calibrado por quintiles Q1-Q5</text><text x="535" y="270" text-anchor="middle" class="dg-sub t-en">calibrated by quintiles Q1-Q5</text><text x="535" y="270" text-anchor="middle" class="dg-sub t-ca">calibrat per quintils Q1-Q5</text>
         <text x="651" y="227" text-anchor="end" class="dg-badge" fill="#9bff57">AUC 0.745</text>
 
         <rect class="dg-rect" x="430" y="330" width="210" height="66" rx="11" stroke="#bd9bff" stroke-width="1.7"/>
         <text x="535" y="356" text-anchor="middle" class="dg-title">3 LLM</text>
-        <text x="535" y="375" text-anchor="middle" class="dg-sub t-es">minería + overlay residual</text><text x="535" y="375" text-anchor="middle" class="dg-sub t-en">mining + residual overlay</text>
+        <text x="535" y="375" text-anchor="middle" class="dg-sub t-es">minería + overlay residual</text><text x="535" y="375" text-anchor="middle" class="dg-sub t-en">mining + residual overlay</text><text x="535" y="375" text-anchor="middle" class="dg-sub t-ca">mineria + overlay residual</text>
 
         <rect class="dg-rect" x="800" y="96" width="232" height="58" rx="11" stroke="#a273ff" stroke-width="1.7"/>
-        <text x="916" y="120" text-anchor="middle" class="dg-title t-es">4 ENTRADA</text><text x="916" y="120" text-anchor="middle" class="dg-title t-en">4 ENTRY</text>
-        <text x="916" y="137" text-anchor="middle" class="dg-sub t-es">gate Q4+Q5 · solo con-TG</text><text x="916" y="137" text-anchor="middle" class="dg-sub t-en">gate Q4+Q5 · TG-only</text>
+        <text x="916" y="120" text-anchor="middle" class="dg-title t-es">4 ENTRADA</text><text x="916" y="120" text-anchor="middle" class="dg-title t-en">4 ENTRY</text><text x="916" y="120" text-anchor="middle" class="dg-title t-ca">4 ENTRADA</text>
+        <text x="916" y="137" text-anchor="middle" class="dg-sub t-es">gate Q4+Q5 · solo con-TG</text><text x="916" y="137" text-anchor="middle" class="dg-sub t-en">gate Q4+Q5 · TG-only</text><text x="916" y="137" text-anchor="middle" class="dg-sub t-ca">gate Q4+Q5 · només amb-TG</text>
 
         <rect class="dg-rect" x="800" y="228" width="232" height="92" rx="11" stroke="#a273ff" stroke-width="2"/>
-        <text x="916" y="252" text-anchor="middle" class="dg-title t-es">5 EXIT · TP FIJO</text><text x="916" y="252" text-anchor="middle" class="dg-title t-en">5 EXIT · FIXED TP</text>
-        <text x="916" y="272" text-anchor="middle" class="dg-sub t-es">Q4+Q5 → TP ~3x (81% win retro)</text><text x="916" y="272" text-anchor="middle" class="dg-sub t-en">Q4+Q5 → TP ~3x (81% win, retro)</text>
-        <text x="916" y="290" text-anchor="middle" class="dg-sub t-es">Q1-Q3 → no entrar</text><text x="916" y="290" text-anchor="middle" class="dg-sub t-en">Q1-Q3 → skip</text>
-        <text x="1023" y="245" text-anchor="end" class="dg-badge t-es" fill="#a273ff">binario</text><text x="1023" y="245" text-anchor="end" class="dg-badge t-en" fill="#a273ff">binary</text>
+        <text x="916" y="252" text-anchor="middle" class="dg-title t-es">5 EXIT · TP FIJO</text><text x="916" y="252" text-anchor="middle" class="dg-title t-en">5 EXIT · FIXED TP</text><text x="916" y="252" text-anchor="middle" class="dg-title t-ca">5 EXIT · TP FIX</text>
+        <text x="916" y="272" text-anchor="middle" class="dg-sub t-es">Q4+Q5 → TP ~3x (81% win retro)</text><text x="916" y="272" text-anchor="middle" class="dg-sub t-en">Q4+Q5 → TP ~3x (81% win, retro)</text><text x="916" y="272" text-anchor="middle" class="dg-sub t-ca">Q4+Q5 → TP ~3x (81% win retro)</text>
+        <text x="916" y="290" text-anchor="middle" class="dg-sub t-es">Q1-Q3 → no entrar</text><text x="916" y="290" text-anchor="middle" class="dg-sub t-en">Q1-Q3 → skip</text><text x="916" y="290" text-anchor="middle" class="dg-sub t-ca">Q1-Q3 → no entrar</text>
+        <text x="1023" y="245" text-anchor="end" class="dg-badge t-es" fill="#a273ff">binario</text><text x="1023" y="245" text-anchor="end" class="dg-badge t-en" fill="#a273ff">binary</text><text x="1023" y="245" text-anchor="end" class="dg-badge t-ca" fill="#a273ff">binari</text>
 
         <rect class="dg-rect" x="800" y="394" width="232" height="58" rx="11" stroke="#a273ff" stroke-width="1.7"/>
-        <text x="916" y="418" text-anchor="middle" class="dg-title t-es">6 EJECUCIÓN</text><text x="916" y="418" text-anchor="middle" class="dg-title t-en">6 EXECUTION</text>
+        <text x="916" y="418" text-anchor="middle" class="dg-title t-es">6 EJECUCIÓN</text><text x="916" y="418" text-anchor="middle" class="dg-title t-en">6 EXECUTION</text><text x="916" y="418" text-anchor="middle" class="dg-title t-ca">6 EXECUCIÓ</text>
         <text x="916" y="435" text-anchor="middle" class="dg-sub">TP-limit · fill-aware · entry ≈ migMC</text>
       </svg>
     </div>
-    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span></p>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span><span class="t-ca">Pessiga per apropar i llegir el detall &#8596;</span></p>
     <p class="engine-cap reveal t-es"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Todo es <b>TOUCH</b> (peak retro). El dinero real lo sella el <b>fill-test</b>: ¿llena el límite a migMC y el TP cae el día 0? · trades post-mig en curso.</p>
-    <p class="engine-cap reveal t-en"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Everything is <b>TOUCH</b> (retro peak). Real money is settled by the <b>fill-test</b>: does the limit fill at migMC and the TP hit on day 0? · post-mig trades in progress.</p>
+    <p class="engine-cap reveal t-en"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Everything is <b>TOUCH</b> (retro peak). Real money is settled by the <b>fill-test</b>: does the limit fill at migMC and the TP hit on day 0? · post-mig trades in progress.</p><p class="engine-cap reveal t-ca"><svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="#b4b4c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Tot és <b>TOUCH</b> (peak retro). Els diners reals els segella el <b>fill-test</b>: omple el límit a migMC i el TP cau el dia 0? · trades post-mig en curs.</p>
     <div class="legend">
-      <span class="t-es"><span class="sw" style="background:#5dff9b"></span><b>validado retro</b> (touch)</span><span class="t-en"><span class="sw" style="background:#5dff9b"></span><b>validated retro</b> (touch)</span>
-      <span class="t-es"><span class="sw" style="background:#22d3ff"></span><b>forward / fill-test</b> pendiente</span><span class="t-en"><span class="sw" style="background:#22d3ff"></span><b>forward / fill-test</b> pending</span>
-      <span class="t-es"><span class="sw" style="background:#6b6b80"></span><b>descartado</b> con evidencia</span><span class="t-en"><span class="sw" style="background:#6b6b80"></span><b>discarded</b> with evidence</span>
-      <span><b style="color:#9bff57">★</b> <span class="t-es">señal fuerte</span><span class="t-en">strong signal</span></span>
+      <span class="t-es"><span class="sw" style="background:#5dff9b"></span><b>validado retro</b> (touch)</span><span class="t-en"><span class="sw" style="background:#5dff9b"></span><b>validated retro</b> (touch)</span><span class="t-ca"><span class="sw" style="background:#5dff9b"></span><b>validat retro</b> (touch)</span>
+      <span class="t-es"><span class="sw" style="background:#22d3ff"></span><b>forward / fill-test</b> pendiente</span><span class="t-en"><span class="sw" style="background:#22d3ff"></span><b>forward / fill-test</b> pending</span><span class="t-ca"><span class="sw" style="background:#22d3ff"></span><b>forward / fill-test</b> pendent</span>
+      <span class="t-es"><span class="sw" style="background:#6b6b80"></span><b>descartado</b> con evidencia</span><span class="t-en"><span class="sw" style="background:#6b6b80"></span><b>discarded</b> with evidence</span><span class="t-ca"><span class="sw" style="background:#6b6b80"></span><b>descartat</b> amb evidència</span>
+      <span><b style="color:#9bff57">★</b> <span class="t-es">señal fuerte</span><span class="t-en">strong signal</span><span class="t-ca">senyal forta</span></span>
     </div>
 
     <div class="layers">
-      <div class="layer reveal"><div class="n grad-text">CAPA 01 · LLM</div><h4><span class="t-es">Minería narrativa</span><span class="t-en">Narrative mining</span></h4><p><span class="t-es">Extrae señales de la narrativa del token (ticker, descripción, idioma, news) y las vuelve features baratas. Offline, sin coste en producción.</span><span class="t-en">Extracts signals from the token's narrative (ticker, description, language, news) and turns them into cheap features. Offline, zero cost in production.</span></p></div>
-      <div class="layer reveal"><div class="n grad-text">CAPA 02 · ML</div><h4><span class="t-es">Combiner calibrado</span><span class="t-en">Calibrated combiner</span></h4><p><span class="t-es">Regresión sobre features estructurales y narrativas, calibrada por quintiles; la magnitud real vive en Q5 (peak ~9-20x).</span><span class="t-en">Regression over structural and narrative features, calibrated by quintiles; the real magnitude lives in Q5 (peak ~9-20x).</span></p></div>
-      <div class="layer reveal"><div class="n grad-text">CAPA 03 · LLM</div><h4><span class="t-es">Overlay residual</span><span class="t-en">Residual overlay</span></h4><p><span class="t-es">Razona los bordes que el modelo no resuelve. Entrada en Q4+Q5 con presencia social; salida por TP fijo fill-aware.</span><span class="t-en">Reasons the edges the model can't resolve. Entry on Q4+Q5 with social presence; exit via a fill-aware fixed TP.</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">CAPA 01 · LLM</div><h4><span class="t-es">Minería narrativa</span><span class="t-en">Narrative mining</span><span class="t-ca">Mineria narrativa</span></h4><p><span class="t-es">Extrae señales de la narrativa del token (ticker, descripción, idioma, news) y las vuelve features baratas. Offline, sin coste en producción.</span><span class="t-en">Extracts signals from the token's narrative (ticker, description, language, news) and turns them into cheap features. Offline, zero cost in production.</span><span class="t-ca">Extreu senyals de la narrativa del token (ticker, descripció, idioma, news) i les converteix en features barates. Offline, sense cost en producció.</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">CAPA 02 · ML</div><h4><span class="t-es">Combiner calibrado</span><span class="t-en">Calibrated combiner</span><span class="t-ca">Combiner calibrat</span></h4><p><span class="t-es">Regresión sobre features estructurales y narrativas, calibrada por quintiles; la magnitud real vive en Q5 (peak ~9-20x).</span><span class="t-en">Regression over structural and narrative features, calibrated by quintiles; the real magnitude lives in Q5 (peak ~9-20x).</span><span class="t-ca">Regressió sobre features estructurals i narratives, calibrada per quintils; la magnitud real viu a Q5 (peak ~9-20x).</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">CAPA 03 · LLM</div><h4><span class="t-es">Overlay residual</span><span class="t-en">Residual overlay</span><span class="t-ca">Overlay residual</span></h4><p><span class="t-es">Razona los bordes que el modelo no resuelve. Entrada en Q4+Q5 con presencia social; salida por TP fijo fill-aware.</span><span class="t-en">Reasons the edges the model can't resolve. Entry on Q4+Q5 with social presence; exit via a fill-aware fixed TP.</span><span class="t-ca">Raona els límits que el model no resol. Entrada a Q4+Q5 amb presència social; sortida per TP fix fill-aware.</span></p></div>
     </div>
   </div>
 </section>
@@ -1039,68 +1063,68 @@ body{overflow:hidden}
 <section id="estrategias">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">El cementerio de estrategias</span><span class="t-en">The strategy graveyard</span></div>
+      <div class="eyebrow"><span class="t-es">El cementerio de estrategias</span><span class="t-en">The strategy graveyard</span><span class="t-ca">El cementiri d'estratègies</span></div>
       <h2 class="t-es">Diez estrategias construidas, medidas y juzgadas</h2>
-      <h2 class="t-en">Ten strategies built, measured and judged</h2>
+      <h2 class="t-en">Ten strategies built, measured and judged</h2><h2 class="t-ca">Deu estratègies construïdes, mesurades i jutjades</h2>
       <p class="t-es">Cada una se implementó completa, corrió en dry-run o live y se evaluó con <strong>EV honesto, no win-rate</strong>. La mayoría se descartó: matar lo que no tiene edge antes de arriesgar capital es la señal de un proceso serio.</p>
-      <p class="t-en">Each one was implemented in full, ran in dry-run or live and was judged on <strong>honest EV, not win-rate</strong>. Most were killed: killing what has no edge before risking capital is the signature of a serious process.</p>
+      <p class="t-en">Each one was implemented in full, ran in dry-run or live and was judged on <strong>honest EV, not win-rate</strong>. Most were killed: killing what has no edge before risking capital is the signature of a serious process.</p><p class="t-ca">Cadascuna es va implementar sencera, va córrer en dry-run o live i es va avaluar amb <strong>EV honest, no win-rate</strong>. La majoria es va descartar: matar el que no té edge abans d'arriscar capital és el senyal d'un procés seriós.</p>
     </div>
 
     <table class="stbl reveal">
       <thead><tr>
-        <th><span class="t-es">Estrategia</span><span class="t-en">Strategy</span></th>
-        <th><span class="t-es">Tesis</span><span class="t-en">Thesis</span></th>
-        <th><span class="t-es">Evidencia</span><span class="t-en">Evidence</span></th>
-        <th><span class="t-es">Veredicto</span><span class="t-en">Verdict</span></th>
+        <th><span class="t-es">Estrategia</span><span class="t-en">Strategy</span><span class="t-ca">Estratègia</span></th>
+        <th><span class="t-es">Tesis</span><span class="t-en">Thesis</span><span class="t-ca">Tesi</span></th>
+        <th><span class="t-es">Evidencia</span><span class="t-en">Evidence</span><span class="t-ca">Evidència</span></th>
+        <th><span class="t-es">Veredicto</span><span class="t-en">Verdict</span><span class="t-ca">Veredicte</span></th>
       </tr></thead>
       <tbody>
         <tr>
-          <td data-h="Strategy" data-h-es="Estrategia"><span class="sn">Scoring Engine</span><span class="sd"><span class="t-es">Scoring ML+LLM post-migración → TP dinámico</span><span class="t-en">Post-mig ML+LLM scoring → dynamic TP</span></span></td>
-          <td data-h="Thesis" data-h-es="Tesis"><span class="t-es">La forma narrativa predice la magnitud del pump</span><span class="t-en">Narrative shape predicts pump magnitude</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono">AUC 0.745</td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-res"><span class="t-es">Research activo</span><span class="t-en">Active research</span></span></td>
+          <td data-h="Strategy" data-h-es="Estrategia" data-h-ca="Estratègia"><span class="sn">Scoring Engine</span><span class="sd"><span class="t-es">Scoring ML+LLM post-migración → TP dinámico</span><span class="t-en">Post-mig ML+LLM scoring → dynamic TP</span><span class="t-ca">Scoring ML+LLM post-migració → TP dinàmic</span></span></td>
+          <td data-h="Thesis" data-h-es="Tesis" data-h-ca="Tesi"><span class="t-es">La forma narrativa predice la magnitud del pump</span><span class="t-en">Narrative shape predicts pump magnitude</span><span class="t-ca">La forma narrativa prediu la magnitud del pump</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono">AUC 0.745</td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-res"><span class="t-es">Research activo</span><span class="t-en">Active research</span><span class="t-ca">Research actiu</span></span></td>
         </tr>
         <tr>
-          <td data-h="Strategy" data-h-es="Estrategia"><span class="sn">Reversión</span><span class="sd"><span class="t-es">Dip-buy de memecoins establecidas (dd&le;&minus;30% + rvol + breadth)</span><span class="t-en">Dip-buy on established memecoins (dd&le;&minus;30% + rvol + breadth)</span></span></td>
-          <td data-h="Thesis" data-h-es="Tesis"><span class="t-es">Las establecidas rebotan tras un dip moderado</span><span class="t-en">Established coins rebound after a moderate dip</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">bt +6,3% t=2,7 → era vela</span><span class="t-en">bt +6.3% t=2.7 → was a candle</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">No desplegable</span><span class="t-en">Non-deployable</span></span></td>
+          <td data-h="Strategy" data-h-es="Estrategia" data-h-ca="Estratègia"><span class="sn">Reversión</span><span class="sd"><span class="t-es">Dip-buy de memecoins establecidas (dd&le;&minus;30% + rvol + breadth)</span><span class="t-en">Dip-buy on established memecoins (dd&le;&minus;30% + rvol + breadth)</span><span class="t-ca">Dip-buy de memecoins establertes (dd&le;&minus;30% + rvol + breadth)</span></span></td>
+          <td data-h="Thesis" data-h-es="Tesis" data-h-ca="Tesi"><span class="t-es">Las establecidas rebotan tras un dip moderado</span><span class="t-en">Established coins rebound after a moderate dip</span><span class="t-ca">Les establertes reboten després d'un dip moderat</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">bt +6,3% t=2,7 → era vela</span><span class="t-en">bt +6.3% t=2.7 → was a candle</span><span class="t-ca">bt +6,3% t=2,7 → era espelma</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill"><span class="t-es">No desplegable</span><span class="t-en">Non-deployable</span><span class="t-ca">No desplegable</span></span></td>
         </tr>
         <tr>
-          <td data-h="Strategy" data-h-es="Estrategia"><span class="sn">FOMO</span><span class="sd"><span class="t-es">Order-flow (la manada entrando) × smart-money</span><span class="t-en">Order-flow (the crowd piling in) × smart-money</span></span></td>
-          <td data-h="Thesis" data-h-es="Tesis"><span class="t-es">Subirse a la ola de compras, filtrando las trampas</span><span class="t-en">Ride the buying wave, filtered from the traps</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">3 errores MÍOS, corregidos</span><span class="t-en">3 of my OWN errors, fixed</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-inc"><span class="t-es">Inconclusa · pista viva</span><span class="t-en">Inconclusive · live lead</span></span></td>
+          <td data-h="Strategy" data-h-es="Estrategia" data-h-ca="Estratègia"><span class="sn">FOMO</span><span class="sd"><span class="t-es">Order-flow (la manada entrando) × smart-money</span><span class="t-en">Order-flow (the crowd piling in) × smart-money</span><span class="t-ca">Order-flow (la ramada entrant) × smart-money</span></span></td>
+          <td data-h="Thesis" data-h-es="Tesis" data-h-ca="Tesi"><span class="t-es">Subirse a la ola de compras, filtrando las trampas</span><span class="t-en">Ride the buying wave, filtered from the traps</span><span class="t-ca">Pujar a l'onada de compres, filtrant les trampes</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">3 errores MÍOS, corregidos</span><span class="t-en">3 of my OWN errors, fixed</span><span class="t-ca">3 errors MEUS, corregits</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-inc"><span class="t-es">Inconclusa · pista viva</span><span class="t-en">Inconclusive · live lead</span><span class="t-ca">Inconclusa · pista viva</span></span></td>
         </tr>
         <tr>
-          <td data-h="Strategy" data-h-es="Estrategia"><span class="sn">BOTRIDER</span><span class="sd"><span class="t-es">Front-run de pump-bots en bonding curve, exit al cruce 50%</span><span class="t-en">Front-running pump-bots on the bonding curve, exit at 50% cross</span></span></td>
-          <td data-h="Thesis" data-h-es="Tesis"><span class="t-es">Cosechar micro-pumps de creators competentes</span><span class="t-en">Harvest micro-pumps from competent creators</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono">live n=723 · &minus;1,66 SOL · 4 días</td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Cerrado · &minus;EV</span><span class="t-en">Closed · &minus;EV</span></span></td>
+          <td data-h="Strategy" data-h-es="Estrategia" data-h-ca="Estratègia"><span class="sn">BOTRIDER</span><span class="sd"><span class="t-es">Front-run de pump-bots en bonding curve, exit al cruce 50%</span><span class="t-en">Front-running pump-bots on the bonding curve, exit at 50% cross</span><span class="t-ca">Front-run de pump-bots en bonding curve, exit al creuament 50%</span></span></td>
+          <td data-h="Thesis" data-h-es="Tesis" data-h-ca="Tesi"><span class="t-es">Cosechar micro-pumps de creators competentes</span><span class="t-en">Harvest micro-pumps from competent creators</span><span class="t-ca">Collir micro-pumps de creators competents</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono">live n=723 · &minus;1,66 SOL · 4 días</td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill"><span class="t-es">Cerrado · &minus;EV</span><span class="t-en">Closed · &minus;EV</span><span class="t-ca">Tancat · &minus;EV</span></span></td>
         </tr>
         <tr>
-          <td data-h="Strategy" data-h-es="Estrategia"><span class="sn">Post-Mig Lead</span><span class="sd"><span class="t-es">Entrada selectiva post-mig (deplBuy &le; 5M &amp; t2q &le; 3)</span><span class="t-en">Selective post-mig entry (deplBuy &le; 5M &amp; t2q &le; 3)</span></span></td>
-          <td data-h="Thesis" data-h-es="Tesis"><span class="t-es">Pérdidas acotadas en AMM tras pasar el rug</span><span class="t-en">Bounded losses on the AMM once past the rug</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono"><span class="t-es">en fill-test</span><span class="t-en">in fill-test</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-val"><span class="t-es">En validación</span><span class="t-en">In validation</span></span></td>
+          <td data-h="Strategy" data-h-es="Estrategia" data-h-ca="Estratègia"><span class="sn">Post-Mig Lead</span><span class="sd"><span class="t-es">Entrada selectiva post-mig (deplBuy &le; 5M &amp; t2q &le; 3)</span><span class="t-en">Selective post-mig entry (deplBuy &le; 5M &amp; t2q &le; 3)</span><span class="t-ca">Entrada selectiva post-mig (deplBuy &le; 5M &amp; t2q &le; 3)</span></span></td>
+          <td data-h="Thesis" data-h-es="Tesis" data-h-ca="Tesi"><span class="t-es">Pérdidas acotadas en AMM tras pasar el rug</span><span class="t-en">Bounded losses on the AMM once past the rug</span><span class="t-ca">Pèrdues acotades en AMM després de passar el rug</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono"><span class="t-es">en fill-test</span><span class="t-en">in fill-test</span><span class="t-ca">en fill-test</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-val"><span class="t-es">En validación</span><span class="t-en">In validation</span><span class="t-ca">En validació</span></span></td>
         </tr>
         <tr>
-          <td data-h="Strategy" data-h-es="Estrategia"><span class="sn">SWT v1-v4</span><span class="sd"><span class="t-es">Copy-trade de smart-money wallets minadas con FDR-BH</span><span class="t-en">Copy-trade of smart-money wallets mined with FDR-BH</span></span></td>
-          <td data-h="Thesis" data-h-es="Tesis"><span class="t-es">Wallets rentables dejan huella replicable</span><span class="t-en">Profitable wallets leave a replicable footprint</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono">n&ge;700</td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-marg"><span class="t-es">Señal marginal</span><span class="t-en">Marginal signal</span></span></td>
+          <td data-h="Strategy" data-h-es="Estrategia" data-h-ca="Estratègia"><span class="sn">SWT v1-v4</span><span class="sd"><span class="t-es">Copy-trade de smart-money wallets minadas con FDR-BH</span><span class="t-en">Copy-trade of smart-money wallets mined with FDR-BH</span><span class="t-ca">Copy-trade de smart-money wallets minades amb FDR-BH</span></span></td>
+          <td data-h="Thesis" data-h-es="Tesis" data-h-ca="Tesi"><span class="t-es">Wallets rentables dejan huella replicable</span><span class="t-en">Profitable wallets leave a replicable footprint</span><span class="t-ca">Les wallets rendibles deixen empremta replicable</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono">n&ge;700</td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-marg"><span class="t-es">Señal marginal</span><span class="t-en">Marginal signal</span><span class="t-ca">Senyal marginal</span></span></td>
         </tr>
         <tr>
-          <td data-h="Strategy" data-h-es="Estrategia"><span class="sn">FT50-VS / FT40 / FT30</span><span class="sd"><span class="t-es">Fixed-time exit sobre tokens viral-steady</span><span class="t-en">Fixed-time exit on viral-steady tokens</span></span></td>
-          <td data-h="Thesis" data-h-es="Tesis"><span class="t-es">Salir a tiempo fijo bate al hold dinámico</span><span class="t-en">A fixed-time exit beats the dynamic hold</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono">n&ge;9.000 bt</td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill">Break-even</span></td>
+          <td data-h="Strategy" data-h-es="Estrategia" data-h-ca="Estratègia"><span class="sn">FT50-VS / FT40 / FT30</span><span class="sd"><span class="t-es">Fixed-time exit sobre tokens viral-steady</span><span class="t-en">Fixed-time exit on viral-steady tokens</span><span class="t-ca">Fixed-time exit sobre tokens viral-steady</span></span></td>
+          <td data-h="Thesis" data-h-es="Tesis" data-h-ca="Tesi"><span class="t-es">Salir a tiempo fijo bate al hold dinámico</span><span class="t-en">A fixed-time exit beats the dynamic hold</span><span class="t-ca">Sortir a temps fix bat el hold dinàmic</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono">n&ge;9.000 bt</td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill">Break-even</span></td>
         </tr>
         <tr>
-          <td data-h="Strategy" data-h-es="Estrategia"><span class="sn">REG-MC5 · POSTMIG v1</span><span class="sd"><span class="t-es">Regresión MC + hold post-migración Raydium</span><span class="t-en">MC regression + post-migration Raydium hold</span></span></td>
-          <td data-h="Thesis" data-h-es="Tesis"><span class="t-es">Edge histórico replicable en vivo</span><span class="t-en">Historical edge replicable live</span></td>
-          <td data-h="Evidence" data-h-es="Evidencia" class="mono">n=124 / 156</td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Edge expiró</span><span class="t-en">Edge expired</span></span></td>
+          <td data-h="Strategy" data-h-es="Estrategia" data-h-ca="Estratègia"><span class="sn">REG-MC5 · POSTMIG v1</span><span class="sd"><span class="t-es">Regresión MC + hold post-migración Raydium</span><span class="t-en">MC regression + post-migration Raydium hold</span><span class="t-ca">Regressió MC + hold post-migració Raydium</span></span></td>
+          <td data-h="Thesis" data-h-es="Tesis" data-h-ca="Tesi"><span class="t-es">Edge histórico replicable en vivo</span><span class="t-en">Historical edge replicable live</span><span class="t-ca">Edge històric replicable en viu</span></td>
+          <td data-h="Evidence" data-h-es="Evidencia" data-h-ca="Evidència" class="mono">n=124 / 156</td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill"><span class="t-es">Edge expiró</span><span class="t-en">Edge expired</span><span class="t-ca">L'edge va expirar</span></span></td>
         </tr>
       </tbody>
     </table>
@@ -1112,11 +1136,11 @@ body{overflow:hidden}
 <section id="juicio">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">La prueba de que el juicio es humano</span><span class="t-en">Proof the judgment is human</span></div>
+      <div class="eyebrow"><span class="t-es">La prueba de que el juicio es humano</span><span class="t-en">Proof the judgment is human</span><span class="t-ca">La prova que el judici és humà</span></div>
       <h2 class="t-es">Cómo cacé un look-ahead bias en mi propio sistema</h2>
-      <h2 class="t-en">How I caught a look-ahead bias in my own system</h2>
+      <h2 class="t-en">How I caught a look-ahead bias in my own system</h2><h2 class="t-ca">Com vaig caçar un look-ahead bias al meu propi sistema</h2>
       <p class="t-es">Cazar un bug sutil en tu propio trabajo y matarlo con evidencia justo cuando el resultado parece <strong>demasiado bueno</strong>. Esa es la señal que un escéptico cree imposible en un perfil construido con IA.</p>
-      <p class="t-en">Catching a subtle bug in your own work and killing it with evidence right when the result looks <strong>too good</strong>. That's the signal a skeptic assumes is impossible in an AI-built profile.</p>
+      <p class="t-en">Catching a subtle bug in your own work and killing it with evidence right when the result looks <strong>too good</strong>. That's the signal a skeptic assumes is impossible in an AI-built profile.</p><p class="t-ca">Caçar un bug subtil a la teva pròpia feina i matar-lo amb evidència just quan el resultat sembla <strong>massa bo</strong>. Aquest és el senyal que un escèptic creu impossible en un perfil construït amb IA.</p>
     </div>
     <div class="sb">
       <!-- ES code -->
@@ -1150,7 +1174,7 @@ fallback_horizon =  <span class="b">600s</span>  <span class="cm">// but exits h
 
 <span class="cm"># verified by 3 fresh agents:</span>
 exit_TP2.0(fix) <span class="a">≈ hold</span>   <span class="cm">// the edge evaporated</span>
-</div>
+</div><div class="sb-code reveal t-ca"><span class="cm"># un exit prometia batre el hold per…</span> exit_TP2.0 <span class="g">+0.239 SOL</span> <span class="cm">// 3x millor?</span> hold_600s +0.071 SOL <span class="cm"># vaig sospitar PER AIXÒ. vaig mirar el sim:</span> scan_horizon = <span class="r">1800s</span> <span class="cm">// busca el TP aquí</span> fallback_horizon = <span class="b">600s</span> <span class="cm">// però surt aquí</span> <span class="cm"># 14/71 trades (20%) acreditats a un</span> <span class="cm"># futur que en viu NO existeix.</span> <span class="cm"># verificat per 3 agents frescos:</span> exit_TP2.0(fix) <span class="a">≈ hold</span> <span class="cm">// l'edge es va evaporar</span></div>
       <div class="sb-body reveal t-es">
         <p>Sospeché <em>porque</em> era demasiado bueno. Y lo era: un 20% de los trades cobraban un futuro que en vivo <strong>no existe</strong>. Look-ahead clásico.</p>
         <p>Lo <strong>verifiqué con tres agentes</strong> para no creerme mi propia corrección. El edge se evaporó a ≈<em>hold</em>. Reporté el negativo y seguí.</p>
@@ -1160,7 +1184,7 @@ exit_TP2.0(fix) <span class="a">≈ hold</span>   <span class="cm">// the edge e
         <p>I got suspicious <em>because</em> it was too good. And it was: 20% of trades were collecting a future that, live, <strong>doesn't exist</strong>. Classic look-ahead.</p>
         <p>I <strong>verified it with three agents</strong> so I wouldn't just trust my own fix. The edge evaporated to ≈<em>hold</em>. I reported the negative and moved on.</p>
         <p class="sb-kicker"><strong>That discipline, not the PnL, is what transfers to a team.</strong></p>
-      </div>
+      </div><div class="sb-body reveal t-ca"><p>Vaig sospitar <em>perquè</em> era massa bo. I ho era: un 20% dels trades cobraven un futur que en viu <strong>no existeix</strong>. Look-ahead clàssic.</p> <p>Ho <strong>vaig verificar amb tres agents</strong> per no creure'm la meva pròpia correcció. L'edge es va evaporar a ≈<em>hold</em>. Vaig reportar el negatiu i vaig seguir.</p> <p class="sb-kicker"><strong>Aquesta disciplina, no el PnL, és el que es transfereix a un equip.</strong></p></div>
     </div>
   </div>
 </section>
@@ -1170,11 +1194,11 @@ exit_TP2.0(fix) <span class="a">≈ hold</span>   <span class="cm">// the edge e
 <section id="juicio2">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">La segunda decisión difícil</span><span class="t-en">The second hard call</span></div>
+      <div class="eyebrow"><span class="t-es">La segunda decisión difícil</span><span class="t-en">The second hard call</span><span class="t-ca">La segona decisió difícil</span></div>
       <h2 class="t-es">Cuando me cuestionaron, revisé mi propio veredicto</h2>
-      <h2 class="t-en">When challenged, I revised my own verdict</h2>
+      <h2 class="t-en">When challenged, I revised my own verdict</h2><h2 class="t-ca">Quan em van qüestionar, vaig revisar el meu propi veredicte</h2>
       <p class="t-es">El análisis (que dirijo con IA) había cerrado esta estrategia como <strong>sin edge</strong>. No me fié del veredicto: cuestioné si se había medido de forma óptima, y al atacar esa conclusión aparecieron <strong>tres errores de medición</strong>.</p>
-      <p class="t-en">The analysis (which I run with AI) had closed this strategy as <strong>no edge</strong>. I didn't trust the verdict: I questioned whether it had been measured optimally, and attacking that conclusion surfaced <strong>three measurement errors</strong>.</p>
+      <p class="t-en">The analysis (which I run with AI) had closed this strategy as <strong>no edge</strong>. I didn't trust the verdict: I questioned whether it had been measured optimally, and attacking that conclusion surfaced <strong>three measurement errors</strong>.</p><p class="t-ca">L'anàlisi (que dirigeixo amb IA) havia tancat aquesta estratègia com a <strong>sense edge</strong>. No em vaig refiar del veredicte: vaig qüestionar si s'havia mesurat de forma òptima, i en atacar aquella conclusió van aparèixer <strong>tres errors de mesura</strong>.</p>
     </div>
     <div class="sb">
       <!-- ES code -->
@@ -1208,7 +1232,7 @@ crowd   <span class="g">net +0.54%  WR 65%</span>
 whale   <span class="r">net &minus;0.45%  WR 50%</span>
 
 <span class="cm"># REJECTED → INCONCLUSIVE (weak lead, n=20)</span>
-</div>
+</div><div class="sb-code reveal t-ca"><span class="cm"># veredicte: FOMO sense edge → REJECTED</span> net_capaA <span class="r">&minus;2.94%</span> <span class="cm">// "no hi ha edge"</span> <span class="cm"># vaig dubtar del veredicte: mesurat òptim? → 3 errors:</span> fill = <span class="r">3.0%</span> &rarr; real <span class="b">0.44%</span> <span class="cm">// ~7x massa alt</span> sensor = <span class="r">close-only</span> <span class="cm">// cec al +2.8% intradia</span> flux = <span class="r">whale + ramada</span> <span class="cm">// senyals OPOSADES barrejades</span> <span class="cm"># en separar la RAMADA (molts petits):</span> ramada <span class="g">net +0.54% WR 65%</span> whale <span class="r">net &minus;0.45% WR 50%</span> <span class="cm"># REJECTED → INCONCLUSIVE (lead feble, n=20)</span></div>
       <div class="sb-body reveal t-es">
         <p>No me fié de mi propio "sin edge": ¿lo había medido bien? No: <strong>tres fallos</strong> (fill 7x alto, sensor ciego al intradía en una estrategia de <em>momentum</em>, ballena y manada mezcladas).</p>
         <p>Corregidos, la conclusión <strong>se voltea</strong>: la manada da <span class="hl">+0.54% (WR 65%)</span>: la dirección de la tesis. Pero n=20, p=0.21 → no dije "funciona": la pasé de <strong>REJECTED a INCONCLUSIVE</strong>.</p>
@@ -1218,7 +1242,7 @@ whale   <span class="r">net &minus;0.45%  WR 50%</span>
         <p>I didn't trust my own "no edge": had I measured it right? No: <strong>three flaws</strong> (fill 7x too high, a sensor blind to the intraday on a <em>momentum</em> strategy, whale and crowd mixed together).</p>
         <p>Fixed, the conclusion <strong>flips</strong>: the crowd yields <span class="hl">+0.54% (65% WR)</span>: the thesis's direction. But n=20, p=0.21 → I didn't say "it works": I moved it from <strong>REJECTED to INCONCLUSIVE</strong>.</p>
         <p class="sb-kicker"><strong>Revising your own verdict with data: that's what transfers.</strong></p>
-      </div>
+      </div><div class="sb-body reveal t-ca"><p>No em vaig refiar del meu propi "sense edge": ho havia mesurat bé? No: <strong>tres fallades</strong> (fill 7x alt, sensor cec a l'intradia en una estratègia de <em>momentum</em>, balena i ramada barrejades).</p> <p>Corregits, la conclusió <strong>es capgira</strong>: la ramada dona <span class="hl">+0.54% (WR 65%)</span>: la direcció de la tesi. Però n=20, p=0.21 → no vaig dir "funciona": la vaig passar de <strong>REJECTED a INCONCLUSIVE</strong>.</p> <p class="sb-kicker"><strong>Revisar el teu propi veredicte amb dades: això es transfereix.</strong></p></div>
     </div>
   </div>
 </section>
@@ -1228,11 +1252,11 @@ whale   <span class="r">net &minus;0.45%  WR 50%</span>
 <section id="metodo">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span></div>
+      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span><span class="t-ca">Com treballo amb IA</span></div>
       <h2 class="t-es">Validación adversarial multi-agente</h2>
-      <h2 class="t-en">Adversarial multi-agent validation</h2>
+      <h2 class="t-en">Adversarial multi-agent validation</h2><h2 class="t-ca">Validació adversarial multiagent</h2>
       <p class="t-es">No le pido a la IA una respuesta. Orquesto flotas de agentes que se auditan entre sí: uno propone, otros intentan refutar, un panel vota. Una hipótesis sobrevive solo si resiste el ataque.</p>
-      <p class="t-en">I don't ask the AI for an answer. I orchestrate fleets of agents that audit each other: one proposes, others try to refute, a panel votes. A hypothesis survives only if it withstands the attack.</p>
+      <p class="t-en">I don't ask the AI for an answer. I orchestrate fleets of agents that audit each other: one proposes, others try to refute, a panel votes. A hypothesis survives only if it withstands the attack.</p><p class="t-ca">No li demano a la IA una resposta. Orquestro flotes d'agents que s'auditen entre si: un proposa, altres intenten refutar, un panell vota. Una hipòtesi sobreviu només si resisteix l'atac.</p>
     </div>
     <div class="engine reveal" style="margin-bottom:34px">
       <svg viewBox="0 0 1080 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Adversarial multi-agent validation loop">
@@ -1262,42 +1286,42 @@ whale   <span class="r">net &minus;0.45%  WR 50%</span>
         <circle r="3.2" fill="#37e0ff" color="#37e0ff" class="dg-particle dg-glow"><animateMotion dur="3.4s" repeatCount="indefinite" path="M840,238 C720,418 250,418 116,238"/></circle>
         <circle r="3.2" fill="#37e0ff" color="#37e0ff" class="dg-particle dg-glow"><animateMotion dur="3.4s" begin="1.7s" repeatCount="indefinite" path="M840,238 C720,418 250,418 116,238"/></circle>
         <text x="540" y="406" text-anchor="middle" class="dg-loop t-es">validación cruzada · sesiones paralelas (si divergen, se arbitra)</text>
-        <text x="540" y="406" text-anchor="middle" class="dg-loop t-en">cross-validation · parallel sessions (if they diverge, it's arbitrated)</text>
+        <text x="540" y="406" text-anchor="middle" class="dg-loop t-en">cross-validation · parallel sessions (if they diverge, it's arbitrated)</text><text x="540" y="406" text-anchor="middle" class="dg-loop t-ca">validació creuada · sessions paral·leles (si divergeixen, s'arbitra)</text>
         <text x="578" y="26" text-anchor="middle" class="dg-el t-es" style="fill:#ff7a9c;font-weight:700">ATAQUE ADVERSARIAL · intentan refutar</text>
-        <text x="578" y="26" text-anchor="middle" class="dg-el t-en" style="fill:#ff7a9c;font-weight:700">ADVERSARIAL ATTACK · they try to refute</text>
+        <text x="578" y="26" text-anchor="middle" class="dg-el t-en" style="fill:#ff7a9c;font-weight:700">ADVERSARIAL ATTACK · they try to refute</text><text x="578" y="26" text-anchor="middle" class="dg-el t-ca" style="fill:#ff7a9c;font-weight:700">ATAC ADVERSARIAL · intenten refutar</text>
         <rect class="dg-rect" x="28" y="170" width="176" height="68" rx="12" stroke="#9b5cff" stroke-width="1.8"/>
-        <text x="116" y="196" text-anchor="middle" class="dg-title t-es">HIPÓTESIS</text><text x="116" y="196" text-anchor="middle" class="dg-title t-en">HYPOTHESIS</text>
-        <text x="116" y="214" text-anchor="middle" class="dg-sub t-es">un agente propone</text><text x="116" y="214" text-anchor="middle" class="dg-sub t-en">an agent proposes</text>
+        <text x="116" y="196" text-anchor="middle" class="dg-title t-es">HIPÓTESIS</text><text x="116" y="196" text-anchor="middle" class="dg-title t-en">HYPOTHESIS</text><text x="116" y="196" text-anchor="middle" class="dg-title t-ca">HIPÒTESI</text>
+        <text x="116" y="214" text-anchor="middle" class="dg-sub t-es">un agente propone</text><text x="116" y="214" text-anchor="middle" class="dg-sub t-en">an agent proposes</text><text x="116" y="214" text-anchor="middle" class="dg-sub t-ca">un agent proposa</text>
         <rect class="dg-rect" x="236" y="180" width="148" height="50" rx="11" stroke="#22d3ff" stroke-width="1.7"/>
         <text x="310" y="200" text-anchor="middle" class="dg-title">PRE-COMMIT</text>
-        <text x="310" y="217" text-anchor="middle" class="dg-sub t-es">umbrales antes de los datos</text><text x="310" y="217" text-anchor="middle" class="dg-sub t-en">thresholds before the data</text>
+        <text x="310" y="217" text-anchor="middle" class="dg-sub t-es">umbrales antes de los datos</text><text x="310" y="217" text-anchor="middle" class="dg-sub t-en">thresholds before the data</text><text x="310" y="217" text-anchor="middle" class="dg-sub t-ca">llindars abans de les dades</text>
         <rect class="dg-rect dg-pulse" x="418" y="38" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
-        <text x="482" y="65" text-anchor="middle" class="dg-title t-es">ESCÉPTICO</text><text x="482" y="65" text-anchor="middle" class="dg-title t-en">SKEPTIC</text>
+        <text x="482" y="65" text-anchor="middle" class="dg-title t-es">ESCÉPTICO</text><text x="482" y="65" text-anchor="middle" class="dg-title t-en">SKEPTIC</text><text x="482" y="65" text-anchor="middle" class="dg-title t-ca">ESCÈPTIC</text>
         <rect class="dg-rect dg-pulse" x="602" y="38" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
-        <text x="666" y="65" text-anchor="middle" class="dg-title t-es">ESCÉPTICO</text><text x="666" y="65" text-anchor="middle" class="dg-title t-en">SKEPTIC</text>
+        <text x="666" y="65" text-anchor="middle" class="dg-title t-es">ESCÉPTICO</text><text x="666" y="65" text-anchor="middle" class="dg-title t-en">SKEPTIC</text><text x="666" y="65" text-anchor="middle" class="dg-title t-ca">ESCÈPTIC</text>
         <rect class="dg-rect dg-pulse" x="418" y="328" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
-        <text x="482" y="355" text-anchor="middle" class="dg-title t-es">ESCÉPTICO</text><text x="482" y="355" text-anchor="middle" class="dg-title t-en">SKEPTIC</text>
+        <text x="482" y="355" text-anchor="middle" class="dg-title t-es">ESCÉPTICO</text><text x="482" y="355" text-anchor="middle" class="dg-title t-en">SKEPTIC</text><text x="482" y="355" text-anchor="middle" class="dg-title t-ca">ESCÈPTIC</text>
         <rect class="dg-rect dg-pulse" x="602" y="328" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
-        <text x="666" y="355" text-anchor="middle" class="dg-title t-es">ESCÉPTICO</text><text x="666" y="355" text-anchor="middle" class="dg-title t-en">SKEPTIC</text>
+        <text x="666" y="355" text-anchor="middle" class="dg-title t-es">ESCÉPTICO</text><text x="666" y="355" text-anchor="middle" class="dg-title t-en">SKEPTIC</text><text x="666" y="355" text-anchor="middle" class="dg-title t-ca">ESCÈPTIC</text>
         <rect class="dg-rect dg-pulse" x="500" y="170" width="156" height="68" rx="12" stroke="url(#mv-grad)" stroke-width="2.2"/>
-        <text x="578" y="196" text-anchor="middle" class="dg-title t-es">TESIS</text><text x="578" y="196" text-anchor="middle" class="dg-title t-en">THESIS</text>
-        <text x="578" y="214" text-anchor="middle" class="dg-sub t-es">bajo ataque</text><text x="578" y="214" text-anchor="middle" class="dg-sub t-en">under attack</text>
+        <text x="578" y="196" text-anchor="middle" class="dg-title t-es">TESIS</text><text x="578" y="196" text-anchor="middle" class="dg-title t-en">THESIS</text><text x="578" y="196" text-anchor="middle" class="dg-title t-ca">TESI</text>
+        <text x="578" y="214" text-anchor="middle" class="dg-sub t-es">bajo ataque</text><text x="578" y="214" text-anchor="middle" class="dg-sub t-en">under attack</text><text x="578" y="214" text-anchor="middle" class="dg-sub t-ca">sota atac</text>
         <rect class="dg-rect" x="760" y="170" width="160" height="68" rx="12" stroke="#a273ff" stroke-width="1.9"/>
-        <text x="840" y="196" text-anchor="middle" class="dg-title t-es">PANEL · vota</text><text x="840" y="196" text-anchor="middle" class="dg-title t-en">PANEL · votes</text>
-        <text x="840" y="214" text-anchor="middle" class="dg-sub t-es">la mayoría decide</text><text x="840" y="214" text-anchor="middle" class="dg-sub t-en">the majority decides</text>
+        <text x="840" y="196" text-anchor="middle" class="dg-title t-es">PANEL · vota</text><text x="840" y="196" text-anchor="middle" class="dg-title t-en">PANEL · votes</text><text x="840" y="196" text-anchor="middle" class="dg-title t-ca">PANELL · vota</text>
+        <text x="840" y="214" text-anchor="middle" class="dg-sub t-es">la mayoría decide</text><text x="840" y="214" text-anchor="middle" class="dg-sub t-en">the majority decides</text><text x="840" y="214" text-anchor="middle" class="dg-sub t-ca">la majoria decideix</text>
         <rect class="dg-rect" x="946" y="92" width="124" height="54" rx="11" stroke="#5dff9b" stroke-width="1.8"/>
-        <text x="1008" y="114" text-anchor="middle" class="dg-title t-es">SOBREVIVE</text><text x="1008" y="114" text-anchor="middle" class="dg-title t-en">SURVIVES</text>
+        <text x="1008" y="114" text-anchor="middle" class="dg-title t-es">SOBREVIVE</text><text x="1008" y="114" text-anchor="middle" class="dg-title t-en">SURVIVES</text><text x="1008" y="114" text-anchor="middle" class="dg-title t-ca">SOBREVIU</text>
         <text x="1008" y="131" text-anchor="middle" class="dg-sub">&#8594; ledger</text>
         <text x="1058" y="109" text-anchor="end" class="dg-badge" fill="#5dff9b">&#10003;</text>
         <rect class="dg-rect" x="946" y="256" width="124" height="54" rx="11" stroke="#ff5d7a" stroke-width="1.8"/>
-        <text x="1008" y="278" text-anchor="middle" class="dg-title t-es">DESCARTADA</text><text x="1008" y="278" text-anchor="middle" class="dg-title t-en">DISCARDED</text>
-        <text x="1008" y="295" text-anchor="middle" class="dg-sub t-es">FP / sesgo cazado</text><text x="1008" y="295" text-anchor="middle" class="dg-sub t-en">FP / bias caught</text>
+        <text x="1008" y="278" text-anchor="middle" class="dg-title t-es">DESCARTADA</text><text x="1008" y="278" text-anchor="middle" class="dg-title t-en">DISCARDED</text><text x="1008" y="278" text-anchor="middle" class="dg-title t-ca">DESCARTADA</text>
+        <text x="1008" y="295" text-anchor="middle" class="dg-sub t-es">FP / sesgo cazado</text><text x="1008" y="295" text-anchor="middle" class="dg-sub t-en">FP / bias caught</text><text x="1008" y="295" text-anchor="middle" class="dg-sub t-ca">FP / biaix caçat</text>
         <text x="1058" y="273" text-anchor="end" class="dg-badge" fill="#ff5d7a">&#10007;</text>
 
         <!-- ══ Banda: cómo estrecho el falso-negativo — careo de medición + realimentación catch humano→lente ══ -->
         <line x1="40" y1="440" x2="1040" y2="440" stroke="#3a3a4a" stroke-width="1" stroke-dasharray="2 6" opacity=".55"/>
         <text x="40" y="432" class="dg-el t-es" style="fill:#ffb454;font-weight:700">CÓMO LO ESTRECHO (careo de medición · mitiga, no cura</text>
-        <text x="40" y="432" class="dg-el t-en" style="fill:#ffb454;font-weight:700">HOW I NARROW IT) measurement critique · mitigates, not cures</text>
+        <text x="40" y="432" class="dg-el t-en" style="fill:#ffb454;font-weight:700">HOW I NARROW IT) measurement critique · mitigates, not cures</text><text x="40" y="432" class="dg-el t-ca" style="fill:#ffb454;font-weight:700">COM L'ESTRENYO (careig de mesura · mitiga, no cura</text>
 
         <!-- flujo: HUMANO → LENTE → CRÍTICO ; y el veredicto −EV cae del panel al crítico -->
         <path d="M178,476 L298,476" fill="none" stroke="#37e0ff" stroke-width="1.8" opacity=".6" class="dg-flow" marker-end="url(#mv-arw)"/>
@@ -1307,31 +1331,31 @@ whale   <span class="r">net &minus;0.45%  WR 50%</span>
         <path d="M1008,310 C1008,392 958,432 905,452" fill="none" stroke="#ff5d7a" stroke-width="1.7" opacity=".55" class="dg-flow" marker-end="url(#mv-arw)"/>
         <circle r="2.8" fill="#ff5d7a" color="#ff5d7a" class="dg-particle dg-glow"><animateMotion dur="2.0s" repeatCount="indefinite" path="M1008,310 C1008,392 958,432 905,452"/></circle>
         <text x="1006" y="360" text-anchor="end" class="dg-el t-es" style="fill:#ff8fa3">&#8722;EV &#183; &#191;medido &#243;ptimo?</text>
-        <text x="1006" y="360" text-anchor="end" class="dg-el t-en" style="fill:#ff8fa3">&#8722;EV &#183; measured optimally?</text>
+        <text x="1006" y="360" text-anchor="end" class="dg-el t-en" style="fill:#ff8fa3">&#8722;EV &#183; measured optimally?</text><text x="1006" y="360" text-anchor="end" class="dg-el t-ca" style="fill:#ff8fa3">&#8722;EV &#183; mesurat &#242;ptim?</text>
 
         <!-- HUMANO (origen de la lente — sigue haciendo falta) -->
         <rect class="dg-rect dg-pulse" x="24" y="452" width="152" height="48" rx="12" stroke="#37e0ff" stroke-width="1.8"/>
-        <text x="100" y="474" text-anchor="middle" class="dg-title t-es">HUMANO</text><text x="100" y="474" text-anchor="middle" class="dg-title t-en">HUMAN</text>
-        <text x="100" y="490" text-anchor="middle" class="dg-sub t-es">caza el punto ciego</text><text x="100" y="490" text-anchor="middle" class="dg-sub t-en">catches the blind spot</text>
+        <text x="100" y="474" text-anchor="middle" class="dg-title t-es">HUMANO</text><text x="100" y="474" text-anchor="middle" class="dg-title t-en">HUMAN</text><text x="100" y="474" text-anchor="middle" class="dg-title t-ca">HUM&#192;</text>
+        <text x="100" y="490" text-anchor="middle" class="dg-sub t-es">caza el punto ciego</text><text x="100" y="490" text-anchor="middle" class="dg-sub t-en">catches the blind spot</text><text x="100" y="490" text-anchor="middle" class="dg-sub t-ca">caça el punt cec</text>
         <!-- LENTE reutilizable -->
         <rect class="dg-rect" x="298" y="452" width="254" height="48" rx="12" stroke="#9b5cff" stroke-width="1.8"/>
-        <text x="425" y="474" text-anchor="middle" class="dg-title t-es">LENTE REUTILIZABLE</text><text x="425" y="474" text-anchor="middle" class="dg-title t-en">REUSABLE LENS</text>
-        <text x="425" y="490" text-anchor="middle" class="dg-sub t-es">la flota la aplica sola</text><text x="425" y="490" text-anchor="middle" class="dg-sub t-en">the fleet applies it</text>
+        <text x="425" y="474" text-anchor="middle" class="dg-title t-es">LENTE REUTILIZABLE</text><text x="425" y="474" text-anchor="middle" class="dg-title t-en">REUSABLE LENS</text><text x="425" y="474" text-anchor="middle" class="dg-title t-ca">LENT REUTILITZABLE</text>
+        <text x="425" y="490" text-anchor="middle" class="dg-sub t-es">la flota la aplica sola</text><text x="425" y="490" text-anchor="middle" class="dg-sub t-en">the fleet applies it</text><text x="425" y="490" text-anchor="middle" class="dg-sub t-ca">la flota l'aplica sola</text>
         <!-- CRÍTICO DE MEDICIÓN (ataca el montaje, no el hallazgo) -->
         <rect class="dg-rect dg-pulse" x="634" y="452" width="318" height="48" rx="12" stroke="#ffb454" stroke-width="2"/>
-        <text x="793" y="472" text-anchor="middle" class="dg-title t-es">CR&#205;TICO DE MEDICI&#211;N</text><text x="793" y="472" text-anchor="middle" class="dg-title t-en">MEASUREMENT CRITIC</text>
-        <text x="793" y="488" text-anchor="middle" class="dg-sub t-es">fill &#183; sensor &#183; conflaci&#243;n &#183; universo</text><text x="793" y="488" text-anchor="middle" class="dg-sub t-en">fill &#183; sensor &#183; conflation &#183; universe</text>
+        <text x="793" y="472" text-anchor="middle" class="dg-title t-es">CR&#205;TICO DE MEDICI&#211;N</text><text x="793" y="472" text-anchor="middle" class="dg-title t-en">MEASUREMENT CRITIC</text><text x="793" y="472" text-anchor="middle" class="dg-title t-ca">CR&#205;TIC DE MESURA</text>
+        <text x="793" y="488" text-anchor="middle" class="dg-sub t-es">fill &#183; sensor &#183; conflaci&#243;n &#183; universo</text><text x="793" y="488" text-anchor="middle" class="dg-sub t-en">fill &#183; sensor &#183; conflation &#183; universe</text><text x="793" y="488" text-anchor="middle" class="dg-sub t-ca">fill &#183; sensor &#183; conflaci&#243; &#183; univers</text>
 
         <text x="540" y="514" text-anchor="middle" class="dg-el t-es">cada veredicto &#8722;EV pasa el careo &#183; por defecto INCONCLUSIVE, no REJECT</text>
-        <text x="540" y="514" text-anchor="middle" class="dg-el t-en">every &#8722;EV verdict passes the critique &#183; default INCONCLUSIVE, not REJECT</text>
+        <text x="540" y="514" text-anchor="middle" class="dg-el t-en">every &#8722;EV verdict passes the critique &#183; default INCONCLUSIVE, not REJECT</text><text x="540" y="514" text-anchor="middle" class="dg-el t-ca">cada veredicte &#8722;EV passa el careig &#183; per defecte INCONCLUSIVE, no REJECT</text>
       </svg>
     </div>
-    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span></p>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span><span class="t-ca">Pessiga per apropar i llegir el detall &#8596;</span></p>
     <p class="engine-cap reveal t-es">Una hipótesis sobrevive solo si <b>resiste el ataque</b>. El juicio es del panel, no de un agente.</p>
-    <p class="engine-cap reveal t-en">A hypothesis survives only if it <b>withstands the attack</b>. Judgment is the panel's, not one agent's.</p>
+    <p class="engine-cap reveal t-en">A hypothesis survives only if it <b>withstands the attack</b>. Judgment is the panel's, not one agent's.</p><p class="engine-cap reveal t-ca">Una hipòtesi sobreviu només si <b>resisteix l'atac</b>. El judici és del panell, no d'un agent.</p>
     <div class="mgrid">
-      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="url(#pg)" stroke="none"/></svg><span class="t-es">Pre-commit thresholds</span><span class="t-en">Pre-commit thresholds</span></h4><p><span class="t-es">Escribo los criterios de decisión <span class="hl">antes</span> de ver los datos. Elimina racionalizar resultados a posteriori, la trampa más común del trading retail.</span><span class="t-en">I write the decision criteria <span class="hl">before</span> seeing the data. It removes rationalizing results after the fact, the most common retail-trading trap.</span></p></div>
-      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="t-es">Caza de sesgos</span><span class="t-en">Bias hunting</span></h4><p><span class="t-es">Detecté y corregí look-ahead, survivorship y sistemas lottery-dependent <span class="hl">en mi propio research</span>, documentados como reglas reutilizables.</span><span class="t-en">I caught and fixed look-ahead, survivorship and lottery-dependent systems <span class="hl">in my own research</span>, documented as reusable rules.</span></p></div>
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="url(#pg)" stroke="none"/></svg><span class="t-es">Pre-commit thresholds</span><span class="t-en">Pre-commit thresholds</span><span class="t-ca">Pre-commit thresholds</span></h4><p><span class="t-es">Escribo los criterios de decisión <span class="hl">antes</span> de ver los datos. Elimina racionalizar resultados a posteriori, la trampa más común del trading retail.</span><span class="t-en">I write the decision criteria <span class="hl">before</span> seeing the data. It removes rationalizing results after the fact, the most common retail-trading trap.</span><span class="t-ca">Escric els criteris de decisió <span class="hl">abans</span> de veure les dades. Elimina racionalitzar resultats a posteriori, el parany més comú del trading retail.</span></p></div>
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="t-es">Caza de sesgos</span><span class="t-en">Bias hunting</span><span class="t-ca">Caça de biaixos</span></h4><p><span class="t-es">Detecté y corregí look-ahead, survivorship y sistemas lottery-dependent <span class="hl">en mi propio research</span>, documentados como reglas reutilizables.</span><span class="t-en">I caught and fixed look-ahead, survivorship and lottery-dependent systems <span class="hl">in my own research</span>, documented as reusable rules.</span><span class="t-ca">Vaig detectar i corregir look-ahead, survivorship i sistemes lottery-dependent <span class="hl">al meu propi research</span>, documentats com a regles reutilitzables.</span></p></div>
     </div>
 
 
@@ -1362,26 +1386,26 @@ $ /seed-review <span class="b">handoff.md</span>
   blind      <span class="b">✎</span>  the plan tested a proxy, not the real goal
 
 <span class="cm"># arbitration →</span> <span class="g">EXECUTE WITH EDITS</span>  <span class="cm">// 3 fixes before touching anything</span>
-</div>
+</div><div class="sb-code t-ca"><span class="cm"># exemple real: revisió d'un handoff entre sessions</span> $ /seed-review <span class="b">handoff.md</span> <span class="a">agent CEC</span> <span class="cm">// no veu el pla → deriva l'objectiu des de la font</span> <span class="a">3 crítics</span> <span class="cm">// en paral·lel, mandat: REFUTAR</span> crític #1 <span class="r">✗</span> una dada no existeix a la font: <span class="r">+6,3%/t=4,2</span> barreja dos exits crític #2 <span class="r">✗</span> el veredicte del cockpit està <span class="r">stale</span> vs el ledger cec <span class="b">✎</span> el pla provava un proxy, no l'objectiu real <span class="cm"># arbitratge →</span> <span class="g">EXECUTAR AMB EDICIONS</span> <span class="cm">// 3 correccions abans de tocar res</span></div>
     </div>
     <p class="engine-cap reveal t-es">La flota del diagrama no es teoría: corre en cada decisión. Un agente <b>ciego</b> reconstruye el objetivo desde la fuente; varios críticos atacan con el mandato de <b>refutar</b>. Lo que cae, se corrige <b>antes</b> de tocar nada.</p>
-    <p class="engine-cap reveal t-en">The fleet in the diagram isn't theory: it runs on every decision. A <b>blind</b> agent rebuilds the goal from the source; several critics attack, mandated to <b>refute</b>. What falls gets fixed <b>before</b> touching anything.</p>
+    <p class="engine-cap reveal t-en">The fleet in the diagram isn't theory: it runs on every decision. A <b>blind</b> agent rebuilds the goal from the source; several critics attack, mandated to <b>refute</b>. What falls gets fixed <b>before</b> touching anything.</p><p class="engine-cap reveal t-ca">La flota del diagrama no és teoria: corre en cada decisió. Un agent <b>cec</b> reconstrueix l'objectiu des de la font; diversos crítics ataquen amb el mandat de <b>refutar</b>. El que cau, es corregeix <b>abans</b> de tocar res.</p>
 
     <div class="truth reveal" style="margin-top:30px">
-      <span class="tl grad-text"><span class="t-es">El límite, y cómo lo estrecho</span><span class="t-en">The limit, and how I narrow it</span></span>
+      <span class="tl grad-text"><span class="t-es">El límite, y cómo lo estrecho</span><span class="t-en">The limit, and how I narrow it</span><span class="t-ca">El límit, i com l'estrenyo</span></span>
       <p class="t-es">La flota comparte los mismos inputs: mata <b>falsos positivos</b>, pero un montaje de medición malo da un <b>falso negativo</b> que ningún nº de agentes caza. Lo estrecho así: cada punto ciego que caza un humano lo convierto en una <b>lente adversarial reutilizable</b>: el caso FOMO ya es una regla ("mide óptimo antes de rechazar") que la flota aplica sola la próxima vez. Irreducible: comparten los priors del mismo modelo y no hay verdad absoluta → la <b>primera</b> vez que aparece un sesgo nuevo, sigue haciendo falta un humano o datos reales.</p>
-      <p class="t-en">The fleet shares the same inputs: it kills <b>false positives</b>, but a flawed measurement setup yields a <b>false negative</b> no number of agents catches. I narrow it like this: every blind spot a human catches becomes a <b>reusable adversarial lens</b>: the FOMO case is already a rule ("measure optimally before rejecting") the fleet then applies on its own. Irreducible: they share one model's priors and there's no ground truth → the <b>first</b> time a new bias appears, it still takes a human or real data.</p>
+      <p class="t-en">The fleet shares the same inputs: it kills <b>false positives</b>, but a flawed measurement setup yields a <b>false negative</b> no number of agents catches. I narrow it like this: every blind spot a human catches becomes a <b>reusable adversarial lens</b>: the FOMO case is already a rule ("measure optimally before rejecting") the fleet then applies on its own. Irreducible: they share one model's priors and there's no ground truth → the <b>first</b> time a new bias appears, it still takes a human or real data.</p><p class="t-ca">La flota comparteix els mateixos inputs: mata <b>falsos positius</b>, però un muntatge de mesura dolent dona un <b>fals negatiu</b> que cap nombre d'agents caça. L'estrenyo així: cada punt cec que caça un humà el converteixo en una <b>lent adversarial reutilitzable</b>: el cas FOMO ja és una regla («mesura òptim abans de rebutjar») que la flota aplica sola la propera vegada. Irreductible: comparteixen els priors del mateix model i no hi ha veritat absoluta → la <b>primera</b> vegada que apareix un biaix nou, encara cal un humà o dades reals.</p>
     </div>
 
     <div class="truth reveal" style="margin-top:16px;display:block">
-      <span class="tl grad-text"><span class="t-es">Un flywheel que gira solo</span><span class="t-en">A flywheel that spins itself</span></span>
+      <span class="tl grad-text"><span class="t-es">Un flywheel que gira solo</span><span class="t-en">A flywheel that spins itself</span><span class="t-ca">Un flywheel que gira sol</span></span>
       <p class="t-es" style="margin-top:10px">Catorce <b>skills propios</b> encadenan el ciclo de investigación y lo hacen girar sin arranque manual. Herramientas que construí para que el sistema <b>se auto-optimice</b> (no para una demo.</p>
-      <p class="t-en" style="margin-top:10px">Fourteen <b>custom skills</b> chain the research loop and spin it with no manual start. Tooling I built so the system <b>self-optimizes</b>) not for a demo.</p>
+      <p class="t-en" style="margin-top:10px">Fourteen <b>custom skills</b> chain the research loop and spin it with no manual start. Tooling I built so the system <b>self-optimizes</b>) not for a demo.</p><p class="t-ca" style="margin-top:10px">Catorze <b>skills propis</b> encadenen el cicle de recerca i el fan girar sense arrencada manual. Eines que vaig construir perquè el sistema <b>s'auto-optimitzi</b>, no per a una demo.</p>
       <div class="cockpit" style="margin-top:24px">
         <div class="reveal">
           <div class="stage" aria-hidden="true">
             <div class="orbit"></div>
-            <div class="hub"><b class="grad-text">flywheel</b><span class="t-es">se auto-optimiza</span><span class="t-en">self-optimizes</span></div>
+            <div class="hub"><b class="grad-text">flywheel</b><span class="t-es">se auto-optimiza</span><span class="t-en">self-optimizes</span><span class="t-ca">s'auto-optimitza</span></div>
             <div class="ring">
             <div class="nd" style="--a:0.0deg"><div class="bubble"><span class="num grad-text">1</span><span class="nm">sync</span></div></div>
             <div class="nd" style="--a:51.43deg"><div class="bubble"><span class="num grad-text">2</span><span class="nm">régimen</span></div></div>
@@ -1392,23 +1416,23 @@ $ /seed-review <span class="b">handoff.md</span>
             <div class="nd" style="--a:308.57deg"><div class="bubble"><span class="num grad-text">7</span><span class="nm">Telegram</span></div></div>
             </div>
           </div>
-          <div class="stage-note"><span class="t-es">pasa el ratón por una skill · gira sin arranque manual</span><span class="t-en">hover a skill · spins with no manual start</span></div>
+          <div class="stage-note"><span class="t-es">pasa el ratón por una skill · gira sin arranque manual</span><span class="t-en">hover a skill · spins with no manual start</span><span class="t-ca">passa el ratolí per una skill · gira sense arrencada manual</span></div>
         </div>
         <div class="reveal">
           <div class="stations">
-            <div class="st"><div class="stt grad-text">1 SYNC</div><h4><span class="t-es">Sincroniza el lab</span><span class="t-en">Sync the lab</span></h4><p><span class="t-es">Trae los datos del bot/VPS al laboratorio: alertas, migraciones y fills.</span><span class="t-en">Pulls bot/VPS data into the lab: alerts, migrations and fills.</span></p></div>
-            <div class="st"><div class="stt grad-text">2 RÉGIMEN</div><h4><span class="t-es">Clima de mercado</span><span class="t-en">Market regime</span></h4><p><span class="t-es">Etiqueta el régimen (breadth de sector) para contextualizar cada señal.</span><span class="t-en">Tags the regime (sector breadth) to contextualize each signal.</span></p></div>
-            <div class="st"><div class="stt grad-text">3 SHADOW</div><h4><span class="t-es">Evalúa hipótesis</span><span class="t-en">Evaluate hypotheses</span></h4><p><span class="t-es">Corre varias hipótesis en paralelo con P(&gt;baseline); leaderboard para decidir.</span><span class="t-en">Runs hypotheses in parallel with P(&gt;baseline); a leaderboard to decide.</span></p></div>
-            <div class="st"><div class="stt grad-text">4 LEDGER</div><h4><span class="t-es">Registro + veredicto</span><span class="t-en">Log + verdict</span></h4><p><span class="t-es">Cada hipótesis con su veredicto; un REJECT exige careo de medición.</span><span class="t-en">Every hypothesis with its verdict; a REJECT requires a measurement critique.</span></p></div>
-            <div class="st"><div class="stt grad-text">5 IMPACT</div><h4><span class="t-es">Contrafactual</span><span class="t-en">Counterfactual</span></h4><p><span class="t-es">ΔPnL real de un cambio antes de tocar el bot (pre-deploy).</span><span class="t-en">Real ΔPnL of a change before touching the bot (pre-deploy).</span></p></div>
-            <div class="st"><div class="stt grad-text">6 OPUS</div><h4><span class="t-es">Genera hipótesis</span><span class="t-en">Generates hypotheses</span></h4><p><span class="t-es">Propone hipótesis nuevas del run del día y realimenta el ciclo.</span><span class="t-en">Proposes new hypotheses from the day's run and feeds the loop.</span></p></div>
-            <div class="st"><div class="stt grad-text">7 TELEGRAM</div><h4><span class="t-es">Avisa</span><span class="t-en">Notifies</span></h4><p><span class="t-es">Decisiones y resultados al móvil; el loop no necesita que lo vigiles.</span><span class="t-en">Decisions and results to your phone; the loop needs no babysitting.</span></p></div>
+            <div class="st"><div class="stt grad-text">1 SYNC</div><h4><span class="t-es">Sincroniza el lab</span><span class="t-en">Sync the lab</span><span class="t-ca">Sincronitza el lab</span></h4><p><span class="t-es">Trae los datos del bot/VPS al laboratorio: alertas, migraciones y fills.</span><span class="t-en">Pulls bot/VPS data into the lab: alerts, migrations and fills.</span><span class="t-ca">Porta les dades del bot/VPS al laboratori: alertes, migracions i fills.</span></p></div>
+            <div class="st"><div class="stt grad-text">2 RÉGIMEN</div><h4><span class="t-es">Clima de mercado</span><span class="t-en">Market regime</span><span class="t-ca">Clima de mercat</span></h4><p><span class="t-es">Etiqueta el régimen (breadth de sector) para contextualizar cada señal.</span><span class="t-en">Tags the regime (sector breadth) to contextualize each signal.</span><span class="t-ca">Etiqueta el règim (breadth de sector) per contextualitzar cada senyal.</span></p></div>
+            <div class="st"><div class="stt grad-text">3 SHADOW</div><h4><span class="t-es">Evalúa hipótesis</span><span class="t-en">Evaluate hypotheses</span><span class="t-ca">Avalua hipòtesis</span></h4><p><span class="t-es">Corre varias hipótesis en paralelo con P(&gt;baseline); leaderboard para decidir.</span><span class="t-en">Runs hypotheses in parallel with P(&gt;baseline); a leaderboard to decide.</span><span class="t-ca">Corre diverses hipòtesis en paral·lel amb P(&gt;baseline); leaderboard per decidir.</span></p></div>
+            <div class="st"><div class="stt grad-text">4 LEDGER</div><h4><span class="t-es">Registro + veredicto</span><span class="t-en">Log + verdict</span><span class="t-ca">Registre + veredicte</span></h4><p><span class="t-es">Cada hipótesis con su veredicto; un REJECT exige careo de medición.</span><span class="t-en">Every hypothesis with its verdict; a REJECT requires a measurement critique.</span><span class="t-ca">Cada hipòtesi amb el seu veredicte; un REJECT exigeix careig de mesura.</span></p></div>
+            <div class="st"><div class="stt grad-text">5 IMPACT</div><h4><span class="t-es">Contrafactual</span><span class="t-en">Counterfactual</span><span class="t-ca">Contrafactual</span></h4><p><span class="t-es">ΔPnL real de un cambio antes de tocar el bot (pre-deploy).</span><span class="t-en">Real ΔPnL of a change before touching the bot (pre-deploy).</span><span class="t-ca">ΔPnL real d'un canvi abans de tocar el bot (pre-deploy).</span></p></div>
+            <div class="st"><div class="stt grad-text">6 OPUS</div><h4><span class="t-es">Genera hipótesis</span><span class="t-en">Generates hypotheses</span><span class="t-ca">Genera hipòtesis</span></h4><p><span class="t-es">Propone hipótesis nuevas del run del día y realimenta el ciclo.</span><span class="t-en">Proposes new hypotheses from the day's run and feeds the loop.</span><span class="t-ca">Proposa hipòtesis noves del run del dia i realimenta el cicle.</span></p></div>
+            <div class="st"><div class="stt grad-text">7 TELEGRAM</div><h4><span class="t-es">Avisa</span><span class="t-en">Notifies</span><span class="t-ca">Avisa</span></h4><p><span class="t-es">Decisiones y resultados al móvil; el loop no necesita que lo vigiles.</span><span class="t-en">Decisions and results to your phone; the loop needs no babysitting.</span><span class="t-ca">Decisions i resultats al mòbil; el loop no necessita que el vigilis.</span></p></div>
           </div>
         </div>
       </div>
     </div>
 
-    <p class="bridge reveal"><span class="t-es">El resto del método (la verificación adversarial, las sesiones paralelas que se contrastan entre sí) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (adversarial verification, parallel sessions cross-checked against each other) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
+    <p class="bridge reveal"><span class="t-es">El resto del método (la verificación adversarial, las sesiones paralelas que se contrastan entre sí) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (adversarial verification, parallel sessions cross-checked against each other) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span><span class="t-ca">La resta del mètode (la verificació adversarial, les sessions paral·leles que es contrasten entre si) és el mateix als cinc sistemes i està explicat una vegada: <a href="../index.html#metodo">a l'índex</a>.</span></p>
   </div>
 </section>
 
@@ -1420,18 +1444,18 @@ $ /seed-review <span class="b">handoff.md</span>
 <section id="contacto">
   <div class="wrap">
     <div class="contact reveal">
-      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span></div>
+      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span><span class="t-ca">Disponible per treballar</span></div>
       <h2 class="t-es">Cojo un problema difuso, lo descompongo y orquesto IA para construir cada pieza, sin perder el rigor.</h2>
-      <h2 class="t-en">I take a fuzzy problem, break it down and orchestrate AI to build every piece, without losing the rigor.</h2>
+      <h2 class="t-en">I take a fuzzy problem, break it down and orchestrate AI to build every piece, without losing the rigor.</h2><h2 class="t-ca">Agafo un problema difús, el descomponc i orquestro IA per construir cada peça, sense perdre el rigor.</h2>
       <p class="t-es">Si buscas a alguien para applied-AI, automatización o forward-deployed engineering, que no se engaña con sus propios resultados, hablemos.</p>
-      <p class="t-en">If you're looking for someone in applied-AI, automation or forward-deployed engineering who doesn't fool themselves with their own results, let's talk.</p>
+      <p class="t-en">If you're looking for someone in applied-AI, automation or forward-deployed engineering who doesn't fool themselves with their own results, let's talk.</p><p class="t-ca">Si busques algú per a applied-AI, automatització o forward-deployed engineering, que no s'enganya amb els seus propis resultats, parlem-ne.</p>
       <div class="cta">
         <a href="mailto:diegollr98@gmail.com" class="btn btn-primary">diegollr98@gmail.com</a>
-        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span></button>
+        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span><span class="t-ca">copiar</span></button>
         <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
         <a href="https://github.com/diegollr98-design" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
-        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span></a>
-        <!-- Repositorio: re-añadir cuando el repo público exista → <a href="URL_DEL_REPO" target="_blank" rel="noopener" class="btn btn-ghost"><span class="t-es">Repositorio</span><span class="t-en">Repository</span></a> -->
+        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span><span class="t-ca">Tornar a l'índex</span></a>
+        <!-- Repositorio: re-añadir cuando el repo público exista → <a href="URL_DEL_REPO" target="_blank" rel="noopener" class="btn btn-ghost"><span class="t-es">Repositorio</span><span class="t-en">Repository</span><span class="t-ca">Repositori</span></a> -->
       </div>
     </div>
   </div>
@@ -1439,7 +1463,7 @@ $ /seed-review <span class="b">handoff.md</span>
 
 <footer class="wrap">
   <span>Quant Research Lab · <span class="hl">Diego</span> · 2026</span>
-  <span><span class="t-es">Construido con IA · sin formación técnica previa</span><span class="t-en">Built with AI · no prior technical background</span></span>
+  <span><span class="t-es">Construido con IA · sin formación técnica previa</span><span class="t-en">Built with AI · no prior technical background</span><span class="t-ca">Construït amb IA · sense formació tècnica prèvia</span></span>
 </footer>
   </div>
   </div>
@@ -1447,21 +1471,41 @@ $ /seed-review <span class="b">handoff.md</span>
   <div class="tw-ac" id="twAc" role="listbox" aria-label="Comandos"></div>
   <form class="tw-prompt" id="twForm" autocomplete="off">
     <span class="twp-u" aria-hidden="true">diego@portfolio</span><span class="twp-d" id="twPath" aria-hidden="true">:~</span><span class="twp-s" aria-hidden="true">$</span>
-    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span></label>
+    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span><span class="t-ca">Comanda</span></label>
     <input id="twIn" type="text" spellcheck="false" autocapitalize="off"
-           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands">
+           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands" data-ph-ca="fes clic per veure les comandes">
     <span class="twp-car" aria-hidden="true">&#9611;</span>
   </form>
 
 
 <script>
 /* ── language toggle ── */
+/* [INC-JS-04] Quita TODA clase `lang-*` en vez de enumerar 'lang-es','lang-en'.
+   Una lista tecleada describe el marcado desde fuera y se desfasa sola: es la misma
+   clase que `var COLS=7` ([INC-JS-01]). Con `lang-ca` sin quitar, la secuencia
+   es -> ca -> es dejaba `class="lang-ca lang-es"`, que casa las reglas de ocultacion
+   de DOS idiomas a la vez: pagina EN BLANCO, `<h1>` vacio, 0 errores de consola. */
+/* Tres spans, uno por idioma: el CSS elige, igual que en el resto de la pagina. Vive
+   junto a twSoloLang porque es chasis: cualquier sitio donde el JS PINTE texto bilingue
+   necesita emitir los TRES, o en el idioma sin rama el widget sale VACIO ([INC-JS-06]). */
+function TRI(es, en, ca){
+  /* la clase se COMPONE a proposito: `_pares()` de eval_portfolio cuenta
+     `class="t-xx"` sobre el HTML crudo, y un literal aqui dentro sumaria un bloque
+     fantasma por idioma en las 6 paginas. */
+  var w = function(l, t){ return '<span class="t-'+l+'">'+t+'</span>'; };
+  return w('es', es) + w('en', en) + w('ca', ca);
+}
+function twSoloLang(el, l){
+  if(!el) return;
+  for(var i=el.classList.length-1; i>=0; i--){
+    if(el.classList[i].indexOf('lang-')===0) el.classList.remove(el.classList[i]);
+  }
+  el.classList.add('lang-'+l);
+}
 function setLang(l){
   document.documentElement.lang=l;
-  document.documentElement.classList.remove('lang-es','lang-en');
-  document.documentElement.classList.add('lang-'+l);
-  document.body.classList.remove('lang-es','lang-en');
-  document.body.classList.add('lang-'+l);
+  twSoloLang(document.documentElement, l);
+  twSoloLang(document.body, l);
   document.querySelectorAll('[data-lang-btn]').forEach(function(b){
     b.setAttribute('aria-pressed', String(b.dataset.langBtn===l));
   });
@@ -1618,7 +1662,7 @@ window.__cmds=[
   {g:'abrir',ic:'↗',es:'Caso · SEKURA',en:'Case · SEKURA',c:'open sekura',k:'sekura sekura',url:'../SEKURA/SEKURA.html'},
   {g:'hacer',ic:'✉',es:'Escribirme un email',en:'Write me an email',c:'/mail',k:'email correo mail escribir write contacto contact',url:MAIL},
   {g:'hacer',ic:'↗',es:'Abrir mi LinkedIn',en:'Open my LinkedIn',c:'open linkedin',k:'linkedin perfil profile red social',url:LI,blank:true},
-  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') setLang(document.documentElement.lang==='en'?'es':'en'); }}
+  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') (function(){var v=[].map.call(document.querySelectorAll('#langList li'),function(x){return x.dataset.v;});if(!v.length)return;var i=v.indexOf(document.documentElement.lang);setLang(v[(i+1)%v.length]);})(); }}
 ];
 window.__runCmd=function(c){
   if(c.fn){ c.fn(); return; }
@@ -1629,10 +1673,8 @@ window.__runCmd=function(c){
 /* ── language toggle ── */
 function setLang(l){
   document.documentElement.lang=l;
-  document.documentElement.classList.remove('lang-es','lang-en');
-  document.documentElement.classList.add('lang-'+l);
-  document.body.classList.remove('lang-es','lang-en');
-  document.body.classList.add('lang-'+l);
+  twSoloLang(document.documentElement, l);
+  twSoloLang(document.body, l);
   /* el desplegable tiene que reflejar el cambio venga de donde venga:
      tambien lo dispara el comando /lang de la paleta */
   var cur=document.getElementById('langCur');
@@ -1767,7 +1809,8 @@ var SC=document.getElementById('twBody');
   var form=document.getElementById('twForm'), inp=document.getElementById('twIn');
   var con=document.getElementById('twCon'), ac=document.getElementById('twAc');
   if(!form) return;
-  function lang(){ return document.documentElement.lang==='en'?'en':'es'; }
+  function lang(){ var l=document.documentElement.lang;
+                   return (l==='en'||l==='ca') ? l : 'es'; }
   function norm(t){ return (t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
   inp.placeholder=inp.getAttribute('data-ph-'+lang())||'';
 
@@ -1777,7 +1820,7 @@ var SC=document.getElementById('twBody');
     var l=lang(), qn=norm(q.trim());
     return (window.__cmds||[]).filter(function(c){
       if(!qn) return true;
-      var hay=norm((c.c||'')+' '+c[l]+' '+c.k+' '+c.g);
+      var hay=norm((c.c||'')+' '+(c[l]||c.es)+' '+c.k+' '+c.g);
       return qn.split(/\s+/).every(function(w){ return hay.indexOf(w)>-1; });
     });
   }
@@ -1787,10 +1830,8 @@ var SC=document.getElementById('twBody');
     var l=lang();
     ac.innerHTML=hits.map(function(c,n){
       return '<div class="it" role="option" aria-selected="'+(n===0)+'" data-i="'+n+'">'+
-             '<span class="c">'+(c.c||'')+'</span><span class="l">'+c[l]+'</span></div>';
-    }).join('')+'<div class="hint">'+(l==='en'
-        ?'tab completes · ↑↓ moves · ↵ runs'
-        :'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
+             '<span class="c">'+(c.c||'')+'</span><span class="l">'+(c[l]||c.es)+'</span></div>';
+    }).join('')+'<div class="hint">'+({en:'tab completes · ↑↓ moves · ↵ runs',ca:'tab completa · ↑↓ mou · ↵ executa'}[l]||'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
     items=[].slice.call(ac.querySelectorAll('.it')); sel=0;
     items.forEach(function(el){
       el.addEventListener('click',function(){ runHit(hits[+el.dataset.i],false); });
@@ -1843,7 +1884,7 @@ var SC=document.getElementById('twBody');
        no hizo nada porque el campo se vacia de golpe */
     if(visible && c.c){ inp.value=c.c; }
     setTimeout(function(){
-      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+c[l]+'</span>','echo');
+      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+(c[l]||c.es)+'</span>','echo');
       inp.value='';
       if(window.__runCmd) window.__runCmd(c);
     }, visible && c.c ? 130 : 0);
@@ -1854,13 +1895,13 @@ var SC=document.getElementById('twBody');
     var G={ir:{es:'ir a',en:'go to'},abrir:{es:'abrir caso',en:'open case'},hacer:{es:'acciones',en:'actions'}};
     var html='';
     Object.keys(by).forEach(function(g){
-      html+='<div class="dim">'+(G[g]?G[g][l]:g)+'</div><table>'+
-        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+c[l]+'</td></tr>'; }).join('')+
+      html+='<div class="dim">'+(G[g]?(G[g][l]||G[g].es):g)+'</div><table>'+
+        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+(c[l]||c.es)+'</td></tr>'; }).join('')+
         '</table>';
     });
-    html+='<div class="dim">'+(l==='en'?'also':'además')+
-      '</div><table><tr><td>help</td><td>'+(l==='en'?'this list':'esta lista')+
-      '</td></tr><tr><td>clear</td><td>'+(l==='en'?'clear the console':'limpia la consola')+
+    html+='<div class="dim">'+(({en:'also',ca:'a més'}[l]||'además'))+
+      '</div><table><tr><td>help</td><td>'+(({en:'this list',ca:'aquesta llista'}[l]||'esta lista'))+
+      '</td></tr><tr><td>clear</td><td>'+(({en:'clear the console',ca:'neteja la consola'}[l]||'limpia la consola'))+
       '</td></tr></table>';
     line(html, '', TTL_LONG);
   }
@@ -1920,8 +1961,8 @@ var SC=document.getElementById('twBody');
     var hit=hits[ac.classList.contains('on')?sel:0];
     if(!hit){
       line('<b>$</b> '+q,'echo');
-      line('<span class="ko">'+(l==='en'?'command not found':'orden no encontrada')+
-           '</span> <span class="dim">· '+(l==='en'?'hit tab to list them':'pulsa tab para verlos')+'</span>');
+      line('<span class="ko">'+(({en:'command not found',ca:'ordre no trobada'}[l]||'orden no encontrada'))+
+           '</span> <span class="dim">· '+(({en:'hit tab to list them',ca:'prem tab per llistar-los'}[l]||'pulsa tab para verlos'))+'</span>');
       inp.value=''; return;
     }
     runHit(hit,true);
@@ -1987,6 +2028,32 @@ var SC=document.getElementById('twBody');
   /* cromo de la terminal y navegacion: no son documento, no se imprimen */
   var SKIP='script,style,noscript,svg,title,.progress,.tw-cmd,'+
            '#proto,#boot,.tw-con,.tw-ac,.tw-prompt,.tw-bar,.cmdk,.pcur';
+
+  /* ── el idioma INACTIVO no se imprime, y eso no es una optimizacion menor ──
+     El TreeWalker de split() no filtraba por visibilidad, asi que recorria tambien
+     el idioma en `display:none`: para cada nodo, un Range + un getClientRects() que
+     devuelve 0 rects + un span. No entraba en la busqueda binaria (la parte cara),
+     pero se pagaba igual, y build() volvia a recorrerlos para encenderlos a mano.
+     Medido en YOUTUBE con CPU x4, A/B intercalado, n=9: quitar el ingles ENTERO
+     ahorraba 226 ms de bloqueo de arranque; anadir un tercer idioma costaba 303 ms.
+     O sea ~226-300 ms POR IDIOMA OCULTO, sobre las 5 paginas de caso que ya
+     arrastran ~700 ms de deuda ([INC-PERF-01]).
+
+     No cambia el comportamiento: el texto que NO se envuelve en `.pl` no lleva
+     `opacity:0`, asi que se ve normal — que es exactamente donde acababa antes, con
+     build() marcandolo `.on` por tener caja de tamano cero. Al cambiar de idioma
+     aparece entero, igual que hoy.
+
+     Va en SKIP y no en un `closest` aparte porque asi es UNA sola llamada, y porque
+     build() debe saltarselos por el mismo motivo.
+
+     ⚠️ split() corre UNA vez (:3862) y `remeasure` NO vuelve a partir el texto —lo
+     dice su propio comentario, «carisimo»—, asi que esta lista se calcula con el
+     idioma de arranque y no caduca: los demas idiomas se quedan como texto plano
+     visible, que es su estado final de todos modos. */
+  var __lg=document.documentElement.lang||'es';
+  SKIP+=','+['es','en','ca'].filter(function(l){return l!==__lg;})
+                            .map(function(l){return '.t-'+l;}).join(',');
   /* cajas cuyo borde y fondo esperan a su primera linea: en la v4 el
      esqueleto de las tarjetas se pintaba mucho antes que su contenido */
   var BOXES='.pj,.mc,.cap,.claim,.ldg,.lex,.term,.cx-lines,.ascii-fw,'+
@@ -2458,13 +2525,24 @@ var SC=document.getElementById('twBody');
 
 (function(){ var orig=window.setLang; if(typeof orig!=="function") return;
   window.setLang=function(l){ orig(l); spy(true);
-    var L=document.documentElement.lang==="en"?"en":"es";
+    var L=document.documentElement.lang||"es";  /* [INC-SEED-02] antes: `lang==="en"?"en":"es"`, que en catalan cae al else
+       y deja el selector mostrando "ES" con la pagina en catalan. */
     var t=document.getElementById("twIn");
-    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||"";
+    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||t.getAttribute("data-ph-es")||"";
     var c=document.getElementById("langCur"); if(c) c.textContent=L.toUpperCase();
     var li=document.getElementById("langList");
     if(li) li.querySelectorAll("li").forEach(function(o){
       o.setAttribute("aria-selected", String(o.dataset.v===L)); });
+    /* [INC-JS-05] Los widgets que PINTA el JS no se re-pintaban al cambiar de idioma:
+       sus dos ganchos existian (`__railRefresh` :1823, `__quotaRefresh` :1736) pero su
+       UNICO llamador era la `setLang` pre-chasis, que esta muerta desde el port. Medido
+       sobre la version comiteada, SIN catalan de por medio: el panel de la cadena decia
+       «Alineacion» antes y despues de `setLang('en')`. O sea que un lector ingles lleva
+       leyendo ese panel en castellano desde el port, en produccion.
+       Van con guarda: en las 5 paginas que no tienen esos widgets no hacen nada, y asi
+       el chasis sigue siendo identico en las 6. */
+    if(window.__railRefresh) window.__railRefresh();
+    if(window.__quotaRefresh) window.__quotaRefresh();
     if(window.__printRemeasure) setTimeout(window.__printRemeasure,60);
   }; })();
 
@@ -2548,8 +2626,8 @@ var SC=document.getElementById('twBody');
 <script>
 /* ── contacto: copiar el email. Un mailto: no hace nada sin cliente de correo ── */
 (function(){
-  var T={ok:{es:'copiado',en:'copied'},base:{es:'copiar',en:'copy'}};
-  function paint(b,k){ b.innerHTML='<span class="t-es">'+T[k].es+'</span><span class="t-en">'+T[k].en+'</span>'; }
+  var T={ok:{es:'copiado',en:'copied',ca:'copiat'},base:{es:'copiar',en:'copy',ca:'copiar'}};
+  function paint(b,k){ b.innerHTML=TRI(T[k].es,T[k].en,T[k].ca); }
   Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'),function(b){
     b.addEventListener('click',function(){
       var v=b.dataset.copy, done=function(){ b.classList.add('done'); paint(b,'ok');

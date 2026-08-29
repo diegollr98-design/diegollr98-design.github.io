@@ -14,6 +14,9 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Diego · YOUTUBE PIPELINE · automatizar un canal entero, y medir que no miente">
 <meta name="twitter:card" content="summary_large_image">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ca_ES">
 <meta property="og:type" content="website">
 <meta name="author" content="Diego · YOUTUBE PIPELINE">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%AC%3C/text%3E%3C/svg%3E">
@@ -23,8 +26,18 @@
 <script>
   /* set language ASAP — no FOUC. stored pref > browser lang > es */
   (function(){try{
+    var OK={es:1,en:1,ca:1};   /* los idiomas que ESTA pagina tiene. Una pagina con catalan anade ca:1 */
     var l=localStorage.getItem('pf_lang');
-    if(!l){l=(navigator.language||'es').toLowerCase().indexOf('en')===0?'en':'es';}
+    if(!OK[l]){
+      /* [SEED §5.8] Antes preguntaba literalmente «es ingles? si no, castellano», asi que
+         un navegador en `ca-ES` aterrizaba en castellano: justo el lector para el que se
+         tradujo. Se comprueba el catalan PRIMERO porque es el mas especifico de los tres.
+         El `if(!OK[l])` final no es de adorno: una pagina que no tenga esa lengua cae al
+         castellano en vez de quedarse con las tres ocultas ([INC-JS-04]). */
+      var n=(navigator.language||'es').toLowerCase();
+      l = n.indexOf('ca')===0 ? 'ca' : (n.indexOf('en')===0 ? 'en' : 'es');
+      if(!OK[l]) l='es';
+    }
     document.documentElement.lang=l;
     document.documentElement.className='lang-'+l;
   }catch(e){}})();
@@ -66,8 +79,17 @@ img,svg{display:block}
 :focus-visible{outline:2px solid var(--g2);outline-offset:3px;border-radius:4px}
 
 /* i18n: hide the inactive language */
-html.lang-es .t-en{display:none!important}
-html.lang-en .t-es{display:none!important}
+/* Cada idioma oculta a TODOS los demas. Con solo dos reglas, anadir `t-ca` lo hacia
+   visible en castellano y en ingles a la vez. */
+html.lang-es .t-en,html.lang-es .t-ca{display:none!important}
+html.lang-en .t-es,html.lang-en .t-ca{display:none!important}
+html.lang-ca .t-es,html.lang-ca .t-en{display:none!important}
+/* [INC-TIPO-01] Inter compone `l·l` como ela geminada precompuesta y a 16 px el punt
+   volat desaparece: «cel·les» se lee «ceHes». `locl 0` desactiva esa forma
+   localizada. Medido: el `·` pasa de 1,53 px a 4,61, y el layout no se mueve
+   (docH/docW/h1 +0 a 390 y 1440, en catalan). NO lo arreglan `kern`, `liga`,
+   `dlig`, `calt` ni `ccmp`, ni cambiar el caracter por `ŀ`. */
+html.lang-ca .t-ca{font-feature-settings:'locl' 0}
 
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,6vw,40px)}
 .grad-text{background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
@@ -486,6 +508,7 @@ footer .hl{color:var(--muted2)}
   .stbl td{border:0;padding:10px 16px}
   .stbl td::before{content:attr(data-h-es);display:block;font-family:'JetBrains Mono';font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
   html.lang-en .stbl td::before{content:attr(data-h)}
+  html.lang-ca .stbl td::before{content:attr(data-h-ca)}
 }
 @media(max-width:520px){footer{flex-direction:column;text-align:center}}
 @media(prefers-reduced-motion:reduce){
@@ -846,7 +869,7 @@ body{overflow:hidden}
            ellos. La pastilla con texto vive en las otras cinco paginas. -->
       <a class="tw-mail" href="mailto:diegollr98@gmail.com" title="diegollr98@gmail.com">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
-          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span></span></a>
+          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span><span class="t-ca">Escriu-me</span></span></a>
       <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M4.98 3.5a2.5 2.5 0 11-.01 5 2.5 2.5 0 01.01-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.5 4.76 5.76V21h-4v-5.7c0-1.36-.03-3.1-1.9-3.1-1.9 0-2.19 1.47-2.19 3v5.8h-4z"/></svg>
@@ -864,12 +887,13 @@ body{overflow:hidden}
          diseño de la ventana es no usar el desplegable nativo. -->
     <div class="tw-lang">
       <button type="button" id="langBtn" aria-haspopup="listbox" aria-expanded="false">
-        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span>
+        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span><span class="sr t-ca">Idioma</span>
         <span id="langCur">ES</span><i aria-hidden="true"></i>
       </button>
       <ul class="tw-langlist" id="langList" role="listbox" hidden>
         <li role="option" data-v="es" aria-selected="true">ES</li>
         <li role="option" data-v="en" aria-selected="false">EN</li>
+        <li role="option" data-v="ca" aria-selected="false">CA</li>
       </ul>
     </div>
   </div>
@@ -880,12 +904,12 @@ body{overflow:hidden}
 <div class="wrap" id="top">
   <!-- hero -->
   <header class="hero">
-    <div class="eyebrow"><span class="t-es">AI Engineer · media pipeline · Python + FFmpeg + LLM</span><span class="t-en">AI Engineer · media pipeline · Python + FFmpeg + LLM</span></div>
+    <div class="eyebrow"><span class="t-es">AI Engineer · media pipeline · Python + FFmpeg + LLM</span><span class="t-en">AI Engineer · media pipeline · Python + FFmpeg + LLM</span><span class="t-ca">AI Engineer · media pipeline · Python + FFmpeg + LLM</span></div>
 
     <a class="hero-repo" href="https://github.com/diegollr98-design/video-pipeline" target="_blank" rel="noopener">github.com/diegollr98-design/video-pipeline<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
 
     <h1 class="t-es display">Automaticé un canal entero. Lo difícil fue construir lo que impide que <span class="grad-text">publique basura</span>.</h1>
-    <h1 class="t-en display">I automated a whole channel. The hard part was building what stops it from <span class="grad-text">shipping garbage</span>.</h1>
+    <h1 class="t-en display">I automated a whole channel. The hard part was building what stops it from <span class="grad-text">shipping garbage</span>.</h1><h1 class="t-ca display">Vaig automatitzar un canal sencer. El més difícil va ser construir el que impedeix que <span class="grad-text">publiqui brossa</span>.</h1>
 
     <p class="lede t-es">
       Este pipeline coge una grabación de Minecraft de 13 GB y devuelve un vídeo de 30 minutos listo para subir:
@@ -900,23 +924,23 @@ body{overflow:hidden}
       <strong>subtitles locked word by word</strong>, animated intro, thumbnail and dozens of vertical shorts.
       With nobody touching anything. And that's the problem: an autonomous system's failure mode <strong>isn't crashing</strong>: it's shipping an MP4 that <strong>looks finished</strong> and is broken in a way nobody sees.
       <strong>Nobody watches 30 minutes of output.</strong> I started not knowing how to code; I built it solo, with AI.
-    </p>
+    </p><p class="lede t-ca">Aquest pipeline agafa una gravació de Minecraft de 13 GB i torna un vídeo de 30 minuts a punt per pujar: història escrita per un LLM, narrada en castellà amb veu triada segons el protagonista, <strong>subtítols clavats paraula per paraula</strong>, intro animada, miniatura i desenes de shorts verticals. Sense que ningú toqui res. I aquí hi ha el problema: el mode de fallada d'un sistema autònom <strong>no és que peti</strong>, és que lliuri un MP4 que <strong>sembla acabat</strong> i estigui trencat d'una manera que ningú veu. <strong>Ningú mira 30 minuts de sortida.</strong> Vaig començar sense saber programar; el vaig aixecar sol, amb IA.</p>
 
-    <p class="hero-note"><span class="t-es"><b>Límite honesto:</b> el uploader está construido (OAuth, subida reanudable y miniatura, con su pestaña en el dashboard) pero <b>no se ha ejecutado nunca</b>: necesita unas credenciales de Google Cloud propias que no están creadas. Por diseño sube <b>en privado</b>, solo el vídeo largo, y se dispara a mano desde una cola con el veredicto del auditor delante; nunca automáticamente al terminar una corrida. Lo digo aquí antes de que lo preguntes.</span><span class="t-en"><b>Honest limit:</b> the uploader is built (OAuth, resumable upload and thumbnail, with its own dashboard tab) but <b>it has never been run</b>: it needs its own Google Cloud credentials, which don't exist yet. By design it uploads <b>privately</b>, long-form video only, and is fired by hand from a queue with the auditor's verdict in front of you; never automatically at the end of a run. Saying it up front.</span></p>
+    <p class="hero-note"><span class="t-es"><b>Límite honesto:</b> el uploader está construido (OAuth, subida reanudable y miniatura, con su pestaña en el dashboard) pero <b>no se ha ejecutado nunca</b>: necesita unas credenciales de Google Cloud propias que no están creadas. Por diseño sube <b>en privado</b>, solo el vídeo largo, y se dispara a mano desde una cola con el veredicto del auditor delante; nunca automáticamente al terminar una corrida. Lo digo aquí antes de que lo preguntes.</span><span class="t-en"><b>Honest limit:</b> the uploader is built (OAuth, resumable upload and thumbnail, with its own dashboard tab) but <b>it has never been run</b>: it needs its own Google Cloud credentials, which don't exist yet. By design it uploads <b>privately</b>, long-form video only, and is fired by hand from a queue with the auditor's verdict in front of you; never automatically at the end of a run. Saying it up front.</span><span class="t-ca"><b>Límit honest:</b> l'uploader està construït (OAuth, pujada represa i miniatura, amb la seva pestanya al dashboard) però <b>no s'ha executat mai</b>: necessita unes credencials de Google Cloud pròpies que no estan creades. Per disseny puja <b>en privat</b>, només el vídeo llarg, i es dispara a mà des d'una cua amb el veredicte de l'auditor al davant; mai automàticament en acabar una execució. Ho dic aquí abans que ho preguntis.</span></p>
 
     <div class="cta">
       <a href="#recorrido" class="btn btn-primary">
         <svg viewBox="0 0 24 24" fill="#08080d"><path d="M8 5v14l11-7z"/></svg>
-        <span class="t-es">Ver el recorrido</span><span class="t-en">Watch the walkthrough</span>
+        <span class="t-es">Ver el recorrido</span><span class="t-en">Watch the walkthrough</span><span class="t-ca">Veure el recorregut</span>
       </a>
-      <a href="#desfase" class="btn btn-ghost"><span class="t-es">El bug que nadie veía</span><span class="t-en">The bug nobody could see</span></a>
+      <a href="#desfase" class="btn btn-ghost"><span class="t-es">El bug que nadie veía</span><span class="t-en">The bug nobody could see</span><span class="t-ca">El bug que ningú veia</span></a>
     </div>
 
     <div class="stats">
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="0.072" data-dec="3"></span><span class="u"> s</span></div><div class="l"><span class="t-es">error medio voz-subtítulo <b>en el fixture de 3 min</b>, contra una transcripción independiente · en la producción real de 30 min: <b>0,153 s</b></span><span class="t-en">mean voice-to-subtitle error <b>on the 3-min fixture</b>, against an independent transcript · on the real 30-min production: <b>0.153 s</b></span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="4"></span></div><div class="l"><span class="t-es">bugs graves que produjeron un MP4 perfecto y reproducible. Los cuatro se cazaron midiendo</span><span class="t-en">serious bugs that produced a perfect, playable MP4. All four were caught by measuring</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="1000"></span><span class="u"><span class="t-es"> /día</span><span class="t-en"> /day</span></span></div><div class="l"><span class="t-es">peticiones al LLM: el techo REAL de producción. La arquitectura se diseñó contra él</span><span class="t-en">LLM requests: the REAL production ceiling. The architecture was designed against it</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="0"></span><span class="u"> €</span></div><div class="l"><span class="t-es">de infraestructura: tier gratuito, TTS gratis, FFmpeg y Whisper en local</span><span class="t-en">infrastructure: free tier, free TTS, FFmpeg and Whisper running locally</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="0.072" data-dec="3"></span><span class="u"> s</span></div><div class="l"><span class="t-es">error medio voz-subtítulo <b>en el fixture de 3 min</b>, contra una transcripción independiente · en la producción real de 30 min: <b>0,153 s</b></span><span class="t-en">mean voice-to-subtitle error <b>on the 3-min fixture</b>, against an independent transcript · on the real 30-min production: <b>0.153 s</b></span><span class="t-ca">error mitjà veu-subtítol <b>al fixture de 3 min</b>, contra una transcripció independent · a la producció real de 30 min: <b>0,153 s</b></span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="4"></span></div><div class="l"><span class="t-es">bugs graves que produjeron un MP4 perfecto y reproducible. Los cuatro se cazaron midiendo</span><span class="t-en">serious bugs that produced a perfect, playable MP4. All four were caught by measuring</span><span class="t-ca">bugs greus que van produir un MP4 perfecte i reproduïble. Els quatre es van caçar mesurant</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="1000"></span><span class="u"><span class="t-es"> /día</span><span class="t-en"> /day</span><span class="t-ca">/dia</span></span></div><div class="l"><span class="t-es">peticiones al LLM: el techo REAL de producción. La arquitectura se diseñó contra él</span><span class="t-en">LLM requests: the REAL production ceiling. The architecture was designed against it</span><span class="t-ca">peticions a l'LLM: el sostre REAL de producció. L'arquitectura es va dissenyar contra ell</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="0"></span><span class="u"> €</span></div><div class="l"><span class="t-es">de infraestructura: tier gratuito, TTS gratis, FFmpeg y Whisper en local</span><span class="t-en">infrastructure: free tier, free TTS, FFmpeg and Whisper running locally</span><span class="t-ca">d'infraestructura: tier gratuït, TTS gratis, FFmpeg i Whisper en local</span></div></div>
     </div>
   </header>
 </div>
@@ -927,28 +951,28 @@ body{overflow:hidden}
 <section id="recorrido">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Recorrido</span><span class="t-en">Walkthrough</span></div>
+      <div class="eyebrow"><span class="t-es">Recorrido</span><span class="t-en">Walkthrough</span><span class="t-ca">Recorregut</span></div>
       <h2 class="t-es">De una carpeta con 13 GB a un vídeo publicable</h2>
-      <h2 class="t-en">From a folder with 13 GB to a publishable video</h2>
+      <h2 class="t-en">From a folder with 13 GB to a publishable video</h2><h2 class="t-ca">D'una carpeta amb 13 GB a un vídeo publicable</h2>
       <p class="t-es">El producto es un vídeo, así que la prueba también. Una corrida real: <strong>ingesta → historia → voz → alineación → subtítulos → intro animada → miniatura → shorts verticales</strong>. Lo que se ve en pantalla es lo fácil de enseñar; lo que sostiene la calidad son dos parámetros que solo aparecen cuando mides la salida.</p>
-      <p class="t-en">The product is a video, so is the proof. A real run: <strong>ingest → story → voice → alignment → subtitles → animated intro → thumbnail → vertical shorts</strong>. What you see on screen is the easy part to show; what holds the quality up are two parameters that only surface when you measure the output.</p>
+      <p class="t-en">The product is a video, so is the proof. A real run: <strong>ingest → story → voice → alignment → subtitles → animated intro → thumbnail → vertical shorts</strong>. What you see on screen is the easy part to show; what holds the quality up are two parameters that only surface when you measure the output.</p><p class="t-ca">El producte és un vídeo, així que la prova també. Una execució real: <strong>ingesta → història → veu → alineació → subtítols → intro animada → miniatura → shorts verticals</strong>. El que es veu a la pantalla és el fàcil d'ensenyar; el que sosté la qualitat són dos paràmetres que només apareixen quan mesures la sortida.</p>
     </div>
     <div class="video vp reveal" id="vpBox" data-hero="YOUTUBE-PIPELINE-hero-90s.mp4" data-tour="YOUTUBE-PIPELINE-tour-completo.mp4">
       <video id="vpVideo" src="YOUTUBE-PIPELINE-hero-90s.mp4" poster="../assets/poster-youtube-pipeline.jpg"
              muted loop playsinline preload="metadata"></video>
-      <span class="vp-tag"><span class="t-es">vista previa · corte hero</span><span class="t-en">preview · hero cut</span></span>
+      <span class="vp-tag"><span class="t-es">vista previa · corte hero</span><span class="t-en">preview · hero cut</span><span class="t-ca">vista prèvia · tall hero</span></span>
       <button class="vp-ov" id="vpBtn" type="button">
         <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
-        <span class="vt"><span class="t-es">Una corrida completa del pipeline · 4:54</span><span class="t-en">A full pipeline run · 4:54</span></span>
-        <span class="vs"><span class="t-es">Sin voz: el pipeline real con los rótulos en pantalla. Pasa el ratón para ver el corte de 90 s; pulsa para la corrida entera.</span><span class="t-en">No voice-over: the real pipeline with on-screen captions. Hover for the 90 s cut; click for the full run.</span></span>
+        <span class="vt"><span class="t-es">Una corrida completa del pipeline · 4:54</span><span class="t-en">A full pipeline run · 4:54</span><span class="t-ca">Una execució completa del pipeline · 4:54</span></span>
+        <span class="vs"><span class="t-es">Sin voz: el pipeline real con los rótulos en pantalla. Pasa el ratón para ver el corte de 90 s; pulsa para la corrida entera.</span><span class="t-en">No voice-over: the real pipeline with on-screen captions. Hover for the 90 s cut; click for the full run.</span><span class="t-ca">Sense veu: el pipeline real amb els rètols a la pantalla. Passa el ratolí per veure el tall de 90 s; prem per a l'execució sencera.</span></span>
       </button>
     </div>
     <div class="vp-chaps reveal" id="vpChaps" role="group" aria-label="Capítulos del recorrido">
-      <button type="button" class="vc" data-t="0"><b>01</b><span class="t-es">De gameplay crudo a un botón</span><span class="t-en">From raw gameplay to one button</span><b>0:00</b></button>
-      <button type="button" class="vc" data-t="90.9"><b>02</b><span class="t-es">El pipeline corriendo, y lo que produce</span><span class="t-en">The pipeline running, and what it makes</span><b>1:30</b></button>
-      <button type="button" class="vc" data-t="182.4"><b>03</b><span class="t-es">Lo que le impide publicar basura</span><span class="t-en">What stops it shipping junk</span><b>3:02</b></button>
+      <button type="button" class="vc" data-t="0"><b>01</b><span class="t-es">De gameplay crudo a un botón</span><span class="t-en">From raw gameplay to one button</span><span class="t-ca">De gameplay cru a un botó</span><b>0:00</b></button>
+      <button type="button" class="vc" data-t="90.9"><b>02</b><span class="t-es">El pipeline corriendo, y lo que produce</span><span class="t-en">The pipeline running, and what it makes</span><span class="t-ca">El pipeline funcionant, i el que produeix</span><b>1:30</b></button>
+      <button type="button" class="vc" data-t="182.4"><b>03</b><span class="t-es">Lo que le impide publicar basura</span><span class="t-en">What stops it shipping junk</span><span class="t-ca">El que li impedeix publicar brossa</span><b>3:02</b></button>
     </div>
-    <p class="video-note"><span class="t-es">Guion sugerido: <b>input/</b> con la grabación cruda → detección de hotbar tirando pausa y escritorio → <b>pool/</b> (1.120 MB → 296 MB en la validación E2E) → historia por bloques → voz + alineación forzada → el ASS sobre el gameplay → intro con rebote elástico y woosh → miniatura → los shorts verticales, cada uno con historia distinta.</span><span class="t-en">Suggested script: <b>input/</b> with the raw recording → hotbar detection dropping pause and desktop → <b>pool/</b> (1,120 MB → 296 MB in the E2E validation) → story in blocks → voice + forced alignment → the ASS over the gameplay → intro with elastic bounce and woosh → thumbnail → the vertical shorts, each with a different story.</span></p>
+    <p class="video-note"><span class="t-es">Guion sugerido: <b>input/</b> con la grabación cruda → detección de hotbar tirando pausa y escritorio → <b>pool/</b> (1.120 MB → 296 MB en la validación E2E) → historia por bloques → voz + alineación forzada → el ASS sobre el gameplay → intro con rebote elástico y woosh → miniatura → los shorts verticales, cada uno con historia distinta.</span><span class="t-en">Suggested script: <b>input/</b> with the raw recording → hotbar detection dropping pause and desktop → <b>pool/</b> (1,120 MB → 296 MB in the E2E validation) → story in blocks → voice + forced alignment → the ASS over the gameplay → intro with elastic bounce and woosh → thumbnail → the vertical shorts, each with a different story.</span><span class="t-ca">Guió suggerit: <b>input/</b> amb la gravació crua → detecció de hotbar descartant pausa i escriptori → <b>pool/</b> (1.120 MB → 296 MB a la validació E2E) → història per blocs → veu + alineació forçada → l'ASS sobre el gameplay → intro amb rebot elàstic i woosh → miniatura → els shorts verticals, cadascun amb història diferent.</span></p>
 
     <!-- anatomía de un fotograma -->
     <div class="frames">
@@ -962,13 +986,13 @@ body{overflow:hidden}
           <span class="tagpos">\pos(960,540) · PlayRes 1920×1080</span>
           <span class="hotbar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
         </div>
-        <div class="fr-cap"><span class="t-es">vídeo largo · 1920×1080</span><span class="t-en">long form · 1920×1080</span></div>
+        <div class="fr-cap"><span class="t-es">vídeo largo · 1920×1080</span><span class="t-en">long form · 1920×1080</span><span class="t-ca">vídeo llarg · 1920×1080</span></div>
         <div class="specs">
           <span class="spec">Impact <b>150</b></span>
-          <span class="spec"><span class="t-es">contorno</span><span class="t-en">outline</span> <b>8 px</b></span>
-          <span class="spec"><span class="t-es">palabra a palabra</span><span class="t-en">word by word</span></span>
-          <span class="spec"><span class="t-es">audio offset</span><span class="t-en">audio offset</span> <b>−100 ms</b></span>
-          <span class="spec"><span class="t-es">sin subtítulos durante la intro</span><span class="t-en">no subs during the intro</span></span>
+          <span class="spec"><span class="t-es">contorno</span><span class="t-en">outline</span><span class="t-ca">contorn</span> <b>8 px</b></span>
+          <span class="spec"><span class="t-es">palabra a palabra</span><span class="t-en">word by word</span><span class="t-ca">paraula a paraula</span></span>
+          <span class="spec"><span class="t-es">audio offset</span><span class="t-en">audio offset</span><span class="t-ca">audio offset</span> <b>−100 ms</b></span>
+          <span class="spec"><span class="t-es">sin subtítulos durante la intro</span><span class="t-en">no subs during the intro</span><span class="t-ca">sense subtítols durant la intro</span></span>
         </div>
       </div>
       <div class="frame-body reveal">
@@ -980,11 +1004,11 @@ body{overflow:hidden}
           <span class="tagpos">\pos(540,960) · 1080×1920</span>
           <span class="hotbar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
         </div>
-        <div class="fr-cap" style="margin-bottom:18px"><span class="t-es">short vertical · 9:16 · fuente 80</span><span class="t-en">vertical short · 9:16 · font 80</span></div>
+        <div class="fr-cap" style="margin-bottom:18px"><span class="t-es">short vertical · 9:16 · fuente 80</span><span class="t-en">vertical short · 9:16 · font 80</span><span class="t-ca">short vertical · 9:16 · font 80</span></div>
         <p class="t-es"><strong>Posición y PlayRes son un par indivisible.</strong> Cambiar uno sin el otro no rompe nada visible en el log: produce un vídeo entero con el texto <span class="hl">estirado</span>. Lo aprendí en la versión vertical, que es exactamente la que nadie revisa.</p>
-        <p class="t-en"><strong>Position and PlayRes are one indivisible pair.</strong> Changing one without the other breaks nothing visible in the log: it produces a whole video with <span class="hl">stretched</span> text. I learned that on the vertical variant, precisely the one nobody reviews.</p>
+        <p class="t-en"><strong>Position and PlayRes are one indivisible pair.</strong> Changing one without the other breaks nothing visible in the log: it produces a whole video with <span class="hl">stretched</span> text. I learned that on the vertical variant, precisely the one nobody reviews.</p><p class="t-ca"><strong>Posició i PlayRes són un parell indivisible.</strong> Canviar-ne un sense l'altre no trenca res visible al log: produeix un vídeo sencer amb el text <span class="hl">estirat</span>. Ho vaig aprendre a la versió vertical, que és exactament la que ningú revisa.</p>
         <p class="t-es">Por eso los invariantes que viven en dos sitios están escritos como tales en las reglas del repo, y tocar uno <strong>obliga</strong> a revisar su gemelo.</p>
-        <p class="t-en">That's why invariants living in two places are written down as such in the repo's rules, and touching one <strong>forces</strong> you to review its twin.</p>
+        <p class="t-en">That's why invariants living in two places are written down as such in the repo's rules, and touching one <strong>forces</strong> you to review its twin.</p><p class="t-ca">Per això els invariants que viuen en dos llocs estan escrits com a tals a les regles del repo, i tocar-ne un <strong>obliga</strong> a revisar el seu bessó.</p>
       </div>
     </div>
   </div>
@@ -995,20 +1019,20 @@ body{overflow:hidden}
 <section id="desfase">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Flagship · el corazón del proyecto</span><span class="t-en">Flagship · the heart of the project</span></div>
+      <div class="eyebrow"><span class="t-es">Flagship · el corazón del proyecto</span><span class="t-en">Flagship · the heart of the project</span><span class="t-ca">Flagship · el cor del projecte</span></div>
       <h2 class="t-es">El bug que dura 4 fotogramas y sobrevive 30 minutos</h2>
-      <h2 class="t-en">The bug that lasts 4 frames and survives 30 minutes</h2>
+      <h2 class="t-en">The bug that lasts 4 frames and survives 30 minutes</h2><h2 class="t-ca">El bug que dura 4 fotogrames i sobreviu 30 minuts</h2>
       <p class="t-es">Durante meses los subtítulos iban <strong>por detrás de la voz</strong>. No lo bastante para que saltara a la vista, lo suficiente para que el vídeo se sintiera mal sin saber por qué. El pipeline no daba ningún error: producía MP4 perfectos. Dale al play y mira las dos pistas de abajo: <strong>la roja es el algoritmo anterior</strong>.</p>
-      <p class="t-en">For months the subtitles ran <strong>behind the voice</strong>. Not enough to jump out at you, enough for the video to feel wrong without knowing why. The pipeline threw no error: it produced perfect MP4s. Hit play and watch the two tracks below: <strong>the red one is the old algorithm</strong>.</p>
+      <p class="t-en">For months the subtitles ran <strong>behind the voice</strong>. Not enough to jump out at you, enough for the video to feel wrong without knowing why. The pipeline threw no error: it produced perfect MP4s. Hit play and watch the two tracks below: <strong>the red one is the old algorithm</strong>.</p><p class="t-ca">Durant mesos els subtítols anaven <strong>per darrere de la veu</strong>. No prou perquè saltés a la vista, sí prou perquè el vídeo se sentís malament sense saber per què. El pipeline no donava cap error: produïa MP4 perfectes. Dona-li al play i mira les dues pistes de sota: <strong>la vermella és l'algorisme anterior</strong>.</p>
     </div>
 
     <div class="tl reveal" id="tl">
       <div class="tl-top">
-        <span class="tt"><span class="t-es">«Mi hermano vendió mi coche clásico para pagar sus deudas sin pedirme permiso.»</span><span class="t-en">"My brother sold my classic car to pay his debts without asking me."</span></span>
+        <span class="tt"><span class="t-es">«Mi hermano vendió mi coche clásico para pagar sus deudas sin pedirme permiso.»</span><span class="t-en">"My brother sold my classic car to pay his debts without asking me."</span><span class="t-ca">«El meu germà va vendre el meu cotxe clàssic per pagar els seus deutes sense demanar-me permís.»</span></span>
         <div class="tl-ctrls">
           <button class="tl-btn" id="tl-play" aria-label="play/pause">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" id="tl-icon"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-            <span id="tl-label"><span class="t-es">pausar</span><span class="t-en">pause</span></span>
+            <span id="tl-label"><span class="t-es">pausar</span><span class="t-en">pause</span><span class="t-ca">pausar</span></span>
           </button>
           <span class="tl-clock" id="tl-clock">0,00 s</span>
         </div>
@@ -1016,17 +1040,17 @@ body{overflow:hidden}
 
       <div class="tl-scroll"><div class="tl-inner">
       <div class="lane lane-voice">
-        <div class="lane-h"><span class="who"><span class="t-es">VOZ (edge-tts)</span><span class="t-en">VOICE (edge-tts)</span></span><span class="meta"><span class="t-es">cuándo suena de verdad cada palabra</span><span class="t-en">when each word is actually spoken</span></span></div>
+        <div class="lane-h"><span class="who"><span class="t-es">VOZ (edge-tts)</span><span class="t-en">VOICE (edge-tts)</span><span class="t-ca">VEU (edge-tts)</span></span><span class="meta"><span class="t-es">cuándo suena de verdad cada palabra</span><span class="t-en">when each word is actually spoken</span><span class="t-ca">quan sona de veritat cada paraula</span></span></div>
         <div class="track tall" id="track-voice"><div class="wave" id="wave" aria-hidden="true"></div><div class="playhead" id="ph-0"></div></div>
       </div>
 
       <div class="lane lane-old">
-        <div class="lane-h"><span class="who"><span class="t-es">ANTES · reparto proporcional</span><span class="t-en">BEFORE · proportional split</span></span><span class="meta"><span class="t-es">las palabras se repartían por nº de caracteres para rellenar la ventana ENTERA</span><span class="t-en">words were spread by character count to fill the ENTIRE window</span></span></div>
+        <div class="lane-h"><span class="who"><span class="t-es">ANTES · reparto proporcional</span><span class="t-en">BEFORE · proportional split</span><span class="t-ca">ABANS · repartiment proporcional</span></span><span class="meta"><span class="t-es">las palabras se repartían por nº de caracteres para rellenar la ventana ENTERA</span><span class="t-en">words were spread by character count to fill the ENTIRE window</span><span class="t-ca">les paraules es repartien per nre. de caràcters per omplir la finestra SENCERA</span></span></div>
         <div class="track" id="track-old"><div class="playhead" id="ph-1"></div></div>
       </div>
 
       <div class="lane lane-new">
-        <div class="lane-h"><span class="who"><span class="t-es">AHORA · traslación con ancla dura</span><span class="t-en">NOW · translation with a hard anchor</span></span><span class="meta"><span class="t-es">se fija el inicio de la frase y se TRASLADAN los tiempos de Whisper, sin estirarlos</span><span class="t-en">the sentence start is pinned and Whisper's times are TRANSLATED, never stretched</span></span></div>
+        <div class="lane-h"><span class="who"><span class="t-es">AHORA · traslación con ancla dura</span><span class="t-en">NOW · translation with a hard anchor</span><span class="t-ca">ARA · translació amb àncora dura</span></span><span class="meta"><span class="t-es">se fija el inicio de la frase y se TRASLADAN los tiempos de Whisper, sin estirarlos</span><span class="t-en">the sentence start is pinned and Whisper's times are TRANSLATED, never stretched</span><span class="t-ca">es fixa l'inici de la frase i es TRASLLADEN els temps de Whisper, sense estirar-los</span></span></div>
         <div class="track" id="track-new"><div class="playhead" id="ph-2"></div></div>
       </div>
 
@@ -1034,27 +1058,27 @@ body{overflow:hidden}
 
       <div class="window" aria-hidden="true">
         <div class="bar w-sent" id="w-sent"><span class="lbl" style="color:#ffce6a;left:0;top:-16px">SentenceBoundary · 7,72 s</span></div>
-        <div class="bar w-voice" id="w-voice"><span class="lbl" style="color:#7dffb4;top:16px;left:0"><span class="t-es">voz real · acaba en 6,76 s</span><span class="t-en">real voice · ends at 6.76 s</span></span></div>
+        <div class="bar w-voice" id="w-voice"><span class="lbl" style="color:#7dffb4;top:16px;left:0"><span class="t-es">voz real · acaba en 6,76 s</span><span class="t-en">real voice · ends at 6.76 s</span><span class="t-ca">veu real · acaba a 6,76 s</span></span></div>
       </div>
       </div></div>
-      <div class="tl-swipe"><span class="t-es">↔ desliza las pistas para verlas enteras</span><span class="t-en">↔ swipe the tracks to see them in full</span></div>
+      <div class="tl-swipe"><span class="t-es">↔ desliza las pistas para verlas enteras</span><span class="t-en">↔ swipe the tracks to see them in full</span><span class="t-ca">↔ llisca les pistes per veure-les senceres</span></div>
 
       <div class="tl-read">
-        <div class="rd"><div class="rk"><span class="t-es">desfase ahora mismo · ANTES</span><span class="t-en">drift right now · BEFORE</span></div><div class="rv bad" id="rv-old">+0,00 s</div></div>
-        <div class="rd"><div class="rk"><span class="t-es">desfase ahora mismo · AHORA</span><span class="t-en">drift right now · NOW</span></div><div class="rv good" id="rv-new">−0,15 s</div></div>
-        <div class="rd"><div class="rk"><span class="t-es">sesgo medio de la frase</span><span class="t-en">mean bias of the sentence</span></div><div class="rv" id="rv-bias">: </div></div>
+        <div class="rd"><div class="rk"><span class="t-es">desfase ahora mismo · ANTES</span><span class="t-en">drift right now · BEFORE</span><span class="t-ca">desfasament ara mateix · ABANS</span></div><div class="rv bad" id="rv-old">+0,00 s</div></div>
+        <div class="rd"><div class="rk"><span class="t-es">desfase ahora mismo · AHORA</span><span class="t-en">drift right now · NOW</span><span class="t-ca">desfasament ara mateix · ARA</span></div><div class="rv good" id="rv-new">−0,15 s</div></div>
+        <div class="rd"><div class="rk"><span class="t-es">sesgo medio de la frase</span><span class="t-en">mean bias of the sentence</span><span class="t-ca">biaix mitjà de la frase</span></div><div class="rv" id="rv-bias">: </div></div>
       </div>
 
       <div class="tl-note">
         <span class="t-es"><b>La causa raíz:</b> edge-tts <b>no emite un solo evento por palabra</b>: 0 <span class="mono">WordBoundary</span>, solo <span class="mono">SentenceBoundary</span>: una ventana por frase. Y esa ventana <b>tila el audio completo, silencios incluidos</b>: medido, termina en 7,72 s cuando la voz acaba en 6,76 s. El código repartía las palabras dentro de la ventana entera, así que cada una caía más tarde de cuando sonaba y <b>el retraso crecía dentro de la frase</b>. Con frases cortas colaba; con las de ~49 palabras que escriben estos modelos, llegaba a 1,5 s.</span>
-        <span class="t-en"><b>Root cause:</b> edge-tts <b>emits no per-word event</b>. 0 <span class="mono">WordBoundary</span>, only <span class="mono">SentenceBoundary</span>: one window per sentence. And that window <b>tiles the entire audio, silences included</b>: measured, it ends at 7.72 s while the voice ends at 6.76 s. The code spread words across the whole window, so each one landed later than it sounded and <b>the lag grew inside the sentence</b>. With short sentences it passed; with the ~49-word ones these models write, it reached 1.5 s.</span>
+        <span class="t-en"><b>Root cause:</b> edge-tts <b>emits no per-word event</b>. 0 <span class="mono">WordBoundary</span>, only <span class="mono">SentenceBoundary</span>: one window per sentence. And that window <b>tiles the entire audio, silences included</b>: measured, it ends at 7.72 s while the voice ends at 6.76 s. The code spread words across the whole window, so each one landed later than it sounded and <b>the lag grew inside the sentence</b>. With short sentences it passed; with the ~49-word ones these models write, it reached 1.5 s.</span><span class="t-ca"><b>La causa arrel:</b> edge-tts <b>no emet un sol esdeveniment per paraula</b>: 0 <span class="mono">WordBoundary</span>, només <span class="mono">SentenceBoundary</span>: una finestra per frase. I aquesta finestra <b>abasta l'àudio complet, silencis inclosos</b>: mesurat, acaba a 7,72 s quan la veu acaba a 6,76 s. El codi repartia les paraules dins de la finestra sencera, així que cadascuna queia més tard de quan sonava i <b>el retard creixia dins de la frase</b>. Amb frases curtes colava; amb les de ~49 paraules que escriuen aquests models, arribava a 1,5 s.</span>
       </div>
     </div>
 
     <div class="ab">
-      <div class="abc reveal"><div class="k"><span class="t-es">error medio · por régimen</span><span class="t-en">mean error · by regime</span></div><div class="row"><span class="from">0,153 s</span><span class="arw">·</span><span class="to">0,072 s</span></div><p><span class="t-es">Los dos son medidas reales de <strong>objetos distintos</strong>, y publico las dos: <strong>0,153 s</strong> es la primera producción real de 30 minutos; <strong>0,072 s</strong>, el fixture de 3 minutos con el que corre el gate. Todo contra una transcripción independiente del audio, no contra el propio texto. Esa medición, la que me deja peor, es la que destapó el bug de anclaje, ya corregido: el fixture post-fix da <strong>0,043 s</strong>. Un solo número aquí habría sido el bonito.</span><span class="t-en">Both are real measurements of <strong>different objects</strong>, and I publish both: <strong>0.153 s</strong> is the first real 30-minute production; <strong>0.072 s</strong>, the 3-minute fixture the gate runs on. All against an independent transcript of the audio, not the source text. That measurement, the one that makes me look worse, is what exposed the anchoring bug, now fixed: the post-fix fixture reads <strong>0.043 s</strong>. A single number here would have been the pretty one.</span></p></div>
-      <div class="abc reveal"><div class="k"><span class="t-es">error máximo</span><span class="t-en">max error</span></div><div class="row"><span class="from">1,064 s</span><span class="arw">→</span><span class="to">0,400 s</span></div><p><span class="t-es">El máximo importa más que la media: es el fotograma en el que el espectador nota que algo va mal. Y es el único umbral que el baseline del 10-ago <strong>no</strong> cumple (objetivo ≤0,30 s): son 0,400 s en <strong>1 palabra de 422</strong>, el monosílabo «Y». Está escrito en el propio <span class="mono">data/eval/2026-08-10.json</span>.</span><span class="t-en">The max matters more than the mean: it's the frame where the viewer notices something is off. It is also the one threshold the 10-Aug baseline <strong>fails</strong> (target ≤0.30 s): 0.400 s on <strong>1 word out of 422</strong>, the monosyllable "Y". It is written in <span class="mono">data/eval/2026-08-10.json</span> itself.</span></p></div>
-      <div class="abc reveal"><div class="k"><span class="t-es">sesgo (signo)</span><span class="t-en">bias (sign)</span></div><div class="row"><span class="from">+0,435 s</span><span class="arw">→</span><span class="to">−0,067 s</span></div><p><span class="t-es">El signo es el objetivo real: el subtítulo debe ir <b>delante</b> de la voz, nunca detrás.</span><span class="t-en">The sign is the real target: the subtitle must run <b>ahead</b> of the voice, never behind.</span></p></div>
+      <div class="abc reveal"><div class="k"><span class="t-es">error medio · por régimen</span><span class="t-en">mean error · by regime</span><span class="t-ca">error mitjà · per règim</span></div><div class="row"><span class="from">0,153 s</span><span class="arw">·</span><span class="to">0,072 s</span></div><p><span class="t-es">Los dos son medidas reales de <strong>objetos distintos</strong>, y publico las dos: <strong>0,153 s</strong> es la primera producción real de 30 minutos; <strong>0,072 s</strong>, el fixture de 3 minutos con el que corre el gate. Todo contra una transcripción independiente del audio, no contra el propio texto. Esa medición, la que me deja peor, es la que destapó el bug de anclaje, ya corregido: el fixture post-fix da <strong>0,043 s</strong>. Un solo número aquí habría sido el bonito.</span><span class="t-en">Both are real measurements of <strong>different objects</strong>, and I publish both: <strong>0.153 s</strong> is the first real 30-minute production; <strong>0.072 s</strong>, the 3-minute fixture the gate runs on. All against an independent transcript of the audio, not the source text. That measurement, the one that makes me look worse, is what exposed the anchoring bug, now fixed: the post-fix fixture reads <strong>0.043 s</strong>. A single number here would have been the pretty one.</span><span class="t-ca">Tots dos són mesures reals d'<strong>objectes diferents</strong>, i publico les dues: <strong>0,153 s</strong> és la primera producció real de 30 minuts; <strong>0,072 s</strong>, el fixture de 3 minuts amb què corre el gate. Tot contra una transcripció independent de l'àudio, no contra el text mateix. Aquesta mesura, la que em deixa pitjor, és la que va destapar el bug d'ancoratge, ja corregit: el fixture post-fix dona <strong>0,043 s</strong>. Un sol número aquí hauria estat el bonic.</span></p></div>
+      <div class="abc reveal"><div class="k"><span class="t-es">error máximo</span><span class="t-en">max error</span><span class="t-ca">error màxim</span></div><div class="row"><span class="from">1,064 s</span><span class="arw">→</span><span class="to">0,400 s</span></div><p><span class="t-es">El máximo importa más que la media: es el fotograma en el que el espectador nota que algo va mal. Y es el único umbral que el baseline del 10-ago <strong>no</strong> cumple (objetivo ≤0,30 s): son 0,400 s en <strong>1 palabra de 422</strong>, el monosílabo «Y». Está escrito en el propio <span class="mono">data/eval/2026-08-10.json</span>.</span><span class="t-en">The max matters more than the mean: it's the frame where the viewer notices something is off. It is also the one threshold the 10-Aug baseline <strong>fails</strong> (target ≤0.30 s): 0.400 s on <strong>1 word out of 422</strong>, the monosyllable "Y". It is written in <span class="mono">data/eval/2026-08-10.json</span> itself.</span><span class="t-ca">El màxim importa més que la mitjana: és el fotograma en què l'espectador nota que alguna cosa va malament. I és l'únic llindar que el baseline del 10-ago <strong>no</strong> compleix (objectiu ≤0,30 s): són 0,400 s en <strong>1 paraula de 422</strong>, el monosíl·lab «Y». Està escrit al mateix <span class="mono">data/eval/2026-08-10.json</span>.</span></p></div>
+      <div class="abc reveal"><div class="k"><span class="t-es">sesgo (signo)</span><span class="t-en">bias (sign)</span><span class="t-ca">biaix (signe)</span></div><div class="row"><span class="from">+0,435 s</span><span class="arw">→</span><span class="to">−0,067 s</span></div><p><span class="t-es">El signo es el objetivo real: el subtítulo debe ir <b>delante</b> de la voz, nunca detrás.</span><span class="t-en">The sign is the real target: the subtitle must run <b>ahead</b> of the voice, never behind.</span><span class="t-ca">El signe és l'objectiu real: el subtítol ha d'anar <b>davant</b> de la veu, mai darrere.</span></p></div>
     </div>
 
     <div class="sb" style="margin-top:44px">
@@ -1097,7 +1121,7 @@ body{overflow:hidden}
 <span class="cm"># The window's trailing silence is left FREE: that's why</span>
 <span class="cm"># the subtitle disappears during pauses, exactly as the</span>
 <span class="cm"># spec asked. The bug and the feature were the same thing.</span>
-</div>
+</div><div class="sb-code reveal t-ca"><span class="cm"># el fix NO va ser una constant: va ser canviar de mecanisme</span> <span class="cm"># modules/tts_engine.py :: _validate_and_fix_alignment</span> <span class="r">ABANS</span> <span class="cm">— repartir per OMPLIR la finestra</span> <span class="cm">for w in palabras:</span> <span class="cm">w.start = ventana.ini + ventana.dur * (chars/total)</span> <span class="cm"># ⇒ la paraula s'estira fins al silenci final</span> <span class="g">ARA</span> <span class="cm">— ancorar l'inici i TRASLLADAR</span> delta = ventana.ini - whisper[<span class="y">0</span>].start <span class="a">for</span> w <span class="a">in</span> palabras: old_dur = w.end - w.start <span class="cm"># ← preservar</span> w.start += delta w.end = w.start + old_dur <span class="cm"># ← o subtítol</span> <span class="cm"># congelat</span> <span class="cm"># El silenci final de la finestra queda LLIURE: per això</span> <span class="cm"># el subtítol desapareix a les pauses, com demanava l'</span> <span class="cm"># especificació. El bug i la feature eren el mateix.</span></div>
       <div class="sb-body reveal t-es">
         <p>Durante meses se afinaron <strong>parámetros</strong> asumiendo que el reparto proporcional era correcto. No lo era, y <strong>ninguna constante</strong> iba a arreglarlo: había que cambiar el mecanismo.</p>
         <p>La lección que me llevo no es sobre subtítulos. Es que <span class="hl">antes de optimizar un enfoque hay que comprobar que el enfoque es el correcto</span>. Medir <em>dónde</em> está el problema es más barato que optimizar donde no está.</p>
@@ -1109,7 +1133,7 @@ body{overflow:hidden}
         <p>The lesson isn't about subtitles. It's that <span class="hl">before optimizing an approach you must check the approach is the right one</span>. Measuring <em>where</em> the problem is costs less than optimizing where it isn't.</p>
         <p>A detail that costs a whole video: when moving <span class="mono">start</span> you must <strong>preserve the duration</strong> and recompute <span class="mono">end</span>. Otherwise the subtitle freezes on screen: another perfectly silent failure.</p>
         <p class="sb-kicker"><strong>The video played fine. What was broken was invisible unless you measured it.</strong></p>
-      </div>
+      </div><div class="sb-body reveal t-ca"><p>Durant mesos es van afinar <strong>paràmetres</strong> assumint que el repartiment proporcional era correcte. No ho era, i <strong>cap constant</strong> no ho arreglaria: calia canviar el mecanisme.</p> <p>La lliçó que me'n duc no va de subtítols. És que <span class="hl">abans d'optimitzar un enfocament cal comprovar que l'enfocament és el correcte</span>. Mesurar <em>on</em> és el problema és més barat que optimitzar on no hi és.</p> <p>Detall que costa un vídeo sencer: en moure <span class="mono">start</span> cal <strong>preservar la durada</strong> i recalcular <span class="mono">end</span>. Si no, el subtítol es congela a la pantalla: una altra fallada perfectament silenciosa.</p> <p class="sb-kicker"><strong>El vídeo es reproduïa bé. El que estava trencat era invisible tret de mesurant.</strong></p></div>
     </div>
   </div>
 </section>
@@ -1119,34 +1143,34 @@ body{overflow:hidden}
 <section id="garantias">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Trabajar con LLMs en producción</span><span class="t-en">Working with LLMs in production</span></div>
+      <div class="eyebrow"><span class="t-es">Trabajar con LLMs en producción</span><span class="t-en">Working with LLMs in production</span><span class="t-ca">Treballar amb LLMs en producció</span></div>
       <h2 class="t-es">Tres cosas que el prompt prometió y no cumplió</h2>
-      <h2 class="t-en">Three things the prompt promised and didn't deliver</h2>
+      <h2 class="t-en">Three things the prompt promised and didn't deliver</h2><h2 class="t-ca">Tres coses que el prompt va prometre i no va complir</h2>
       <p class="t-es">Esta es la regla más cara del proyecto, y la pagué <strong>tres veces</strong>: una garantía escrita en prosa dentro de un prompt <strong>no está garantizada</strong>. El modelo la cumple casi siempre, y «casi siempre» en un sistema autónomo significa que el fallo llega a la salida sin que nadie lo vea. Lo que importa no es que lo diga el prompt: es <strong>quién lo comprueba después</strong>.</p>
-      <p class="t-en">This is the project's most expensive rule, and I paid for it <strong>three times</strong>: a guarantee written in prose inside a prompt <strong>is not guaranteed</strong>. The model complies almost always, and "almost always" in an autonomous system means the failure reaches the output unseen. What matters isn't that the prompt says it: it's <strong>who checks afterwards</strong>.</p>
+      <p class="t-en">This is the project's most expensive rule, and I paid for it <strong>three times</strong>: a guarantee written in prose inside a prompt <strong>is not guaranteed</strong>. The model complies almost always, and "almost always" in an autonomous system means the failure reaches the output unseen. What matters isn't that the prompt says it: it's <strong>who checks afterwards</strong>.</p><p class="t-ca">Aquesta és la regla més cara del projecte, i la vaig pagar <strong>tres vegades</strong>: una garantia escrita en prosa dins d'un prompt <strong>no està garantida</strong>. El model la compleix gairebé sempre, i «gairebé sempre» en un sistema autònom vol dir que la fallada arriba a la sortida sense que ningú la vegi. El que importa no és que ho digui el prompt: és <strong>qui ho comprova després</strong>.</p>
     </div>
 
     <div class="eps">
       <div class="ep reveal">
-        <div class="epn"><span class="t-es">Episodio 01 · respiración</span><span class="t-en">Episode 01 · breathing</span></div>
-        <h4><span class="t-es">«Pon una coma cada 8-12 palabras»</span><span class="t-en">"Add a comma every 8-12 words"</span></h4>
-        <p class="prom"><span class="t-es">Sin comas, el TTS <b>se inventa</b> dónde respirar: pausas de 0,44 s en mitad de una idea.</span><span class="t-en">Without commas the TTS <b>invents</b> where to breathe: 0.44 s pauses mid-idea.</span></p>
-        <div class="meas"><span class="t-es">Medido con la regla puesta:<br>167 · 129 · <b>0</b> · <b>0</b> comas en 4 generaciones.<br>Frases de 19 a 67 palabras de media.</span><span class="t-en">Measured with the rule in place:<br>167 · 129 · <b>0</b> · <b>0</b> commas across 4 runs.<br>Sentences averaging 19 to 67 words.</span></div>
-        <div class="fix"><span class="t-es">→ <b>_ensure_breathing_commas</b> las inserta en código, solo delante de conectores. Pausas inesperadas 2 → 0.</span><span class="t-en">→ <b>_ensure_breathing_commas</b> inserts them in code, only before connectors. Unexpected pauses 2 → 0.</span></div>
+        <div class="epn"><span class="t-es">Episodio 01 · respiración</span><span class="t-en">Episode 01 · breathing</span><span class="t-ca">Episodi 01 · respiració</span></div>
+        <h4><span class="t-es">«Pon una coma cada 8-12 palabras»</span><span class="t-en">"Add a comma every 8-12 words"</span><span class="t-ca">«Posa una coma cada 8-12 paraules»</span></h4>
+        <p class="prom"><span class="t-es">Sin comas, el TTS <b>se inventa</b> dónde respirar: pausas de 0,44 s en mitad de una idea.</span><span class="t-en">Without commas the TTS <b>invents</b> where to breathe: 0.44 s pauses mid-idea.</span><span class="t-ca">Sense comes, el TTS <b>s'inventa</b> on respirar: pauses de 0,44 s enmig d'una idea.</span></p>
+        <div class="meas"><span class="t-es">Medido con la regla puesta:<br>167 · 129 · <b>0</b> · <b>0</b> comas en 4 generaciones.<br>Frases de 19 a 67 palabras de media.</span><span class="t-en">Measured with the rule in place:<br>167 · 129 · <b>0</b> · <b>0</b> commas across 4 runs.<br>Sentences averaging 19 to 67 words.</span><span class="t-ca">Mesurat amb la regla posada:<br>167 · 129 · <b>0</b> · <b>0</b> comes en 4 generacions.<br>Frases de 19 a 67 paraules de mitjana.</span></div>
+        <div class="fix"><span class="t-es">→ <b>_ensure_breathing_commas</b> las inserta en código, solo delante de conectores. Pausas inesperadas 2 → 0.</span><span class="t-en">→ <b>_ensure_breathing_commas</b> inserts them in code, only before connectors. Unexpected pauses 2 → 0.</span><span class="t-ca">→ <b>_ensure_breathing_commas</b> les insereix en codi, només davant de connectors. Pauses inesperades 2 → 0.</span></div>
       </div>
       <div class="ep reveal">
-        <div class="epn"><span class="t-es">Episodio 02 · el título</span><span class="t-en">Episode 02 · the title</span></div>
-        <h4><span class="t-es">«Empieza el speech con el título»</span><span class="t-en">"Start the speech with the title"</span></h4>
-        <p class="prom"><span class="t-es">La intro animada dura <b>exactamente</b> lo que el narrador tarda en decir el título. Si no coincide, la intro se corta a media frase.</span><span class="t-en">The animated intro lasts <b>exactly</b> as long as the narrator takes to say the title. If it doesn't match, the intro cuts mid-sentence.</span></p>
-        <div class="meas"><span class="t-es">El modelo lo cumplía… hasta que no.<br>Y el fallo no aborta nada: produce un vídeo entero con la intro descuadrada.</span><span class="t-en">The model complied… until it didn't.<br>And the failure aborts nothing: it produces a whole video with a misaligned intro.</span></div>
-        <div class="fix"><span class="t-es">→ <b>_ensure_title_at_start</b> lo fuerza tras generar, borrando el solapamiento parcial.</span><span class="t-en">→ <b>_ensure_title_at_start</b> forces it after generation, stripping the partial overlap.</span></div>
+        <div class="epn"><span class="t-es">Episodio 02 · el título</span><span class="t-en">Episode 02 · the title</span><span class="t-ca">Episodi 02 · el títol</span></div>
+        <h4><span class="t-es">«Empieza el speech con el título»</span><span class="t-en">"Start the speech with the title"</span><span class="t-ca">«Comença el speech amb el títol»</span></h4>
+        <p class="prom"><span class="t-es">La intro animada dura <b>exactamente</b> lo que el narrador tarda en decir el título. Si no coincide, la intro se corta a media frase.</span><span class="t-en">The animated intro lasts <b>exactly</b> as long as the narrator takes to say the title. If it doesn't match, the intro cuts mid-sentence.</span><span class="t-ca">La intro animada dura <b>exactament</b> el que el narrador triga a dir el títol. Si no coincideix, la intro es talla a mitja frase.</span></p>
+        <div class="meas"><span class="t-es">El modelo lo cumplía… hasta que no.<br>Y el fallo no aborta nada: produce un vídeo entero con la intro descuadrada.</span><span class="t-en">The model complied… until it didn't.<br>And the failure aborts nothing: it produces a whole video with a misaligned intro.</span><span class="t-ca">El model ho complia… fins que no.<br>I la fallada no avorta res: produeix un vídeo sencer amb la intro descentrada.</span></div>
+        <div class="fix"><span class="t-es">→ <b>_ensure_title_at_start</b> lo fuerza tras generar, borrando el solapamiento parcial.</span><span class="t-en">→ <b>_ensure_title_at_start</b> forces it after generation, stripping the partial overlap.</span><span class="t-ca">→ <b>_ensure_title_at_start</b> ho força després de generar, esborrant el solapament parcial.</span></div>
       </div>
       <div class="ep reveal">
-        <div class="epn"><span class="t-es">Episodio 03 · variedad</span><span class="t-en">Episode 03 · variety</span></div>
-        <h4><span class="t-es">«Que sea DISTINTA a cualquier otra»</span><span class="t-en">"Make it DIFFERENT from any other"</span></h4>
-        <p class="prom"><span class="t-es">Cada short es una llamada independiente con el mismo prompt. El modelo <b>no podía saber</b> cuáles eran «las otras».</span><span class="t-en">Each short is an independent call with the same prompt. The model <b>could not know</b> which "the others" were.</span></p>
-        <div class="meas"><span class="t-es">Corrida real: los <b>4 shorts</b> con el mismo argumento.<br>Solo cambiaba el final… y una vez «hermano» por «hermana».</span><span class="t-en">Real run: all <b>4 shorts</b> with the same plot.<br>Only the ending changed… and once "brother" for "sister".</span></div>
-        <div class="fix"><span class="t-es">→ Se le pasan los títulos ya generados (<b>avoid</b>), incluidos los de corridas anteriores leídos del disco.</span><span class="t-en">→ It receives the already-generated titles (<b>avoid</b>), including previous runs' read from disk.</span></div>
+        <div class="epn"><span class="t-es">Episodio 03 · variedad</span><span class="t-en">Episode 03 · variety</span><span class="t-ca">Episodi 03 · varietat</span></div>
+        <h4><span class="t-es">«Que sea DISTINTA a cualquier otra»</span><span class="t-en">"Make it DIFFERENT from any other"</span><span class="t-ca">«Que sigui DIFERENT a qualsevol altra»</span></h4>
+        <p class="prom"><span class="t-es">Cada short es una llamada independiente con el mismo prompt. El modelo <b>no podía saber</b> cuáles eran «las otras».</span><span class="t-en">Each short is an independent call with the same prompt. The model <b>could not know</b> which "the others" were.</span><span class="t-ca">Cada short és una crida independent amb el mateix prompt. El model <b>no podia saber</b> quines eren «les altres».</span></p>
+        <div class="meas"><span class="t-es">Corrida real: los <b>4 shorts</b> con el mismo argumento.<br>Solo cambiaba el final… y una vez «hermano» por «hermana».</span><span class="t-en">Real run: all <b>4 shorts</b> with the same plot.<br>Only the ending changed… and once "brother" for "sister".</span><span class="t-ca">Execució real: els <b>4 shorts</b> amb el mateix argument.<br>Només canviava el final… i un cop «germà» per «germana».</span></div>
+        <div class="fix"><span class="t-es">→ Se le pasan los títulos ya generados (<b>avoid</b>), incluidos los de corridas anteriores leídos del disco.</span><span class="t-en">→ It receives the already-generated titles (<b>avoid</b>), including previous runs' read from disk.</span><span class="t-ca">→ Se li passen els títols ja generats (<b>avoid</b>), inclosos els d'execucions anteriors llegits del disc.</span></div>
       </div>
     </div>
 
@@ -1182,7 +1206,7 @@ body{overflow:hidden}
     <span class="a">if</span> marker <span class="a">in</span> title.lower(): <span class="a">return</span> <span class="r">False</span>
 <span class="a">if</span> es_hits < <span class="y">2</span> <span class="a">and</span> <span class="a">not</span> accents: <span class="a">return</span> <span class="r">False</span>
 <span class="cm"># → retry with a harder instruction</span>
-</div>
+</div><div class="sb-code reveal t-ca"><span class="cm"># i el guàrdia que corona els tres: validar la sortida</span> <span class="cm"># modules/script_generator.py :: _validar_salida</span> <span class="cm"># CAS REAL: un model de raonament va escriure el seu</span> <span class="cm"># raonament EN COMPTES de la història. El títol va sortir:</span> <span class="r">"The user wants a viral micro-story script for Shorts."</span> <span class="cm"># …i aquell títol va anar a la MINIATURA i a la INTRO.</span> <span class="cm"># El vídeo: 4,5 segons. Va acabar sense error.</span> <span class="a">if</span> <span class="a">not</span> (min_pal &lt;= len(titulo.split()) &lt;= <span class="y">45</span>): <span class="a">return</span> <span class="r">False</span>, <span class="cm"># títol implausible</span> <span class="a">for</span> marcador <span class="a">in</span> (<span class="b">"the user"</span>, <span class="b">"here is"</span>, <span class="b">"```"</span>, …): <span class="a">if</span> marcador <span class="a">in</span> titulo.lower(): <span class="a">return</span> <span class="r">False</span> <span class="a">if</span> aciertos_es &lt; <span class="y">2</span> <span class="a">and</span> <span class="a">not</span> tildes: <span class="a">return</span> <span class="r">False</span> <span class="cm"># → reintent amb una instrucció més dura</span></div>
       <div class="sb-body reveal t-es">
         <p>El corolario práctico, y es transferible a cualquier producto con un LLM dentro: <strong>toda salida de modelo que alimente algo irreversible pasa por un validador</strong>. Aquí «irreversible» es la miniatura y la intro de un vídeo que se sube.</p>
         <p>Y su reverso, que también aplico: cuando una decisión exige un juicio que el modelo <span class="hl">no puede dar de forma fiable</span>, no le pido su mejor intento, porque su mejor intento produce <em>ruido plausible</em>, que es peor que un hueco: nadie lo detecta.</p>
@@ -1192,7 +1216,7 @@ body{overflow:hidden}
         <p>The practical corollary, transferable to any product with an LLM inside: <strong>every model output feeding something irreversible goes through a validator</strong>. Here "irreversible" is the thumbnail and intro of a video that gets uploaded.</p>
         <p>And its flip side, which I also apply: when a decision needs judgment the model <span class="hl">cannot reliably provide</span>, I don't ask for its best attempt, because its best attempt produces <em>plausible noise</em>, which is worse than a gap: nobody detects it.</p>
         <p class="sb-kicker"><strong>A guarantee promised in prose isn't guaranteed until an <span class="mono">if</span> enforces it.</strong></p>
-      </div>
+      </div><div class="sb-body reveal t-ca"><p>El corol·lari pràctic, i és transferible a qualsevol producte amb un LLM a dins: <strong>tota sortida de model que alimenti alguna cosa irreversible passa per un validador</strong>. Aquí «irreversible» és la miniatura i la intro d'un vídeo que es puja.</p> <p>I el seu revers, que també aplico: quan una decisió exigeix un judici que el model <span class="hl">no pot donar de manera fiable</span>, no li demano el seu millor intent, perquè el seu millor intent produeix <em>soroll plausible</em>, que és pitjor que un buit: ningú no el detecta.</p> <p class="sb-kicker"><strong>Una garantia promesa en prosa no està garantida fins que un <span class="mono">if</span> la força.</strong></p></div>
     </div>
   </div>
 </section>
@@ -1202,54 +1226,54 @@ body{overflow:hidden}
 <section id="silencioso">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Los cuatro que terminaron sin error</span><span class="t-en">The four that finished without error</span></div>
+      <div class="eyebrow"><span class="t-es">Los cuatro que terminaron sin error</span><span class="t-en">The four that finished without error</span><span class="t-ca">Els quatre que van acabar sense error</span></div>
       <h2 class="t-es">Verde local ≠ funciona</h2>
-      <h2 class="t-en">Green locally ≠ works</h2>
+      <h2 class="t-en">Green locally ≠ works</h2><h2 class="t-ca">Verd local ≠ funciona</h2>
       <p class="t-es">Los cuatro bugs graves de este repo produjeron <strong>vídeos completos y reproducibles</strong>. Ninguno se habría cazado leyendo el código, y ninguno disparó una alarma. Lo que los delató fue <strong>medir la salida</strong>. Esta tabla es, para mí, el activo del proyecto: la diferencia entre la señal fácil y el dato.</p>
-      <p class="t-en">All four serious bugs in this repo produced <strong>complete, playable videos</strong>. None would have been caught by reading the code, and none raised an alarm. What exposed them was <strong>measuring the output</strong>. This table is, to me, the project's real asset: the gap between the easy signal and the datum.</p>
+      <p class="t-en">All four serious bugs in this repo produced <strong>complete, playable videos</strong>. None would have been caught by reading the code, and none raised an alarm. What exposed them was <strong>measuring the output</strong>. This table is, to me, the project's real asset: the gap between the easy signal and the datum.</p><p class="t-ca">Els quatre bugs greus d'aquest repo van produir <strong>vídeos complets i reproduïbles</strong>. Cap s'hauria caçat llegint el codi, i cap va disparar una alarma. El que els va delatar va ser <strong>mesurar la sortida</strong>. Aquesta taula és, per a mi, l'actiu del projecte: la diferència entre el senyal fàcil i la dada.</p>
     </div>
 
     <table class="stbl reveal">
       <thead><tr>
-        <th><span class="t-es">El fallo</span><span class="t-en">The failure</span></th>
-        <th><span class="t-es">Lo que decía la señal fácil</span><span class="t-en">What the easy signal said</span></th>
-        <th><span class="t-es">Lo que dijo la medición</span><span class="t-en">What the measurement said</span></th>
-        <th><span class="t-es">La defensa que existe hoy</span><span class="t-en">The defense that exists today</span></th>
+        <th><span class="t-es">El fallo</span><span class="t-en">The failure</span><span class="t-ca">La fallada</span></th>
+        <th><span class="t-es">Lo que decía la señal fácil</span><span class="t-en">What the easy signal said</span><span class="t-ca">El que deia el senyal fàcil</span></th>
+        <th><span class="t-es">Lo que dijo la medición</span><span class="t-en">What the measurement said</span><span class="t-ca">El que va dir la mesura</span></th>
+        <th><span class="t-es">La defensa que existe hoy</span><span class="t-en">The defense that exists today</span><span class="t-ca">La defensa que existeix avui</span></th>
       </tr></thead>
       <tbody>
         <tr>
-          <td data-h="The failure" data-h-es="El fallo"><span class="sn"><span class="t-es">Demuxer concat</span><span class="t-en">concat demuxer</span></span><span class="sd"><span class="t-es">rutas relativas en la lista, resueltas respecto al directorio del fichero y no al cwd</span><span class="t-en">relative paths in the list, resolved against the file's directory, not the cwd</span></span></td>
-          <td data-h="Easy signal" data-h-es="Lo que decía la señal fácil" class="easy"><span class="t-es">«la ingesta terminó»</span><span class="t-en">"ingest finished"</span></td>
-          <td data-h="Measurement" data-h-es="Lo que dijo la medición" class="mono"><span class="t-es"><b>nunca funcionó.</b> La única corrida real era 95% gameplay y tomaba el atajo de <span class="mono">-ss/-to</span></span><span class="t-en"><b>it never worked.</b> The only real run was 95% gameplay and took the <span class="mono">-ss/-to</span> shortcut</span></td>
-          <td data-h="Defense" data-h-es="Defensa"><span class="v v-val"><span class="t-es">rutas absolutas</span><span class="t-en">absolute paths</span></span><span class="sd"><span class="t-es">+ un segmento que falla ya no entra en la lista</span><span class="t-en">+ a failed segment no longer enters the list</span></span></td>
+          <td data-h="The failure" data-h-es="El fallo" data-h-ca="La fallada"><span class="sn"><span class="t-es">Demuxer concat</span><span class="t-en">concat demuxer</span><span class="t-ca">Demuxer concat</span></span><span class="sd"><span class="t-es">rutas relativas en la lista, resueltas respecto al directorio del fichero y no al cwd</span><span class="t-en">relative paths in the list, resolved against the file's directory, not the cwd</span><span class="t-ca">rutes relatives a la llista, resoltes respecte al directori del fitxer i no al cwd</span></span></td>
+          <td data-h="Easy signal" data-h-es="Lo que decía la señal fácil" data-h-ca="El que deia el senyal fàcil" class="easy"><span class="t-es">«la ingesta terminó»</span><span class="t-en">"ingest finished"</span><span class="t-ca">«la ingesta ha acabat»</span></td>
+          <td data-h="Measurement" data-h-es="Lo que dijo la medición" data-h-ca="El que va dir la mesura" class="mono"><span class="t-es"><b>nunca funcionó.</b> La única corrida real era 95% gameplay y tomaba el atajo de <span class="mono">-ss/-to</span></span><span class="t-en"><b>it never worked.</b> The only real run was 95% gameplay and took the <span class="mono">-ss/-to</span> shortcut</span><span class="t-ca"><b>mai va funcionar.</b> L'única execució real era 95% gameplay i prenia la drecera de <span class="mono">-ss/-to</span></span></td>
+          <td data-h="Defense" data-h-es="Defensa" data-h-ca="Defensa"><span class="v v-val"><span class="t-es">rutas absolutas</span><span class="t-en">absolute paths</span><span class="t-ca">rutes absolutes</span></span><span class="sd"><span class="t-es">+ un segmento que falla ya no entra en la lista</span><span class="t-en">+ a failed segment no longer enters the list</span><span class="t-ca">+ un segment que falla ja no entra a la llista</span></span></td>
         </tr>
         <tr>
-          <td data-h="The failure" data-h-es="El fallo"><span class="sn"><span class="t-es">Subtítulos por detrás</span><span class="t-en">Subtitles running late</span></span><span class="sd"><span class="t-es">reparto proporcional sobre una ventana que incluye los silencios</span><span class="t-en">proportional split over a window that includes the silences</span></span></td>
-          <td data-h="Easy signal" data-h-es="Lo que decía la señal fácil" class="easy"><span class="t-es">«los subtítulos salen»</span><span class="t-en">"the subtitles show up"</span></td>
-          <td data-h="Measurement" data-h-es="Lo que dijo la medición" class="mono"><b>+0,435 s</b> <span class="t-es">de sesgo medio · <b>1,064 s</b> de máximo</span><span class="t-en">mean bias · <b>1.064 s</b> max</span></td>
-          <td data-h="Defense" data-h-es="Defensa"><span class="v v-val"><span class="t-es">anclas duras</span><span class="t-en">hard anchors</span></span><span class="sd"><span class="t-es">y el sincronismo es la métrica primaria del gate</span><span class="t-en">and sync is the gate's primary metric</span></span></td>
+          <td data-h="The failure" data-h-es="El fallo" data-h-ca="La fallada"><span class="sn"><span class="t-es">Subtítulos por detrás</span><span class="t-en">Subtitles running late</span><span class="t-ca">Subtítols per darrere</span></span><span class="sd"><span class="t-es">reparto proporcional sobre una ventana que incluye los silencios</span><span class="t-en">proportional split over a window that includes the silences</span><span class="t-ca">repartiment proporcional sobre una finestra que inclou els silencis</span></span></td>
+          <td data-h="Easy signal" data-h-es="Lo que decía la señal fácil" data-h-ca="El que deia el senyal fàcil" class="easy"><span class="t-es">«los subtítulos salen»</span><span class="t-en">"the subtitles show up"</span><span class="t-ca">«els subtítols surten»</span></td>
+          <td data-h="Measurement" data-h-es="Lo que dijo la medición" data-h-ca="El que va dir la mesura" class="mono"><b>+0,435 s</b> <span class="t-es">de sesgo medio · <b>1,064 s</b> de máximo</span><span class="t-en">mean bias · <b>1.064 s</b> max</span><span class="t-ca">de biaix mitjà · <b>1,064 s</b> de màxim</span></td>
+          <td data-h="Defense" data-h-es="Defensa" data-h-ca="Defensa"><span class="v v-val"><span class="t-es">anclas duras</span><span class="t-en">hard anchors</span><span class="t-ca">àncores dures</span></span><span class="sd"><span class="t-es">y el sincronismo es la métrica primaria del gate</span><span class="t-en">and sync is the gate's primary metric</span><span class="t-ca">i el sincronisme és la mètrica primària del gate</span></span></td>
         </tr>
         <tr>
-          <td data-h="The failure" data-h-es="El fallo"><span class="sn"><span class="t-es">Shorts clonados</span><span class="t-en">Cloned shorts</span></span><span class="sd"><span class="t-es">N llamadas independientes con un prompt idéntico</span><span class="t-en">N independent calls with an identical prompt</span></span></td>
-          <td data-h="Easy signal" data-h-es="Lo que decía la señal fácil" class="easy"><span class="t-es">«se generaron 4 shorts»</span><span class="t-en">"4 shorts were generated"</span></td>
-          <td data-h="Measurement" data-h-es="Lo que dijo la medición" class="mono"><span class="t-es">los <b>4 con el mismo argumento</b>; solo cambiaba el final</span><span class="t-en">all <b>4 with the same plot</b>; only the ending changed</span></td>
-          <td data-h="Defense" data-h-es="Defensa"><span class="v v-val">avoid[]</span><span class="sd"><span class="t-es">+ prohibido validar con <span class="mono">--no-shorts</span></span><span class="t-en">+ validating with <span class="mono">--no-shorts</span> is banned</span></span></td>
+          <td data-h="The failure" data-h-es="El fallo" data-h-ca="La fallada"><span class="sn"><span class="t-es">Shorts clonados</span><span class="t-en">Cloned shorts</span><span class="t-ca">Shorts clonats</span></span><span class="sd"><span class="t-es">N llamadas independientes con un prompt idéntico</span><span class="t-en">N independent calls with an identical prompt</span><span class="t-ca">N crides independents amb un prompt idèntic</span></span></td>
+          <td data-h="Easy signal" data-h-es="Lo que decía la señal fácil" data-h-ca="El que deia el senyal fàcil" class="easy"><span class="t-es">«se generaron 4 shorts»</span><span class="t-en">"4 shorts were generated"</span><span class="t-ca">«s'han generat 4 shorts»</span></td>
+          <td data-h="Measurement" data-h-es="Lo que dijo la medición" data-h-ca="El que va dir la mesura" class="mono"><span class="t-es">los <b>4 con el mismo argumento</b>; solo cambiaba el final</span><span class="t-en">all <b>4 with the same plot</b>; only the ending changed</span><span class="t-ca">els <b>4 amb el mateix argument</b>; només canviava el final</span></td>
+          <td data-h="Defense" data-h-es="Defensa" data-h-ca="Defensa"><span class="v v-val">avoid[]</span><span class="sd"><span class="t-es">+ prohibido validar con <span class="mono">--no-shorts</span></span><span class="t-en">+ validating with <span class="mono">--no-shorts</span> is banned</span><span class="t-ca">+ prohibit validar amb <span class="mono">--no-shorts</span></span></span></td>
         </tr>
         <tr>
-          <td data-h="The failure" data-h-es="El fallo"><span class="sn"><span class="t-es">Comas del prompt</span><span class="t-en">The prompt's commas</span></span><span class="sd"><span class="t-es">una regla de estilo que el modelo cumplía a ratos</span><span class="t-en">a style rule the model followed sometimes</span></span></td>
-          <td data-h="Easy signal" data-h-es="Lo que decía la señal fácil" class="easy"><span class="t-es">«la regla está en el prompt»</span><span class="t-en">"the rule is in the prompt"</span></td>
-          <td data-h="Measurement" data-h-es="Lo que dijo la medición" class="mono">167 · 129 · <b>0</b> · <b>0</b> <span class="t-es">en 4 generaciones</span><span class="t-en">across 4 generations</span></td>
-          <td data-h="Defense" data-h-es="Defensa"><span class="v v-val"><span class="t-es">impuesto en código</span><span class="t-en">enforced in code</span></span><span class="sd"><span class="t-es">con un invariante: no cambia el nº de palabras</span><span class="t-en">with an invariant: it never changes the word count</span></span></td>
+          <td data-h="The failure" data-h-es="El fallo" data-h-ca="La fallada"><span class="sn"><span class="t-es">Comas del prompt</span><span class="t-en">The prompt's commas</span><span class="t-ca">Comes del prompt</span></span><span class="sd"><span class="t-es">una regla de estilo que el modelo cumplía a ratos</span><span class="t-en">a style rule the model followed sometimes</span><span class="t-ca">una regla d'estil que el model complia a estones</span></span></td>
+          <td data-h="Easy signal" data-h-es="Lo que decía la señal fácil" data-h-ca="El que deia el senyal fàcil" class="easy"><span class="t-es">«la regla está en el prompt»</span><span class="t-en">"the rule is in the prompt"</span><span class="t-ca">«la regla és al prompt»</span></td>
+          <td data-h="Measurement" data-h-es="Lo que dijo la medición" data-h-ca="El que va dir la mesura" class="mono">167 · 129 · <b>0</b> · <b>0</b> <span class="t-es">en 4 generaciones</span><span class="t-en">across 4 generations</span><span class="t-ca">en 4 generacions</span></td>
+          <td data-h="Defense" data-h-es="Defensa" data-h-ca="Defensa"><span class="v v-val"><span class="t-es">impuesto en código</span><span class="t-en">enforced in code</span><span class="t-ca">imposat en codi</span></span><span class="sd"><span class="t-es">con un invariante: no cambia el nº de palabras</span><span class="t-en">with an invariant: it never changes the word count</span><span class="t-ca">amb un invariant: no canvia el nre. de paraules</span></span></td>
         </tr>
         <tr>
-          <td data-h="The failure" data-h-es="El fallo"><span class="sn"><span class="t-es">Y una trampa de medición</span><span class="t-en">And a measurement trap</span></span><span class="sd"><span class="t-es">un fixture de sincronismo construido repitiendo el mismo párrafo 4 veces</span><span class="t-en">a sync fixture built by repeating the same paragraph 4 times</span></span></td>
-          <td data-h="Easy signal" data-h-es="Lo que decía la señal fácil" class="easy"><span class="t-es">«2,525 s de error, está roto»</span><span class="t-en">"2.525 s of error, it's broken"</span></td>
-          <td data-h="Measurement" data-h-es="Lo que dijo la medición" class="mono"><span class="t-es">el <b>mismo valor exacto</b> en 3 de 5 repeticiones → el emparejador enganchaba la copia equivocada</span><span class="t-en">the <b>exact same value</b> in 3 of 5 repeats → the matcher latched onto the wrong copy</span></td>
-          <td data-h="Defense" data-h-es="Defensa"><span class="v v-inc"><span class="t-es">fixtures no repetidos</span><span class="t-en">non-repeating fixtures</span></span><span class="sd"><span class="t-es">un valor idéntico entre corridas es la firma del artefacto</span><span class="t-en">an identical value across runs is the artifact's signature</span></span></td>
+          <td data-h="The failure" data-h-es="El fallo" data-h-ca="La fallada"><span class="sn"><span class="t-es">Y una trampa de medición</span><span class="t-en">And a measurement trap</span><span class="t-ca">I una trampa de mesura</span></span><span class="sd"><span class="t-es">un fixture de sincronismo construido repitiendo el mismo párrafo 4 veces</span><span class="t-en">a sync fixture built by repeating the same paragraph 4 times</span><span class="t-ca">un fixture de sincronisme construït repetint el mateix paràgraf 4 vegades</span></span></td>
+          <td data-h="Easy signal" data-h-es="Lo que decía la señal fácil" data-h-ca="El que deia el senyal fàcil" class="easy"><span class="t-es">«2,525 s de error, está roto»</span><span class="t-en">"2.525 s of error, it's broken"</span><span class="t-ca">«2,525 s d'error, està trencat»</span></td>
+          <td data-h="Measurement" data-h-es="Lo que dijo la medición" data-h-ca="El que va dir la mesura" class="mono"><span class="t-es">el <b>mismo valor exacto</b> en 3 de 5 repeticiones → el emparejador enganchaba la copia equivocada</span><span class="t-en">the <b>exact same value</b> in 3 of 5 repeats → the matcher latched onto the wrong copy</span><span class="t-ca">el <b>mateix valor exacte</b> en 3 de 5 repeticions → l'emparellador enganxava la còpia equivocada</span></td>
+          <td data-h="Defense" data-h-es="Defensa" data-h-ca="Defensa"><span class="v v-inc"><span class="t-es">fixtures no repetidos</span><span class="t-en">non-repeating fixtures</span><span class="t-ca">fixtures no repetits</span></span><span class="sd"><span class="t-es">un valor idéntico entre corridas es la firma del artefacto</span><span class="t-en">an identical value across runs is the artifact's signature</span><span class="t-ca">un valor idèntic entre execucions és la signatura de l'artefacte</span></span></td>
         </tr>
       </tbody>
     </table>
-    <p class="engine-cap reveal" style="margin-top:22px"><span class="t-es">La última fila es la que más me enseñó: <b>desconfiar de mi propia medición</b>. Un número que sale idéntico tres veces no es precisión, es un artefacto del test. Si la herramienta puede mentir, el dato tampoco vale.</span><span class="t-en">The last row taught me the most: <b>distrust my own measurement</b>. A number that comes out identical three times isn't precision, it's a test artifact. If the tool can lie, the datum is worthless too.</span></p>
+    <p class="engine-cap reveal" style="margin-top:22px"><span class="t-es">La última fila es la que más me enseñó: <b>desconfiar de mi propia medición</b>. Un número que sale idéntico tres veces no es precisión, es un artefacto del test. Si la herramienta puede mentir, el dato tampoco vale.</span><span class="t-en">The last row taught me the most: <b>distrust my own measurement</b>. A number that comes out identical three times isn't precision, it's a test artifact. If the tool can lie, the datum is worthless too.</span><span class="t-ca">L'última fila és la que més em va ensenyar: <b>desconfiar de la meva pròpia mesura</b>. Un número que surt idèntic tres vegades no és precisió, és un artefacte del test. Si l'eina pot mentir, la dada tampoc val.</span></p>
   </div>
 </section>
 
@@ -1258,25 +1282,25 @@ body{overflow:hidden}
 <section id="cuota">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">La restricción que manda</span><span class="t-en">The binding constraint</span></div>
+      <div class="eyebrow"><span class="t-es">La restricción que manda</span><span class="t-en">The binding constraint</span><span class="t-ca">La restricció que mana</span></div>
       <h2 class="t-es">Aquí el coste no es dinero: es cuota</h2>
-      <h2 class="t-en">Here cost isn't money: it's quota</h2>
+      <h2 class="t-en">Here cost isn't money: it's quota</h2><h2 class="t-ca">Aquí el cost no són diners: és quota</h2>
       <p class="t-es">El proyecto corre a <strong>0 €</strong>, y por eso mismo el recurso escaso es otro: <strong>1.000 peticiones al día</strong> en OpenRouter y <strong>la cuota diaria</strong> de la YouTube Data API. Eso no es un detalle de facturación: es <strong>una restricción de arquitectura</strong>. Durante meses mi propia documentación dijo «50/día», y <strong>tres auditorías adversariales repitieron el dato falso porque estaba escrito en un <span class="mono">.md</span></strong>, hasta que se consultó la API. Está en mi ledger como <span class="mono">[DOC-01]</span>: la prosa no es prueba, ni siquiera la mía. Mueve el deslizador: la fórmula es la misma que corre en <span class="mono">main.py</span>.</p>
-      <p class="t-en">The project runs at <strong>€0</strong>, and precisely because of that the scarce resource is different: <strong>1,000 requests per day</strong> on OpenRouter and <strong>the daily quota</strong> of the YouTube Data API. That isn't a billing detail: it's <strong>an architectural constraint</strong>. For months my own documentation said «50/day», and <strong>three adversarial audits repeated the false figure because it was written in a <span class="mono">.md</span></strong>, until someone queried the API. It's in my ledger as <span class="mono">[DOC-01]</span>: prose isn't proof, not even mine. Move the slider: the formula is the one running in <span class="mono">main.py</span>.</p>
+      <p class="t-en">The project runs at <strong>€0</strong>, and precisely because of that the scarce resource is different: <strong>1,000 requests per day</strong> on OpenRouter and <strong>the daily quota</strong> of the YouTube Data API. That isn't a billing detail: it's <strong>an architectural constraint</strong>. For months my own documentation said «50/day», and <strong>three adversarial audits repeated the false figure because it was written in a <span class="mono">.md</span></strong>, until someone queried the API. It's in my ledger as <span class="mono">[DOC-01]</span>: prose isn't proof, not even mine. Move the slider: the formula is the one running in <span class="mono">main.py</span>.</p><p class="t-ca">El projecte corre a <strong>0 €</strong>, i precisament per això el recurs escàs és un altre: <strong>1.000 peticions al dia</strong> a OpenRouter i <strong>la quota diària</strong> de la YouTube Data API. Això no és un detall de facturació: és <strong>una restricció d'arquitectura</strong>. Durant mesos la meva pròpia documentació deia «50/dia», i <strong>tres auditories adversarials van repetir la dada falsa perquè estava escrita en un <span class="mono">.md</span></strong>, fins que es va consultar l'API. És al meu ledger com a <span class="mono">[DOC-01]</span>: la prosa no és prova, ni tan sols la meva. Mou el lliscador: la fórmula és la mateixa que corre a <span class="mono">main.py</span>.</p>
     </div>
 
     <div class="calc reveal">
       <div class="calc-top">
-        <span class="cl"><span class="t-es">minutos de gameplay por vídeo</span><span class="t-en">minutes of gameplay per video</span></span>
+        <span class="cl"><span class="t-es">minutos de gameplay por vídeo</span><span class="t-en">minutes of gameplay per video</span><span class="t-ca">minuts de gameplay per vídeo</span></span>
         <span class="cn"><b class="calc-n">30</b> min</span>
       </div>
       <input type="range" min="5" max="40" value="30" id="q-range" aria-label="Minutos de gameplay por vídeo">
 
       <div class="breakdown">
-        <div class="bd"><div class="bk"><span class="t-es">palabras objetivo</span><span class="t-en">target words</span></div><div class="bv" id="q-words">4.800</div></div>
-        <div class="bd"><div class="bk"><span class="t-es">bloques de historia</span><span class="t-en">story blocks</span></div><div class="bv" id="q-blocks">3 <span class="bu"><span class="t-es">peticiones</span><span class="t-en">requests</span></span></div></div>
-        <div class="bd"><div class="bk"><span class="t-es">shorts verticales</span><span class="t-en">vertical shorts</span></div><div class="bv" id="q-shorts">45 <span class="bu"><span class="t-es">peticiones</span><span class="t-en">requests</span></span></div></div>
-        <div class="bd"><div class="bk"><span class="t-es">total por vídeo</span><span class="t-en">total per video</span></div><div class="bv" id="q-total">48</div></div>
+        <div class="bd"><div class="bk"><span class="t-es">palabras objetivo</span><span class="t-en">target words</span><span class="t-ca">paraules objectiu</span></div><div class="bv" id="q-words">4.800</div></div>
+        <div class="bd"><div class="bk"><span class="t-es">bloques de historia</span><span class="t-en">story blocks</span><span class="t-ca">blocs d'història</span></div><div class="bv" id="q-blocks">3 <span class="bu"><span class="t-es">peticiones</span><span class="t-en">requests</span><span class="t-ca">peticions</span></span></div></div>
+        <div class="bd"><div class="bk"><span class="t-es">shorts verticales</span><span class="t-en">vertical shorts</span><span class="t-ca">shorts verticals</span></div><div class="bv" id="q-shorts">45 <span class="bu"><span class="t-es">peticiones</span><span class="t-en">requests</span><span class="t-ca">peticions</span></span></div></div>
+        <div class="bd"><div class="bk"><span class="t-es">total por vídeo</span><span class="t-en">total per video</span><span class="t-ca">total per vídeo</span></div><div class="bv" id="q-total">48</div></div>
       </div>
 
       <div class="gauge" id="q-gauge">
@@ -1285,25 +1309,25 @@ body{overflow:hidden}
         <span class="glbl" id="q-glbl">48 / 1000</span>
       </div>
       <div class="gauge-cap">
-        <span><span class="t-es">peticiones consumidas por UN vídeo</span><span class="t-en">requests consumed by ONE video</span></span>
-        <span><span class="t-es">tope diario de OpenRouter: 1.000</span><span class="t-en">OpenRouter daily cap: 1,000</span></span>
+        <span><span class="t-es">peticiones consumidas por UN vídeo</span><span class="t-en">requests consumed by ONE video</span><span class="t-ca">peticions consumides per UN vídeo</span></span>
+        <span><span class="t-es">tope diario de OpenRouter: 1.000</span><span class="t-en">OpenRouter daily cap: 1,000</span><span class="t-ca">sostre diari d'OpenRouter: 1.000</span></span>
       </div>
 
       <div class="verdict">
         <span class="vtxt" id="q-verdict"></span>
-        <span class="vbig"><b id="q-perday">20</b><small><span class="t-es">vídeos al día</span><span class="t-en">videos per day</span></small></span>
+        <span class="vbig"><b id="q-perday">20</b><small><span class="t-es">vídeos al día</span><span class="t-en">videos per day</span><span class="t-ca">vídeos al dia</span></small></span>
       </div>
 
       <div class="calc-note">
         <span class="t-es"><b>La fórmula es la del código, no una estimación.</b> <span class="mono">palabras = clamp(minutos × 196 wpm, 500, 8000)</span> · <span class="mono">bloques = max(2, ceil(palabras / 2000))</span> · <span class="mono">short = (200 / 200) × 60 / 1,5 = 40 s</span> · <span class="mono">shorts = max(1, floor(segundos de gameplay / 40))</span>. A eso hay que sumarle los reintentos y el análisis de competencia, que clasifica los canales candidatos en lotes de 8 y repite hasta 3 pasadas partiendo el lote (8 → 4 → 2) con los que se quedan sin veredicto. Los dos ritmos son <b>knobs separados a propósito</b> (196 wpm la historia larga, 200 los shorts): compartir la clave hacía que recalibrar la historia moviese en silencio cuántos shorts se generan, y con ellos el gasto. Con el tope diario en 1.000 la cuota ya no es la restricción que muerde, pero saber el coste <b>antes</b> de lanzar sigue siendo lo que evita morir a mitad de corrida con un 429.</span>
-        <span class="t-en"><b>The formula is the code's, not an estimate.</b> <span class="mono">words = clamp(minutes × 196 wpm, 500, 8000)</span> · <span class="mono">blocks = max(2, ceil(words / 2000))</span> · <span class="mono">short = (200 / 200) × 60 / 1.5 = 40 s</span> · <span class="mono">shorts = max(1, floor(gameplay seconds / 40))</span>. On top of that: retries, and the competition analysis, which classifies candidate channels in batches of 8 and repeats for up to 3 passes, halving the batch (8 → 4 → 2) with whatever is left unresolved. The two paces are <b>deliberately separate knobs</b> (196 wpm for the long story, 200 for shorts): sharing the key meant recalibrating the story silently moved how many shorts get generated, and with them the spend. With the daily cap at 1,000 the quota is no longer the binding constraint, but knowing the cost <b>before</b> launching is still what stops a run dying halfway with a 429.</span>
+        <span class="t-en"><b>The formula is the code's, not an estimate.</b> <span class="mono">words = clamp(minutes × 196 wpm, 500, 8000)</span> · <span class="mono">blocks = max(2, ceil(words / 2000))</span> · <span class="mono">short = (200 / 200) × 60 / 1.5 = 40 s</span> · <span class="mono">shorts = max(1, floor(gameplay seconds / 40))</span>. On top of that: retries, and the competition analysis, which classifies candidate channels in batches of 8 and repeats for up to 3 passes, halving the batch (8 → 4 → 2) with whatever is left unresolved. The two paces are <b>deliberately separate knobs</b> (196 wpm for the long story, 200 for shorts): sharing the key meant recalibrating the story silently moved how many shorts get generated, and with them the spend. With the daily cap at 1,000 the quota is no longer the binding constraint, but knowing the cost <b>before</b> launching is still what stops a run dying halfway with a 429.</span><span class="t-ca"><b>La fórmula és la del codi, no una estimació.</b> <span class="mono">palabras = clamp(minutos × 196 wpm, 500, 8000)</span> · <span class="mono">bloques = max(2, ceil(palabras / 2000))</span> · <span class="mono">short = (200 / 200) × 60 / 1,5 = 40 s</span> · <span class="mono">shorts = max(1, floor(segundos de gameplay / 40))</span>. A això cal sumar-hi els reintents i l'anàlisi de competència, que classifica els canals candidats en lots de 8 i repeteix fins a 3 passades partint el lot (8 → 4 → 2) amb els que es queden sense veredicte. Els dos ritmes són <b>knobs separats a propòsit</b> (196 wpm la història llarga, 200 els shorts): compartir la clau feia que recalibrar la història mogués en silenci quants shorts es generen, i amb ells la despesa. Amb el sostre diari a 1.000 la quota ja no és la restricció que mossega, però saber el cost <b>abans</b> de llançar segueix sent el que evita morir a mitja execució amb un 429.</span>
       </div>
     </div>
 
     <div class="quota2">
-      <div class="q2 reveal"><div class="qn"><b>0</b></div><h4><span class="t-es">búsquedas para medir 40 canales</span><span class="t-en">searches to measure 40 channels</span></h4><p><span class="t-es">Los últimos vídeos de un canal se leen por su <b>playlist de subidas</b>, no con <span class="mono">search.list</span>. El presupuesto de búsquedas es el recurso más escaso de la API, y así medir 40 canales no gasta ni una.</span><span class="t-en">A channel's latest videos are read via its <b>uploads playlist</b>, not <span class="mono">search.list</span>. The search budget is the API's scarcest resource, and this way measuring 40 channels spends none of it.</span></p></div>
-      <div class="q2 reveal"><div class="qn"><b>~470</b></div><h4><span class="t-es">unidades por escaneo</span><span class="t-en">units per scan</span></h4><p><span class="t-es">De las cuales <b>400 son las 4 búsquedas</b> de descubrimiento: el gasto dominante. Por eso las keywords <b>rotan</b> entre escaneos y el contador se corta <b>antes</b> de que Google devuelva un 403.</span><span class="t-en">Of which <b>400 are the 4 discovery searches</b>: the dominant cost. That's why keywords <b>rotate</b> between scans and the counter cuts off <b>before</b> Google returns a 403.</span></p></div>
-      <div class="q2 reveal"><div class="qn"><b>0</b></div><h4><span class="t-es">canales perdidos por un corte</span><span class="t-en">channels lost to a cutoff</span></h4><p><span class="t-es">Si la cuota se acaba a mitad, el canal se deja <b>intacto</b> para la próxima corrida. Antes quedaba marcado «sin vídeos recientes» de forma permanente y <b>la lista se vaciaba sola</b>.</span><span class="t-en">If quota runs out mid-scan, the channel is left <b>untouched</b> for the next run. It used to be permanently flagged "no recent videos" and <b>the list emptied itself</b>.</span></p></div>
+      <div class="q2 reveal"><div class="qn"><b>0</b></div><h4><span class="t-es">búsquedas para medir 40 canales</span><span class="t-en">searches to measure 40 channels</span><span class="t-ca">cerques per mesurar 40 canals</span></h4><p><span class="t-es">Los últimos vídeos de un canal se leen por su <b>playlist de subidas</b>, no con <span class="mono">search.list</span>. El presupuesto de búsquedas es el recurso más escaso de la API, y así medir 40 canales no gasta ni una.</span><span class="t-en">A channel's latest videos are read via its <b>uploads playlist</b>, not <span class="mono">search.list</span>. The search budget is the API's scarcest resource, and this way measuring 40 channels spends none of it.</span><span class="t-ca">Els últims vídeos d'un canal es llegeixen per la seva <b>playlist de pujades</b>, no amb <span class="mono">search.list</span>. El pressupost de cerques és el recurs més escàs de l'API, i així mesurar 40 canals no en gasta ni una.</span></p></div>
+      <div class="q2 reveal"><div class="qn"><b>~470</b></div><h4><span class="t-es">unidades por escaneo</span><span class="t-en">units per scan</span><span class="t-ca">unitats per escaneig</span></h4><p><span class="t-es">De las cuales <b>400 son las 4 búsquedas</b> de descubrimiento: el gasto dominante. Por eso las keywords <b>rotan</b> entre escaneos y el contador se corta <b>antes</b> de que Google devuelva un 403.</span><span class="t-en">Of which <b>400 are the 4 discovery searches</b>: the dominant cost. That's why keywords <b>rotate</b> between scans and the counter cuts off <b>before</b> Google returns a 403.</span><span class="t-ca">De les quals <b>400 són les 4 cerques</b> de descobriment: la despesa dominant. Per això les keywords <b>roten</b> entre escanejos i el comptador es talla <b>abans</b> que Google torni un 403.</span></p></div>
+      <div class="q2 reveal"><div class="qn"><b>0</b></div><h4><span class="t-es">canales perdidos por un corte</span><span class="t-en">channels lost to a cutoff</span><span class="t-ca">canals perduts per un tall</span></h4><p><span class="t-es">Si la cuota se acaba a mitad, el canal se deja <b>intacto</b> para la próxima corrida. Antes quedaba marcado «sin vídeos recientes» de forma permanente y <b>la lista se vaciaba sola</b>.</span><span class="t-en">If quota runs out mid-scan, the channel is left <b>untouched</b> for the next run. It used to be permanently flagged "no recent videos" and <b>the list emptied itself</b>.</span><span class="t-ca">Si la quota s'acaba a mitges, el canal es deixa <b>intacte</b> per a la propera execució. Abans quedava marcat «sense vídeos recents» de manera permanent i <b>la llista es buidava sola</b>.</span></p></div>
     </div>
   </div>
 </section>
@@ -1313,11 +1337,11 @@ body{overflow:hidden}
 <section id="cadena">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">La cadena de producción</span><span class="t-en">The production chain</span></div>
+      <div class="eyebrow"><span class="t-es">La cadena de producción</span><span class="t-en">The production chain</span><span class="t-ca">La cadena de producció</span></div>
       <h2 class="t-es">Nueve etapas, y ocho en las que un fallo es invisible</h2>
-      <h2 class="t-en">Nine stages, eight where a failure is invisible</h2>
+      <h2 class="t-en">Nine stages, eight where a failure is invisible</h2><h2 class="t-ca">Nou etapes, i vuit en què una fallada és invisible</h2>
       <p class="t-es">No todas las etapas merecen la misma ceremonia. Las marcadas como <strong>superficie sensible</strong> son aquellas donde un cambio puede romper la salida <strong>sin romper la ejecución</strong>, y esas no se cierran sin medir. Pasa el ratón por una etapa.</p>
-      <p class="t-en">Not every stage deserves the same ceremony. The ones marked <strong>sensitive surface</strong> are those where a change can break the output <strong>without breaking the run</strong>, and those don't close without measuring. Hover a stage.</p>
+      <p class="t-en">Not every stage deserves the same ceremony. The ones marked <strong>sensitive surface</strong> are those where a change can break the output <strong>without breaking the run</strong>, and those don't close without measuring. Hover a stage.</p><p class="t-ca">No totes les etapes mereixen la mateixa cerimònia. Les marcades com a <strong>superfície sensible</strong> són aquelles on un canvi pot trencar la sortida <strong>sense trencar l'execució</strong>, i aquestes no es tanquen sense mesurar. Passa el ratolí per una etapa.</p>
     </div>
 
     <div class="reveal">
@@ -1325,13 +1349,13 @@ body{overflow:hidden}
         <div class="rail-in" id="rail"><div class="rail-line"></div></div>
       </div>
       <div class="rail-detail" id="rail-detail"></div>
-      <div class="rail-hint"><span class="t-es">↔ desliza para ver la cadena completa · pasa el ratón o toca una etapa</span><span class="t-en">↔ swipe to see the whole chain · hover or tap a stage</span></div>
+      <div class="rail-hint"><span class="t-es">↔ desliza para ver la cadena completa · pasa el ratón o toca una etapa</span><span class="t-en">↔ swipe to see the whole chain · hover or tap a stage</span><span class="t-ca">↔ llisca per veure la cadena completa · passa el ratolí o toca una etapa</span></div>
     </div>
 
     <div class="twin reveal">
-      <span class="tl2 grad-text"><span class="t-es">El gemelo que nadie mira</span><span class="t-en">The twin nobody looks at</span></span>
+      <span class="tl2 grad-text"><span class="t-es">El gemelo que nadie mira</span><span class="t-en">The twin nobody looks at</span><span class="t-ca">El bessó que ningú mira</span></span>
       <p class="t-es">Los shorts verticales <b>comparten</b> con el vídeo largo la intro animada, el woosh, la alineación y los subtítulos, pero con PlayRes, posición y velocidad distintas. Un arreglo en uno casi siempre tiene <b>gemelo</b> en el otro, y el de los shorts es el que nadie revisa: ahí vivieron los 4 shorts idénticos. Por eso la regla del repo no dice «arregla la función», dice <b>«enumera las dos etapas»</b>, y correr con <span class="mono">--no-shorts</span> está prohibido para validar un cambio.</p>
-      <p class="t-en">Vertical shorts <b>share</b> the animated intro, the woosh, the alignment and the subtitles with the long video, but with different PlayRes, position and speed. A fix in one almost always has a <b>twin</b> in the other, and the shorts' one is what nobody reviews: that's where the 4 identical shorts lived. That's why the repo's rule doesn't say "fix the function", it says <b>"enumerate both stages"</b>, and running with <span class="mono">--no-shorts</span> is banned for validating a change.</p>
+      <p class="t-en">Vertical shorts <b>share</b> the animated intro, the woosh, the alignment and the subtitles with the long video, but with different PlayRes, position and speed. A fix in one almost always has a <b>twin</b> in the other, and the shorts' one is what nobody reviews: that's where the 4 identical shorts lived. That's why the repo's rule doesn't say "fix the function", it says <b>"enumerate both stages"</b>, and running with <span class="mono">--no-shorts</span> is banned for validating a change.</p><p class="t-ca">Els shorts verticals <b>comparteixen</b> amb el vídeo llarg la intro animada, el woosh, l'alineació i els subtítols, però amb PlayRes, posició i velocitat diferents. Un arranjament en un gairebé sempre té <b>bessó</b> a l'altre, i el dels shorts és el que ningú revisa: allà van viure els 4 shorts idèntics. Per això la regla del repo no diu «arregla la funció», diu <b>«enumera les dues etapes»</b>, i córrer amb <span class="mono">--no-shorts</span> està prohibit per validar un canvi.</p>
     </div>
   </div>
 </section>
@@ -1341,11 +1365,11 @@ body{overflow:hidden}
 <section id="metodo">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span></div>
+      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span><span class="t-ca">Com treballo amb IA</span></div>
       <h2 class="t-es">Un gate con dientes, y un panel que intenta romper mi propio vídeo</h2>
-      <h2 class="t-en">A gate with teeth, and a panel trying to break my own video</h2>
+      <h2 class="t-en">A gate with teeth, and a panel trying to break my own video</h2><h2 class="t-ca">Un gate amb dents, i un panell que intenta trencar el meu propi vídeo</h2>
       <p class="t-es">No le pido a la IA una respuesta. Un orquestador delega la implementación en agentes en paralelo, y después <strong>un panel escéptico ataca</strong> lo construido: <span class="mono">bug-hunter</span> localiza la causa raíz <em>sin contexto previo</em>, <span class="mono">output-audit</span> intenta <strong>demostrar que el vídeo está roto</strong> midiendo sus artefactos, y <span class="mono">/eval</span> corre la cadena entera contra un clip fijo y compara con el baseline. El orquestador <strong>re-deriva cada veredicto ejecutando</strong>, nunca por informe. Yo juzgo lo que ninguna capa puede juzgar.</p>
-      <p class="t-en">I don't ask the AI for an answer. An orchestrator delegates implementation to parallel agents, then <strong>a skeptical panel attacks</strong> what was built: <span class="mono">bug-hunter</span> finds the root cause <em>with no prior context</em>, <span class="mono">output-audit</span> tries to <strong>prove the video is broken</strong> by measuring its artifacts, and <span class="mono">/eval</span> runs the whole chain against a fixed clip and compares to the baseline. The orchestrator <strong>re-derives every verdict by executing</strong>, never by report. I judge what no layer can judge.</p>
+      <p class="t-en">I don't ask the AI for an answer. An orchestrator delegates implementation to parallel agents, then <strong>a skeptical panel attacks</strong> what was built: <span class="mono">bug-hunter</span> finds the root cause <em>with no prior context</em>, <span class="mono">output-audit</span> tries to <strong>prove the video is broken</strong> by measuring its artifacts, and <span class="mono">/eval</span> runs the whole chain against a fixed clip and compares to the baseline. The orchestrator <strong>re-derives every verdict by executing</strong>, never by report. I judge what no layer can judge.</p><p class="t-ca">No li demano a la IA una resposta. Un orquestrador delega la implementació en agents en paral·lel, i després <strong>un panell escèptic ataca</strong> el que s'ha construït: <span class="mono">bug-hunter</span> localitza la causa arrel <em>sense context previ</em>, <span class="mono">output-audit</span> intenta <strong>demostrar que el vídeo està trencat</strong> mesurant els seus artefactes, i <span class="mono">/eval</span> corre la cadena sencera contra un clip fix i compara amb el baseline. L'orquestrador <strong>re-deriva cada veredicte executant</strong>, mai per informe. Jo jutjo el que cap capa pot jutjar.</p>
     </div>
 
     <div class="engine reveal" style="margin-bottom:34px">
@@ -1390,56 +1414,56 @@ body{overflow:hidden}
         <circle r="3.2" fill="#37e0ff" color="#37e0ff" class="dg-glow"><animateMotion dur="3.6s" repeatCount="indefinite" path="M934,258 C880,368 250,382 110,180"/></circle>
         <circle r="3.2" fill="#37e0ff" color="#37e0ff" class="dg-glow"><animateMotion dur="3.6s" begin="1.8s" repeatCount="indefinite" path="M934,258 C880,368 250,382 110,180"/></circle>
         <text x="530" y="372" text-anchor="middle" class="dg-loop t-es">el incidente se registra como HECHO · solo /optimize lo promueve a regla</text>
-        <text x="530" y="372" text-anchor="middle" class="dg-loop t-en">the incident is logged as a FACT · only /optimize promotes it to a rule</text>
+        <text x="530" y="372" text-anchor="middle" class="dg-loop t-en">the incident is logged as a FACT · only /optimize promotes it to a rule</text><text x="530" y="372" text-anchor="middle" class="dg-loop t-ca">l'incident es registra com a FET · només /optimize el promou a regla</text>
         <text x="528" y="20" text-anchor="middle" class="dg-el t-es" style="fill:#ff7a9c;font-weight:700">PANEL ADVERSARIAL · su trabajo es demostrar que el vídeo está roto</text>
-        <text x="528" y="20" text-anchor="middle" class="dg-el t-en" style="fill:#ff7a9c;font-weight:700">ADVERSARIAL PANEL · their job is to prove the video is broken</text>
+        <text x="528" y="20" text-anchor="middle" class="dg-el t-en" style="fill:#ff7a9c;font-weight:700">ADVERSARIAL PANEL · their job is to prove the video is broken</text><text x="528" y="20" text-anchor="middle" class="dg-el t-ca" style="fill:#ff7a9c;font-weight:700">PANELL ADVERSARIAL · la seva feina és demostrar que el vídeo està trencat</text>
 
         <!-- nodes -->
         <rect class="dg-rect" x="16" y="118" width="170" height="64" rx="12" stroke="#9b5cff" stroke-width="1.8"/>
-        <text x="101" y="144" text-anchor="middle" class="dg-title t-es">EL CAMBIO</text><text x="101" y="144" text-anchor="middle" class="dg-title t-en">THE CHANGE</text>
-        <text x="101" y="162" text-anchor="middle" class="dg-sub t-es">¿superficie sensible?</text><text x="101" y="162" text-anchor="middle" class="dg-sub t-en">sensitive surface?</text>
+        <text x="101" y="144" text-anchor="middle" class="dg-title t-es">EL CAMBIO</text><text x="101" y="144" text-anchor="middle" class="dg-title t-en">THE CHANGE</text><text x="101" y="144" text-anchor="middle" class="dg-title t-ca">EL CANVI</text>
+        <text x="101" y="162" text-anchor="middle" class="dg-sub t-es">¿superficie sensible?</text><text x="101" y="162" text-anchor="middle" class="dg-sub t-en">sensitive surface?</text><text x="101" y="162" text-anchor="middle" class="dg-sub t-ca">superfície sensible?</text>
 
         <rect class="dg-rect" x="232" y="118" width="160" height="64" rx="12" stroke="#22d3ff" stroke-width="1.8"/>
         <text x="312" y="144" text-anchor="middle" class="dg-title">/eval</text>
-        <text x="312" y="162" text-anchor="middle" class="dg-sub t-es">la cadena entera · con shorts</text><text x="312" y="162" text-anchor="middle" class="dg-sub t-en">the whole chain · with shorts</text>
+        <text x="312" y="162" text-anchor="middle" class="dg-sub t-es">la cadena entera · con shorts</text><text x="312" y="162" text-anchor="middle" class="dg-sub t-en">the whole chain · with shorts</text><text x="312" y="162" text-anchor="middle" class="dg-sub t-ca">la cadena sencera · amb shorts</text>
 
         <rect class="dg-rect dg-pulse" x="424" y="42" width="150" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
         <text x="499" y="61" text-anchor="middle" class="dg-title">bug-hunter</text>
-        <text x="499" y="76" text-anchor="middle" class="dg-sub t-es">causa raíz, sin contexto</text><text x="499" y="76" text-anchor="middle" class="dg-sub t-en">root cause, no context</text>
+        <text x="499" y="76" text-anchor="middle" class="dg-sub t-es">causa raíz, sin contexto</text><text x="499" y="76" text-anchor="middle" class="dg-sub t-en">root cause, no context</text><text x="499" y="76" text-anchor="middle" class="dg-sub t-ca">causa arrel, sense context</text>
 
         <rect class="dg-rect dg-pulse" x="424" y="214" width="150" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
         <text x="499" y="233" text-anchor="middle" class="dg-title">output-audit</text>
-        <text x="499" y="248" text-anchor="middle" class="dg-sub t-es">mide el ASS, el WAV, el MP4</text><text x="499" y="248" text-anchor="middle" class="dg-sub t-en">measures ASS, WAV, MP4</text>
+        <text x="499" y="248" text-anchor="middle" class="dg-sub t-es">mide el ASS, el WAV, el MP4</text><text x="499" y="248" text-anchor="middle" class="dg-sub t-en">measures ASS, WAV, MP4</text><text x="499" y="248" text-anchor="middle" class="dg-sub t-ca">mesura l'ASS, el WAV, l'MP4</text>
 
         <rect class="dg-rect dg-pulse" x="444" y="118" width="160" height="64" rx="12" stroke="url(#yt-grad)" stroke-width="2.2"/>
-        <text x="524" y="144" text-anchor="middle" class="dg-title t-es">EL VÍDEO</text><text x="524" y="144" text-anchor="middle" class="dg-title t-en">THE VIDEO</text>
-        <text x="524" y="162" text-anchor="middle" class="dg-sub t-es">bajo ataque</text><text x="524" y="162" text-anchor="middle" class="dg-sub t-en">under attack</text>
+        <text x="524" y="144" text-anchor="middle" class="dg-title t-es">EL VÍDEO</text><text x="524" y="144" text-anchor="middle" class="dg-title t-en">THE VIDEO</text><text x="524" y="144" text-anchor="middle" class="dg-title t-ca">EL VÍDEO</text>
+        <text x="524" y="162" text-anchor="middle" class="dg-sub t-es">bajo ataque</text><text x="524" y="162" text-anchor="middle" class="dg-sub t-en">under attack</text><text x="524" y="162" text-anchor="middle" class="dg-sub t-ca">sota atac</text>
 
         <rect class="dg-rect" x="660" y="118" width="160" height="64" rx="12" stroke="#a273ff" stroke-width="1.8"/>
-        <text x="740" y="144" text-anchor="middle" class="dg-title t-es">DIEGO · juzga</text><text x="740" y="144" text-anchor="middle" class="dg-title t-en">DIEGO · judges</text>
-        <text x="740" y="162" text-anchor="middle" class="dg-sub t-es">¿engancha? ¿suena natural?</text><text x="740" y="162" text-anchor="middle" class="dg-sub t-en">does it hook? sound natural?</text>
+        <text x="740" y="144" text-anchor="middle" class="dg-title t-es">DIEGO · juzga</text><text x="740" y="144" text-anchor="middle" class="dg-title t-en">DIEGO · judges</text><text x="740" y="144" text-anchor="middle" class="dg-title t-ca">DIEGO · jutja</text>
+        <text x="740" y="162" text-anchor="middle" class="dg-sub t-es">¿engancha? ¿suena natural?</text><text x="740" y="162" text-anchor="middle" class="dg-sub t-en">does it hook? sound natural?</text><text x="740" y="162" text-anchor="middle" class="dg-sub t-ca">enganxa? sona natural?</text>
 
         <rect class="dg-rect" x="872" y="42" width="150" height="56" rx="11" stroke="#5dff9b" stroke-width="1.8"/>
-        <text x="947" y="65" text-anchor="middle" class="dg-title t-es">A output/</text><text x="947" y="65" text-anchor="middle" class="dg-title t-en">TO output/</text>
-        <text x="947" y="82" text-anchor="middle" class="dg-sub t-es">vídeo + miniatura + título</text><text x="947" y="82" text-anchor="middle" class="dg-sub t-en">video + thumbnail + title</text>
+        <text x="947" y="65" text-anchor="middle" class="dg-title t-es">A output/</text><text x="947" y="65" text-anchor="middle" class="dg-title t-en">TO output/</text><text x="947" y="65" text-anchor="middle" class="dg-title t-ca">A output/</text>
+        <text x="947" y="82" text-anchor="middle" class="dg-sub t-es">vídeo + miniatura + título</text><text x="947" y="82" text-anchor="middle" class="dg-sub t-en">video + thumbnail + title</text><text x="947" y="82" text-anchor="middle" class="dg-sub t-ca">vídeo + miniatura + títol</text>
         <text x="1012" y="60" text-anchor="end" class="dg-badge" fill="#5dff9b">&#10003;</text>
 
         <rect class="dg-rect" x="872" y="202" width="150" height="56" rx="11" stroke="#ff5d7a" stroke-width="1.8"/>
-        <text x="947" y="225" text-anchor="middle" class="dg-title t-es">AL LEDGER</text><text x="947" y="225" text-anchor="middle" class="dg-title t-en">TO THE LEDGER</text>
-        <text x="947" y="242" text-anchor="middle" class="dg-sub t-es">hecho, no regla</text><text x="947" y="242" text-anchor="middle" class="dg-sub t-en">a fact, not a rule</text>
+        <text x="947" y="225" text-anchor="middle" class="dg-title t-es">AL LEDGER</text><text x="947" y="225" text-anchor="middle" class="dg-title t-en">TO THE LEDGER</text><text x="947" y="225" text-anchor="middle" class="dg-title t-ca">AL LEDGER</text>
+        <text x="947" y="242" text-anchor="middle" class="dg-sub t-es">hecho, no regla</text><text x="947" y="242" text-anchor="middle" class="dg-sub t-en">a fact, not a rule</text><text x="947" y="242" text-anchor="middle" class="dg-sub t-ca">fet, no regla</text>
         <text x="1012" y="220" text-anchor="end" class="dg-badge" fill="#ff5d7a">&#10007;</text>
 
         <text x="312" y="200" text-anchor="middle" class="dg-el t-es">si empeora el baseline → NO se cierra</text>
-        <text x="312" y="200" text-anchor="middle" class="dg-el t-en">if the baseline worsens → it does NOT close</text>
+        <text x="312" y="200" text-anchor="middle" class="dg-el t-en">if the baseline worsens → it does NOT close</text><text x="312" y="200" text-anchor="middle" class="dg-el t-ca">si empitjora el baseline → NO es tanca</text>
       </svg>
     </div>
-    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span></p>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span><span class="t-ca">Pessiga per apropar i llegir el detall &#8596;</span></p>
     <p class="engine-cap reveal t-es">El gate no avisa: <b>bloquea</b>. Un cambio en superficie sensible que empeore el sincronismo respecto al baseline no se cierra: no es una advertencia, es un no. Y la última capa siempre soy yo: <b>ninguna medición dice si una historia engancha</b>, y fingir lo contrario sería el mismo error que confiar en que el modelo obedezca el prompt.</p>
-    <p class="engine-cap reveal t-en">The gate doesn't warn: it <b>blocks</b>. A sensitive-surface change that worsens sync against the baseline does not close: it isn't a warning, it's a no. And the last layer is always me: <b>no measurement tells you whether a story hooks</b>, and pretending otherwise would be the same mistake as trusting the model to obey the prompt.</p>
+    <p class="engine-cap reveal t-en">The gate doesn't warn: it <b>blocks</b>. A sensitive-surface change that worsens sync against the baseline does not close: it isn't a warning, it's a no. And the last layer is always me: <b>no measurement tells you whether a story hooks</b>, and pretending otherwise would be the same mistake as trusting the model to obey the prompt.</p><p class="engine-cap reveal t-ca">El gate no avisa: <b>bloqueja</b>. Un canvi en superfície sensible que empitjori el sincronisme respecte al baseline no es tanca: no és un advertiment, és un no. I l'última capa sempre soc jo: <b>cap mesura diu si una història enganxa</b>, i fingir el contrari seria el mateix error que confiar que el model obeeixi el prompt.</p>
 
     <div class="mgrid">
-      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg><span class="t-es">Verificación por ejecución</span><span class="t-en">Verification by execution</span></h4><p><span class="t-es">Ningún «el subagente reportó que OK» cierra nada. Corro yo el <span class="hl">ffprobe</span>, la medición de alineación y el <span class="hl">/eval</span>, y pego la <b>salida real</b> en el siguiente paso. Un informe no es evidencia; una salida sí.</span><span class="t-en">No "the subagent reported OK" closes anything. I run <span class="hl">ffprobe</span>, the alignment measurement and <span class="hl">/eval</span> myself, and paste the <b>real output</b> into the next step. A report isn't evidence; output is.</span></p></div>
-      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg><span class="t-es">Prueba el caso de fallo</span><span class="t-en">Test the failure case</span></h4><p><span class="t-es">Un gate nuevo es <b>superficie nueva</b>: antes de darlo por bueno le paso el conjunto vacío, el dato ausente y el valor desconocido. Y verifico sobre <span class="hl">el caso que el módulo existe para cubrir</span>: una grabación CON pausas, no el clip fácil que toma el atajo y pasa siempre.</span><span class="t-en">A new gate is <b>new surface</b>: before trusting it I feed it the empty set, the missing datum and the unknown value. And I verify against <span class="hl">the case the module exists to cover</span>: a recording WITH pauses, not the easy clip that takes the shortcut and always passes.</span></p></div>
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg><span class="t-es">Verificación por ejecución</span><span class="t-en">Verification by execution</span><span class="t-ca">Verificació per execució</span></h4><p><span class="t-es">Ningún «el subagente reportó que OK» cierra nada. Corro yo el <span class="hl">ffprobe</span>, la medición de alineación y el <span class="hl">/eval</span>, y pego la <b>salida real</b> en el siguiente paso. Un informe no es evidencia; una salida sí.</span><span class="t-en">No "the subagent reported OK" closes anything. I run <span class="hl">ffprobe</span>, the alignment measurement and <span class="hl">/eval</span> myself, and paste the <b>real output</b> into the next step. A report isn't evidence; output is.</span><span class="t-ca">Cap «el subagent ha reportat que OK» tanca res. Corro jo el <span class="hl">ffprobe</span>, la mesura d'alineació i el <span class="hl">/eval</span>, i enganxo la <b>sortida real</b> al pas següent. Un informe no és evidència; una sortida sí.</span></p></div>
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg><span class="t-es">Prueba el caso de fallo</span><span class="t-en">Test the failure case</span><span class="t-ca">Prova el cas de fallada</span></h4><p><span class="t-es">Un gate nuevo es <b>superficie nueva</b>: antes de darlo por bueno le paso el conjunto vacío, el dato ausente y el valor desconocido. Y verifico sobre <span class="hl">el caso que el módulo existe para cubrir</span>: una grabación CON pausas, no el clip fácil que toma el atajo y pasa siempre.</span><span class="t-en">A new gate is <b>new surface</b>: before trusting it I feed it the empty set, the missing datum and the unknown value. And I verify against <span class="hl">the case the module exists to cover</span>: a recording WITH pauses, not the easy clip that takes the shortcut and always passes.</span><span class="t-ca">Un gate nou és <b>superfície nova</b>: abans de donar-lo per bo li passo el conjunt buit, la dada absent i el valor desconegut. I verifico sobre <span class="hl">el cas que el mòdul existeix per cobrir</span>: una gravació AMB pauses, no el clip fàcil que pren la drecera i passa sempre.</span></p></div>
     </div>
 
 
@@ -1448,7 +1472,7 @@ body{overflow:hidden}
       <span>OpenRouter</span><span>YouTube Data API v3</span><span>Streamlit</span><span>Pillow</span><span>ASS / SRT</span><span>NVENC</span>
     </div>
 
-    <p class="bridge reveal"><span class="t-es">El resto del método (la refutación asimétrica, el ledger que solo asciende a regla con freno) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (asymmetric refutation, the ledger that only promotes to a rule with a brake) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
+    <p class="bridge reveal"><span class="t-es">El resto del método (la refutación asimétrica, el ledger que solo asciende a regla con freno) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (asymmetric refutation, the ledger that only promotes to a rule with a brake) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span><span class="t-ca">La resta del mètode (la refutació asimètrica, el ledger que només ascendeix a regla amb fre) és el mateix als cinc sistemes i està explicat una vegada: <a href="../index.html#metodo">a l'índex</a>.</span></p>
   </div>
 </section>
 
@@ -1458,17 +1482,17 @@ body{overflow:hidden}
 <section id="contacto">
   <div class="wrap">
     <div class="contact reveal">
-      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span></div>
+      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span><span class="t-ca">Disponible per treballar</span></div>
       <h2 class="t-es">Cojo un problema difuso, lo descompongo y orquesto IA para construir cada pieza, sin perder el rigor.</h2>
-      <h2 class="t-en">I take a fuzzy problem, break it down and orchestrate AI to build every piece, without losing the rigor.</h2>
+      <h2 class="t-en">I take a fuzzy problem, break it down and orchestrate AI to build every piece, without losing the rigor.</h2><h2 class="t-ca">Agafo un problema difús, el descomponc i orquestro IA per construir cada peça, sense perdre el rigor.</h2>
       <p class="t-es">Si buscas a alguien para applied-AI, automatización o forward-deployed engineering: que construya sistemas autónomos <strong>y las medidas que impiden que se engañen a sí mismos</strong>: hablemos.</p>
-      <p class="t-en">If you're looking for someone in applied-AI, automation or forward-deployed engineering: someone who builds autonomous systems <strong>and the measurements that stop them fooling themselves</strong>: let's talk.</p>
+      <p class="t-en">If you're looking for someone in applied-AI, automation or forward-deployed engineering: someone who builds autonomous systems <strong>and the measurements that stop them fooling themselves</strong>: let's talk.</p><p class="t-ca">Si busques algú per a applied-AI, automatització o forward-deployed engineering: que construeixi sistemes autònoms <strong>i les mesures que impedeixen que s'enganyin a si mateixos</strong>: parlem-ne.</p>
       <div class="cta">
         <a href="mailto:diegollr98@gmail.com" class="btn btn-primary">diegollr98@gmail.com</a>
-        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span></button>
+        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span><span class="t-ca">copiar</span></button>
         <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
         <a href="https://github.com/diegollr98-design/video-pipeline" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
-        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span></a>
+        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span><span class="t-ca">Tornar a l'índex</span></a>
       </div>
     </div>
   </div>
@@ -1476,7 +1500,7 @@ body{overflow:hidden}
 
 <footer class="wrap">
   <span>YOUTUBE PIPELINE · <span class="hl">Diego</span> · 2026</span>
-  <span><span class="t-es">Pipeline autónomo · construido con IA · sin formación técnica previa</span><span class="t-en">Autonomous pipeline · built with AI · no prior technical background</span></span>
+  <span><span class="t-es">Pipeline autónomo · construido con IA · sin formación técnica previa</span><span class="t-en">Autonomous pipeline · built with AI · no prior technical background</span><span class="t-ca">Pipeline autònom · construït amb IA · sense formació tècnica prèvia</span></span>
 </footer>
   </div>
   </div>
@@ -1484,21 +1508,41 @@ body{overflow:hidden}
   <div class="tw-ac" id="twAc" role="listbox" aria-label="Comandos"></div>
   <form class="tw-prompt" id="twForm" autocomplete="off">
     <span class="twp-u" aria-hidden="true">diego@portfolio</span><span class="twp-d" id="twPath" aria-hidden="true">:~</span><span class="twp-s" aria-hidden="true">$</span>
-    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span></label>
+    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span><span class="t-ca">Comanda</span></label>
     <input id="twIn" type="text" spellcheck="false" autocapitalize="off"
-           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands">
+           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands" data-ph-ca="fes clic per veure les comandes">
     <span class="twp-car" aria-hidden="true">&#9611;</span>
   </form>
 
 
 <script>
 /* ── language toggle ── */
+/* [INC-JS-04] Quita TODA clase `lang-*` en vez de enumerar 'lang-es','lang-en'.
+   Una lista tecleada describe el marcado desde fuera y se desfasa sola: es la misma
+   clase que `var COLS=7` ([INC-JS-01]). Con `lang-ca` sin quitar, la secuencia
+   es -> ca -> es dejaba `class="lang-ca lang-es"`, que casa las reglas de ocultacion
+   de DOS idiomas a la vez: pagina EN BLANCO, `<h1>` vacio, 0 errores de consola. */
+/* Tres spans, uno por idioma: el CSS elige, igual que en el resto de la pagina. Vive
+   junto a twSoloLang porque es chasis: cualquier sitio donde el JS PINTE texto bilingue
+   necesita emitir los TRES, o en el idioma sin rama el widget sale VACIO ([INC-JS-06]). */
+function TRI(es, en, ca){
+  /* la clase se COMPONE a proposito: `_pares()` de eval_portfolio cuenta
+     `class="t-xx"` sobre el HTML crudo, y un literal aqui dentro sumaria un bloque
+     fantasma por idioma en las 6 paginas. */
+  var w = function(l, t){ return '<span class="t-'+l+'">'+t+'</span>'; };
+  return w('es', es) + w('en', en) + w('ca', ca);
+}
+function twSoloLang(el, l){
+  if(!el) return;
+  for(var i=el.classList.length-1; i>=0; i--){
+    if(el.classList[i].indexOf('lang-')===0) el.classList.remove(el.classList[i]);
+  }
+  el.classList.add('lang-'+l);
+}
 function setLang(l){
   document.documentElement.lang=l;
-  document.documentElement.classList.remove('lang-es','lang-en');
-  document.documentElement.classList.add('lang-'+l);
-  document.body.classList.remove('lang-es','lang-en');
-  document.body.classList.add('lang-'+l);
+  twSoloLang(document.documentElement, l);
+  twSoloLang(document.body, l);
   document.querySelectorAll('[data-lang-btn]').forEach(function(b){
     b.setAttribute('aria-pressed', String(b.dataset.langBtn===l));
   });
@@ -1516,6 +1560,15 @@ function setLang(l){
   });
 })();
 function isEN(){return document.documentElement.lang==='en';}
+/* [INC-SEED-02] Los ternarios binarios `(en?x:y)` caen al castellano en catalan.
+   LG elige el campo del idioma vivo y usa el castellano de reserva. Los sufijos de
+   este fichero son irregulares (es/en/ca, des/dee/dca, mes/mee/mca), asi que se
+   pasan los tres nombres en vez de concatenarlos. */
+function LG(o,kEs,kEn,kCa){
+  var l=document.documentElement.lang;
+  var v = l==='en' ? o[kEn] : l==='ca' ? o[kCa] : o[kEs];
+  return (v==null||v==='') ? o[kEs] : v;
+}
 function num(v,d){return d?v.toFixed(d).replace('.',isEN()?'.':','):Math.round(v).toLocaleString(isEN()?'en-US':'es-ES');}
 
 /* ── count-up ── */
@@ -1543,6 +1596,9 @@ document.querySelectorAll('.ct').forEach(function(c){ c.textContent=(c.dataset.p
   var root=document.getElementById('tl'); if(!root) return;
   var WORDS_ES=['Mi','hermano','vendió','mi','coche','clásico','para','pagar','sus','deudas','sin','pedirme','permiso'];
   var WORDS_EN=['My','brother','sold','my','classic','car','to','pay','his','debts','without','asking','me'];
+  /* ⚠️ EXACTAMENTE 13 palabras: van atadas una a una a los 13 onsets reales de VOICE.
+     La traduccion literal del castellano da 17 y descuadraria el demo entero. */
+  var WORDS_CA=['El','meu','germà','va','vendre','el','cotxe','clàssic','per','pagar','deutes','sense','permís'];
   /* onsets REALES de la voz (s) — la voz termina en 6,76 */
   var VOICE=[0.18,0.45,1.00,1.55,1.78,2.30,3.00,3.40,3.95,4.28,4.95,5.35,6.02];
   var WINDOW=7.72, VOICE_END=6.76, TOTAL=8.2, OFFSET=0.146;
@@ -1562,7 +1618,8 @@ document.querySelectorAll('.ct').forEach(function(c){ c.textContent=(c.dataset.p
       c.style.left=(t/TOTAL*100).toFixed(2)+'%';
       var es=document.createElement('span'); es.className='t-es'; es.textContent=WORDS_ES[i];
       var en=document.createElement('span'); en.className='t-en'; en.textContent=WORDS_EN[i];
-      c.appendChild(es); c.appendChild(en);
+      var ca=document.createElement('span'); ca.className='t-ca'; ca.textContent=WORDS_CA[i];
+      c.appendChild(es); c.appendChild(en); c.appendChild(ca);
       track.appendChild(c); return c;
     });
   }
@@ -1601,8 +1658,8 @@ document.querySelectorAll('.ct').forEach(function(c){ c.textContent=(c.dataset.p
   var ICON_PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>', ICON_PLAY='<path d="M8 5v14l11-7z"/>';
   function syncBtn(){
     icon.innerHTML=playing?ICON_PAUSE:ICON_PLAY;
-    label.innerHTML=playing?'<span class="t-es">pausar</span><span class="t-en">pause</span>'
-                           :'<span class="t-es">reproducir</span><span class="t-en">play</span>';
+    label.innerHTML=playing?TRI('pausar','pause','pausar')
+                           :TRI('reproducir','play','reproduir');
   }
   btn.addEventListener('click',function(){playing=!playing;last=null;syncBtn();});
   syncBtn();
@@ -1676,8 +1733,8 @@ document.querySelectorAll('.ct').forEach(function(c){ c.textContent=(c.dataset.p
 
     document.querySelectorAll('.calc-n').forEach(function(e){e.textContent=mins;});
     els.words.textContent=num(words);
-    els.blocks.innerHTML=blocks+' <span class="bu"><span class="t-es">peticiones</span><span class="t-en">requests</span></span>';
-    els.shorts.innerHTML=shorts+' <span class="bu"><span class="t-es">peticiones</span><span class="t-en">requests</span></span>';
+    els.blocks.innerHTML=blocks+' <span class="bu">'+TRI('peticiones','requests','peticions')+'</span>';
+    els.shorts.innerHTML=shorts+' <span class="bu">'+TRI('peticiones','requests','peticions')+'</span>';
     els.total.textContent=total;
 
     var pct=Math.min(total/CAP*100,100);
@@ -1709,70 +1766,76 @@ document.querySelectorAll('.ct').forEach(function(c){ c.textContent=(c.dataset.p
   var rail=document.getElementById('rail'), detail=document.getElementById('rail-detail');
   if(!rail) return;
   var S=[
-    {es:'Ingesta',en:'Ingest',sens:1,mod:'video_cleaner.py',
+    {es:'Ingesta',en:'Ingest',ca:'Ingesta',sens:1,mod:'video_cleaner.py',
      des:'Detecta la hotbar de Minecraft fotograma a fotograma y elimina pausa, escritorio y menús. Es donde se decide cuánto gameplay sobrevive.',
-     dee:'Detects the Minecraft hotbar frame by frame and drops pause, desktop and menus. This is where it\'s decided how much gameplay survives.',
+     dee:'Detects the Minecraft hotbar frame by frame and drops pause, desktop and menus. This is where it\'s decided how much gameplay survives.',dca:'Detecta la hotbar de Minecraft fotograma a fotograma i elimina pausa, escriptori i menús. És on es decideix quant gameplay sobreviu.',
      mes:'Aquí vivía el bug del demuxer <b>concat</b>: rutas relativas mal resueltas abortaban la ingesta entera de cualquier grabación con pausas.',
-     mee:'This is where the <b>concat</b> demuxer bug lived: badly resolved relative paths aborted the whole ingest of any recording with pauses.'},
-    {es:'Pool',en:'Pool',sens:1,mod:'gameplay_pool.py',
+     mee:'This is where the <b>concat</b> demuxer bug lived: badly resolved relative paths aborted the whole ingest of any recording with pauses.',mca:'Aquí vivia el bug del demuxer <b>concat</b>: rutes relatives mal resoltes avortaven la ingesta sencera de qualsevol gravació amb pauses.'},
+    {es:'Pool',en:'Pool',ca:'Pool',sens:1,mod:'gameplay_pool.py',
      des:'Recodifica y encola el gameplay limpio en trozos de 20-40 min. 13 GB de grabación bajan a ~2 GB sin pérdida perceptible.',
-     dee:'Re-encodes and queues the clean gameplay in 20-40 min chunks. 13 GB of recording drop to ~2 GB with no perceptible loss.',
+     dee:'Re-encodes and queues the clean gameplay in 20-40 min chunks. 13 GB of recording drop to ~2 GB with no perceptible loss.',dca:'Recodifica i encua el gameplay net en trossos de 20-40 min. 13 GB de gravació baixen a ~2 GB sense pèrdua perceptible.',
      mes:'Medido en la validación E2E: <b>1.120 MB → 296 MB</b>. El sobrante se queda en la cola para la próxima corrida.',
-     mee:'Measured in the E2E validation: <b>1,120 MB → 296 MB</b>. The remainder stays queued for the next run.'},
-    {es:'Historia',en:'Story',sens:1,mod:'script_generator.py',
+     mee:'Measured in the E2E validation: <b>1,120 MB → 296 MB</b>. The remainder stays queued for the next run.',mca:'Mesurat a la validació E2E: <b>1.120 MB → 296 MB</b>. El sobrant es queda a la cua per a la propera execució.'},
+    {es:'Historia',en:'Story',ca:'Història',sens:1,mod:'script_generator.py',
      des:'Genera título largo e historia por bloques de ~2000 palabras. Toda llamada al LLM pasa por una sola costura, que es donde viven los reintentos y el conteo de cuota.',
-     dee:'Generates a long title and the story in ~2000-word blocks. Every LLM call goes through one seam, which is where retries and quota accounting live.',
+     dee:'Generates a long title and the story in ~2000-word blocks. Every LLM call goes through one seam, which is where retries and quota accounting live.',dca:'Genera títol llarg i història per blocs de ~2000 paraules. Tota crida a l\'LLM passa per una sola costura, que és on viuen els reintents i el recompte de quota.',
      mes:'El guardia <b>_validar_salida</b> rechaza el razonamiento del modelo antes de que acabe en la miniatura. Ese título llegó a producir un vídeo de 4,5 s.',
-     mee:'The <b>_validar_salida</b> guard rejects the model\'s reasoning before it lands on the thumbnail. That title once produced a 4.5 s video.'},
-    {es:'Voz',en:'Voice',sens:1,mod:'tts_engine.py',
+     mee:'The <b>_validar_salida</b> guard rejects the model\'s reasoning before it lands on the thumbnail. That title once produced a 4.5 s video.',mca:'El guàrdia <b>_validar_salida</b> rebutja el raonament del model abans que acabi a la miniatura. Aquell títol va arribar a produir un vídeo de 4,5 s.'},
+    {es:'Voz',en:'Voice',ca:'Veu',sens:1,mod:'tts_engine.py',
      des:'edge-tts en español de España, con voz masculina o femenina elegida automáticamente por los patrones del texto («mi esposa» → hombre).',
-     dee:'edge-tts in Castilian Spanish, male or female voice picked automatically from the text\'s patterns ("my wife" → male).',
+     dee:'edge-tts in Castilian Spanish, male or female voice picked automatically from the text\'s patterns ("my wife" → male).',dca:'edge-tts en castellà d\'Espanya, amb veu masculina o femenina triada automàticament pels patrons del text («mi esposa» → home).',
      mes:'La limpieza de texto es sensible: los dos puntos convertidos en punto metían una pausa de <b>1,18 s</b> a mitad de idea. Ahora es una coma: 0,44 s.',
-     mee:'Text cleanup is sensitive: a colon turned into a period injected a <b>1.18 s</b> pause mid-idea. Now it becomes a comma: 0.44 s.'},
-    {es:'Alineación',en:'Alignment',sens:1,mod:'stable-ts + whisper small',
+     mee:'Text cleanup is sensitive: a colon turned into a period injected a <b>1.18 s</b> pause mid-idea. Now it becomes a comma: 0.44 s.',mca:'La neteja de text és sensible: els dos punts convertits en punt ficaven una pausa d\'<b>1,18 s</b> a mitja idea. Ara és una coma: 0,44 s.'},
+    {es:'Alineación',en:'Alignment',ca:'Alineació',sens:1,mod:'stable-ts + whisper small',
      des:'Forced alignment: coge el texto exacto y encuentra dónde suena cada palabra. Las ventanas de SentenceBoundary se usan como anclas duras.',
-     dee:'Forced alignment: takes the exact text and finds where each word sounds. SentenceBoundary windows are used as hard anchors.',
+     dee:'Forced alignment: takes the exact text and finds where each word sounds. SentenceBoundary windows are used as hard anchors.',dca:'Forced alignment: agafa el text exacte i troba on sona cada paraula. Les finestres de SentenceBoundary s\'usen com a àncores dures.',
      mes:'Modelo <b>small</b>, no <span class="mono">tiny</span> ni <span class="mono">base</span>: en español los pequeños derivan en los silencios. Error medio: <b>0,072 s</b> en el fixture de 3 min; <b>0,153 s</b> en la producción real de 30.',
-     mee:'Model <b>small</b>, not <span class="mono">tiny</span> or <span class="mono">base</span>: in Spanish the small ones drift in silences. Mean error: <b>0.072 s</b> on the 3-min fixture; <b>0.153 s</b> on the real 30-min production.'},
-    {es:'Subtítulos',en:'Subtitles',sens:1,mod:'subtitle_builder.py',
+     mee:'Model <b>small</b>, not <span class="mono">tiny</span> or <span class="mono">base</span>: in Spanish the small ones drift in silences. Mean error: <b>0.072 s</b> on the 3-min fixture; <b>0.153 s</b> on the real 30-min production.',mca:'Model <b>small</b>, no <span class=\"mono\">tiny</span> ni <span class=\"mono\">base</span>: en castellà els petits deriven als silencis. Error mitjà: <b>0,072 s</b> al fixture de 3 min; <b>0,153 s</b> a la producció real de 30.'},
+    {es:'Subtítulos',en:'Subtitles',ca:'Subtítols',sens:1,mod:'subtitle_builder.py',
      des:'SRT → ASS: palabra a palabra, mayúsculas, Impact 150, posición fija en el centro. Desaparecen en las pausas, dejando solo gameplay.',
-     dee:'SRT → ASS: word by word, uppercase, Impact 150, fixed centre position. They vanish during pauses, leaving only gameplay.',
+     dee:'SRT → ASS: word by word, uppercase, Impact 150, fixed centre position. They vanish during pauses, leaving only gameplay.',dca:'SRT → ASS: paraula a paraula, majúscules, Impact 150, posició fixa al centre. Desapareixen a les pauses, deixant només gameplay.',
      mes:'Posición y PlayRes son un <b>par indivisible</b>. En los shorts hay que cambiar los dos: (540,960) con 1080×1920, o el texto sale distorsionado.',
-     mee:'Position and PlayRes are an <b>indivisible pair</b>. In shorts you must change both: (540,960) with 1080×1920, or the text comes out distorted.'},
-    {es:'Composición',en:'Composition',sens:1,mod:'video_composer.py',
+     mee:'Position and PlayRes are an <b>indivisible pair</b>. In shorts you must change both: (540,960) with 1080×1920, or the text comes out distorted.',mca:'Posició i PlayRes són un <b>parell indivisible</b>. Als shorts cal canviar-los tots dos: (540,960) amb 1080×1920, o el text surt distorsionat.'},
+    {es:'Composición',en:'Composition',ca:'Composició',sens:1,mod:'video_composer.py',
      des:'FFmpeg: intro animada con rebote elástico, woosh sincronizado con la llegada al centro, subtítulos y offset de audio de −100 ms.',
-     dee:'FFmpeg: animated intro with elastic bounce, woosh synced to the arrival at centre, subtitles and a −100 ms audio offset.',
+     dee:'FFmpeg: animated intro with elastic bounce, woosh synced to the arrival at centre, subtitles and a −100 ms audio offset.',dca:'FFmpeg: intro animada amb rebot elàstic, woosh sincronitzat amb l\'arribada al centre, subtítols i offset d\'àudio de −100 ms.',
      mes:'El offset negativo es deliberado: la voz debe ir <b>siempre delante</b> del subtítulo. Un sesgo positivo es exactamente el bug que estuvo meses vivo.',
-     mee:'The negative offset is deliberate: the voice must <b>always lead</b> the subtitle. A positive bias is exactly the bug that lived for months.'},
-    {es:'Miniatura',en:'Thumbnail',sens:0,mod:'thumbnail_generator.py',
+     mee:'The negative offset is deliberate: the voice must <b>always lead</b> the subtitle. A positive bias is exactly the bug that lived for months.',mca:'L\'offset negatiu és deliberat: la veu ha d\'anar <b>sempre davant</b> del subtítol. Un biaix positiu és exactament el bug que va estar mesos viu.'},
+    {es:'Miniatura',en:'Thumbnail',ca:'Miniatura',sens:0,mod:'thumbnail_generator.py',
      des:'Frame del gameplay con blur y tinte de color rotando por ángulo áureo, plantilla superpuesta y el título completo en mayúsculas con auto-tamaño.',
-     dee:'A gameplay frame with blur and a colour tint rotating by golden angle, overlaid template and the full title in uppercase, auto-sized.',
+     dee:'A gameplay frame with blur and a colour tint rotating by golden angle, overlaid template and the full title in uppercase, auto-sized.',dca:'Frame del gameplay amb blur i tint de color rotant per angle auri, plantilla superposada i el títol complet en majúscules amb mida automàtica.',
      mes:'La rotación por ángulo áureo garantiza que dos miniaturas seguidas <b>nunca</b> comparten color. Es la única etapa no sensible de la cadena principal.',
-     mee:'The golden-angle rotation guarantees two consecutive thumbnails <b>never</b> share a colour. It\'s the only non-sensitive stage in the main chain.'},
-    {es:'Shorts',en:'Shorts',sens:1,mod:'shorts_generator.py',
+     mee:'The golden-angle rotation guarantees two consecutive thumbnails <b>never</b> share a colour. It\'s the only non-sensitive stage in the main chain.',mca:'La rotació per angle auri garanteix que dues miniatures seguides <b>mai</b> comparteixen color. És l\'única etapa no sensible de la cadena principal.'},
+    {es:'Shorts',en:'Shorts',ca:'Shorts',sens:1,mod:'shorts_generator.py',
      des:'El gemelo vertical: 9:16, micro-historia de ~200 palabras, audio acelerado x1.5 con atempo y todos los timestamps escalados. Cada short usa un offset distinto del gameplay.',
-     dee:'The vertical twin: 9:16, ~200-word micro-story, audio sped up 1.5× with atempo and every timestamp scaled. Each short uses a different gameplay offset.',
+     dee:'The vertical twin: 9:16, ~200-word micro-story, audio sped up 1.5× with atempo and every timestamp scaled. Each short uses a different gameplay offset.',dca:'El bessó vertical: 9:16, microhistòria de ~200 paraules, àudio accelerat x1.5 amb atempo i tots els timestamps escalats. Cada short fa servir un offset diferent del gameplay.',
      mes:'<b>No usar <span class="mono">-hwaccel cuda</span></b> con filtros de CPU: las transferencias GPU↔CPU llevaban cada short a 10-15 min. Y el blur bajó 36× cambiando boxblur por escalar+gblur.',
-     mee:'<b>Don\'t use <span class="mono">-hwaccel cuda</span></b> with CPU filters: GPU↔CPU transfers pushed each short to 10-15 min. And the blur got 36× faster swapping boxblur for scale+gblur.'}
+     mee:'<b>Don\'t use <span class="mono">-hwaccel cuda</span></b> with CPU filters: GPU↔CPU transfers pushed each short to 10-15 min. And the blur got 36× faster swapping boxblur for scale+gblur.',mca:'<b>No fer servir <span class=\"mono\">-hwaccel cuda</span></b> amb filtres de CPU: les transferències GPU↔CPU portaven cada short a 10-15 min. I el blur va baixar 36× canviant boxblur per escalar+gblur.'}
   ];
   var line=rail.querySelector('.rail-line');
   var btns=S.map(function(s,i){
     var b=document.createElement('button');
     b.type='button'; b.className='stg'+(s.sens?' sensitive':'');
-    b.innerHTML='<span class="dot"></span><span class="nm"><span class="t-es">'+s.es+'</span><span class="t-en">'+s.en+'</span>'+
-      '<span class="sens"><span class="t-es">SENSIBLE</span><span class="t-en">SENSITIVE</span></span></span>';
+    b.innerHTML='<span class="dot"></span><span class="nm">'+TRI(s.es,s.en,s.ca||s.es)+
+      '<span class="sens">'+TRI('SENSIBLE','SENSITIVE','SENSIBLE')+'</span></span>';
     rail.appendChild(b); return b;
   });
+  /* [INC-JS-05] Estos dos rotulos vivian como ternarios binarios `(en?a:b)` dentro de
+     show(), asi que en catalan caian al castellano: el panel decia «Alineacion» con la
+     pagina en catalan. No lo vio ninguna sonda -- se vio MIRANDO la captura. */
+  var SENS={es:'superficie sensible · /eval antes de cerrar',
+            en:'sensitive surface · /eval before closing',
+            ca:'superfície sensible · /eval abans de tancar'};
   var cur=4; /* arranca en Alineación: la etapa insignia */
   function show(i){
     cur=i;
     btns.forEach(function(b,j){b.classList.toggle('act',j===i);});
     var s=S[i], en=isEN();
     detail.innerHTML=
-      '<div class="rdh"><h4>'+(en?s.en:s.es)+'</h4>'+
+      '<div class="rdh"><h4>'+LG(s,'es','en','ca')+'</h4>'+
       '<span class="rdt">'+s.mod+'</span>'+
-      (s.sens?'<span class="rdt hot">'+(en?'sensitive surface · /eval before closing':'superficie sensible · /eval antes de cerrar')+'</span>':'')+
-      '</div><p>'+(en?s.dee:s.des)+'</p><div class="rdm">'+(en?s.mee:s.mes)+'</div>';
+      (s.sens?'<span class="rdt hot">'+LG(SENS,'es','en','ca')+'</span>':'')+
+      '</div><p>'+LG(s,'des','dee','dca')+'</p><div class="rdm">'+LG(s,'mes','mee','mca')+'</div>';
   }
   btns.forEach(function(b,i){
     b.addEventListener('mouseenter',function(){show(i);});
@@ -1789,13 +1852,13 @@ document.querySelectorAll('.ct').forEach(function(c){ c.textContent=(c.dataset.p
 (function(){
   var NS='http://www.w3.org/2000/svg';
   var NODES=[
-    {id:'desfase',x:500,y:282,r:38,c:'#9b5cff',href:'#desfase',es:'El desfase',en:'The drift',ses:'0,072 s fixture · 0,153 s producción',sen:'0.072 s fixture · 0.153 s production'},
-    {id:'recorrido',x:206,y:140,r:26,c:'#22d3ff',href:'#recorrido',es:'Recorrido',en:'Walkthrough',ses:'la salida, en vivo',sen:'the output, live'},
-    {id:'garantias',x:790,y:138,r:28,c:'#a273ff',href:'#garantias',es:'Garantías',en:'Guarantees',ses:'el prompt no basta',sen:'the prompt is not enough'},
-    {id:'silencioso',x:842,y:396,r:28,c:'#ff9b5c',href:'#silencioso',es:'Fallo silencioso',en:'Silent failure',ses:'4 MP4 perfectos y rotos',sen:'4 perfect, broken MP4s'},
-    {id:'cuota',x:500,y:482,r:26,c:'#5dd0ff',href:'#cuota',es:'Cuota',en:'Quota',ses:'1.000/día · 10.000 u/día',sen:'1,000/day · 10,000 u/day'},
-    {id:'cadena',x:160,y:396,r:28,c:'#bd9bff',href:'#cadena',es:'La cadena',en:'The chain',ses:'9 etapas · 8 sensibles',sen:'9 stages · 8 sensitive'},
-    {id:'metodo',x:328,y:238,r:22,c:'#5dff9b',href:'#metodo',es:'Método',en:'Method',ses:'gate + panel adversarial',sen:'gate + adversarial panel'}
+    {id:'desfase',x:500,y:282,r:38,c:'#9b5cff',href:'#desfase',es:'El desfase',en:'The drift',ca:'El desfasament',ses:'0,072 s fixture · 0,153 s producción',sen:'0.072 s fixture · 0.153 s production'},
+    {id:'recorrido',x:206,y:140,r:26,c:'#22d3ff',href:'#recorrido',es:'Recorrido',en:'Walkthrough',ca:'Recorregut',ses:'la salida, en vivo',sen:'the output, live'},
+    {id:'garantias',x:790,y:138,r:28,c:'#a273ff',href:'#garantias',es:'Garantías',en:'Guarantees',ca:'Garanties',ses:'el prompt no basta',sen:'the prompt is not enough'},
+    {id:'silencioso',x:842,y:396,r:28,c:'#ff9b5c',href:'#silencioso',es:'Fallo silencioso',en:'Silent failure',ca:'Fallada silenciosa',ses:'4 MP4 perfectos y rotos',sen:'4 perfect, broken MP4s'},
+    {id:'cuota',x:500,y:482,r:26,c:'#5dd0ff',href:'#cuota',es:'Cuota',en:'Quota',ca:'Quota',ses:'1.000/día · 10.000 u/día',sen:'1,000/day · 10,000 u/day'},
+    {id:'cadena',x:160,y:396,r:28,c:'#bd9bff',href:'#cadena',es:'La cadena',en:'The chain',ca:'La cadena',ses:'9 etapas · 8 sensibles',sen:'9 stages · 8 sensitive'},
+    {id:'metodo',x:328,y:238,r:22,c:'#5dff9b',href:'#metodo',es:'Método',en:'Method',ca:'Mètode',ses:'gate + panel adversarial',sen:'gate + adversarial panel'}
   ];
   var EDGES=[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,2],[2,3],[3,4],[4,5],[5,1],[6,5],[6,3]];
   var NB={}; NODES.forEach(function(_,i){NB[i]=[];});
@@ -1860,14 +1923,14 @@ document.querySelectorAll('.ct').forEach(function(c){ c.textContent=(c.dataset.p
 
 <script>
 /* ══ CHASIS DE TERMINAL · JS portado del indice ══ */
-var SECS=[  {id:'recorrido',ix:'01',es:'Recorrido',en:'Walkthrough',p:'~/tour',c:'/tour'},
-  {id:'desfase',ix:'02',es:'Desfase',en:'Drift',p:'~/drift',c:'/drift'},
-  {id:'garantias',ix:'03',es:'Garantías',en:'Guarantees',p:'~/guarantees',c:'/guarantees'},
-  {id:'silencioso',ix:'04',es:'Silencios',en:'Silent',p:'~/silent',c:'/silent-fail'},
-  {id:'cuota',ix:'05',es:'Cuota',en:'Quota',p:'~/quota',c:'/quota'},
-  {id:'cadena',ix:'06',es:'Cadena',en:'Chain',p:'~/chain',c:'/chain'},
-  {id:'metodo',ix:'07',es:'Método',en:'Method',p:'~/method',c:'/method'},
-  {id:'contacto',ix:'08',es:'Contacto',en:'Contact',p:'~/contact',c:'/mail'}
+var SECS=[  {id:'recorrido',ix:'01',es:'Recorrido',en:'Walkthrough',ca:'Recorregut',p:'~/tour',c:'/tour'},
+  {id:'desfase',ix:'02',es:'Desfase',en:'Drift',ca:'Desfasament',p:'~/drift',c:'/drift'},
+  {id:'garantias',ix:'03',es:'Garantías',en:'Guarantees',ca:'Garanties',p:'~/guarantees',c:'/guarantees'},
+  {id:'silencioso',ix:'04',es:'Silencios',en:'Silent',ca:'Silencis',p:'~/silent',c:'/silent-fail'},
+  {id:'cuota',ix:'05',es:'Cuota',en:'Quota',ca:'Quota',p:'~/quota',c:'/quota'},
+  {id:'cadena',ix:'06',es:'Cadena',en:'Chain',ca:'Cadena',p:'~/chain',c:'/chain'},
+  {id:'metodo',ix:'07',es:'Método',en:'Method',ca:'Mètode',p:'~/method',c:'/method'},
+  {id:'contacto',ix:'08',es:'Contacto',en:'Contact',ca:'Contacte',p:'~/contact',c:'/mail'}
 ];
 var HOME={p:"~",c:"/video-pipeline"};
 var spy=function(){};
@@ -1878,22 +1941,22 @@ var spy=function(){};
 var MAIL='mailto:diegollr98@gmail.com?subject=Portafolio%20%C2%B7%20Diego';
 var LI='https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/';
 window.__cmds=[
-  {g:'ir',ic:'§',es:'Recorrido',en:'Walkthrough',c:'/tour',k:'recorrido walkthrough recorrido tour',go:'recorrido'},
-  {g:'ir',ic:'§',es:'Desfase',en:'Drift',c:'/drift',k:'desfase drift desfase drift',go:'desfase'},
-  {g:'ir',ic:'§',es:'Garantías',en:'Guarantees',c:'/guarantees',k:'garantías guarantees garantias guarantees',go:'garantias'},
-  {g:'ir',ic:'§',es:'Silencios',en:'Silent',c:'/silent-fail',k:'silencios silent silencioso silent-fail',go:'silencioso'},
-  {g:'ir',ic:'§',es:'Cuota',en:'Quota',c:'/quota',k:'cuota quota cuota quota',go:'cuota'},
-  {g:'ir',ic:'§',es:'Cadena',en:'Chain',c:'/chain',k:'cadena chain cadena chain',go:'cadena'},
-  {g:'ir',ic:'§',es:'Método',en:'Method',c:'/method',k:'método method metodo method',go:'metodo'},
-  {g:'ir',ic:'§',es:'Contacto',en:'Contact',c:'/mail',k:'contacto contact contacto mail',go:'contacto'},
-  {g:'abrir',ic:'↗',es:'Índice · los 5 sistemas',en:'Index · the 5 systems',c:'open index',k:'indice index inicio home hub volver back portada',url:'../index.html'},
-  {g:'abrir',ic:'↗',es:'Caso · ECXM OPS',en:'Case · ECXM OPS',c:'open ecxm-ops',k:'ecxm ops ecxm-ops',url:'../ecxm-ops/ECXM-OPS.html'},
-  {g:'abrir',ic:'↗',es:'Caso · Quant Research Lab',en:'Case · Quant Research Lab',c:'open quant-lab',k:'quant research lab quant-lab',url:'../pumpfun-bot/PUMPFUN-BOT.html'},
-  {g:'abrir',ic:'↗',es:'Caso · RESELLERMASTER',en:'Case · RESELLERMASTER',c:'open resellermaster',k:'resellermaster resellermaster',url:'../RESELLERMASTER/RESELLERMASTER.html'},
-  {g:'abrir',ic:'↗',es:'Caso · SEKURA',en:'Case · SEKURA',c:'open sekura',k:'sekura sekura',url:'../SEKURA/SEKURA.html'},
-  {g:'hacer',ic:'✉',es:'Escribirme un email',en:'Write me an email',c:'/mail',k:'email correo mail escribir write contacto contact',url:MAIL},
-  {g:'hacer',ic:'↗',es:'Abrir mi LinkedIn',en:'Open my LinkedIn',c:'open linkedin',k:'linkedin perfil profile red social',url:LI,blank:true},
-  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') setLang(document.documentElement.lang==='en'?'es':'en'); }}
+  {g:'ir',ic:'§',es:'Recorrido',en:'Walkthrough',ca:'Recorregut',c:'/tour',k:'recorrido walkthrough recorrido tour',go:'recorrido'},
+  {g:'ir',ic:'§',es:'Desfase',en:'Drift',ca:'Desfasament',c:'/drift',k:'desfase drift desfase drift',go:'desfase'},
+  {g:'ir',ic:'§',es:'Garantías',en:'Guarantees',ca:'Garanties',c:'/guarantees',k:'garantías guarantees garantias guarantees',go:'garantias'},
+  {g:'ir',ic:'§',es:'Silencios',en:'Silent',ca:'Silencis',c:'/silent-fail',k:'silencios silent silencioso silent-fail',go:'silencioso'},
+  {g:'ir',ic:'§',es:'Cuota',en:'Quota',ca:'Quota',c:'/quota',k:'cuota quota cuota quota',go:'cuota'},
+  {g:'ir',ic:'§',es:'Cadena',en:'Chain',ca:'Cadena',c:'/chain',k:'cadena chain cadena chain',go:'cadena'},
+  {g:'ir',ic:'§',es:'Método',en:'Method',ca:'Mètode',c:'/method',k:'método method metodo method',go:'metodo'},
+  {g:'ir',ic:'§',es:'Contacto',en:'Contact',ca:'Contacte',c:'/mail',k:'contacto contact contacto mail',go:'contacto'},
+  {g:'abrir',ic:'↗',es:'Índice · los 5 sistemas',en:'Index · the 5 systems',ca:'Índex · els 5 sistemes',c:'open index',k:'indice index inicio home hub volver back portada',url:'../index.html'},
+  {g:'abrir',ic:'↗',es:'Caso · ECXM OPS',en:'Case · ECXM OPS',ca:'Cas · ECXM OPS',c:'open ecxm-ops',k:'ecxm ops ecxm-ops',url:'../ecxm-ops/ECXM-OPS.html'},
+  {g:'abrir',ic:'↗',es:'Caso · Quant Research Lab',en:'Case · Quant Research Lab',ca:'Cas · Quant Research Lab',c:'open quant-lab',k:'quant research lab quant-lab',url:'../pumpfun-bot/PUMPFUN-BOT.html'},
+  {g:'abrir',ic:'↗',es:'Caso · RESELLERMASTER',en:'Case · RESELLERMASTER',ca:'Cas · RESELLERMASTER',c:'open resellermaster',k:'resellermaster resellermaster',url:'../RESELLERMASTER/RESELLERMASTER.html'},
+  {g:'abrir',ic:'↗',es:'Caso · SEKURA',en:'Case · SEKURA',ca:'Cas · SEKURA',c:'open sekura',k:'sekura sekura',url:'../SEKURA/SEKURA.html'},
+  {g:'hacer',ic:'✉',es:'Escribirme un email',en:'Write me an email',ca:'Escriure\'m un email',c:'/mail',k:'email correo mail escribir write contacto contact',url:MAIL},
+  {g:'hacer',ic:'↗',es:'Abrir mi LinkedIn',en:'Open my LinkedIn',ca:'Obrir el meu LinkedIn',c:'open linkedin',k:'linkedin perfil profile red social',url:LI,blank:true},
+  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',ca:'Veure la pàgina en anglès',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') (function(){var v=[].map.call(document.querySelectorAll('#langList li'),function(x){return x.dataset.v;});if(!v.length)return;var i=v.indexOf(document.documentElement.lang);setLang(v[(i+1)%v.length]);})(); }}
 ];
 window.__runCmd=function(c){
   if(c.fn){ c.fn(); return; }
@@ -1904,10 +1967,8 @@ window.__runCmd=function(c){
 /* ── language toggle ── */
 function setLang(l){
   document.documentElement.lang=l;
-  document.documentElement.classList.remove('lang-es','lang-en');
-  document.documentElement.classList.add('lang-'+l);
-  document.body.classList.remove('lang-es','lang-en');
-  document.body.classList.add('lang-'+l);
+  twSoloLang(document.documentElement, l);
+  twSoloLang(document.body, l);
   /* el desplegable tiene que reflejar el cambio venga de donde venga:
      tambien lo dispara el comando /lang de la paleta */
   var cur=document.getElementById('langCur');
@@ -2042,7 +2103,8 @@ var SC=document.getElementById('twBody');
   var form=document.getElementById('twForm'), inp=document.getElementById('twIn');
   var con=document.getElementById('twCon'), ac=document.getElementById('twAc');
   if(!form) return;
-  function lang(){ return document.documentElement.lang==='en'?'en':'es'; }
+  function lang(){ var l=document.documentElement.lang;
+                   return (l==='en'||l==='ca') ? l : 'es'; }
   function norm(t){ return (t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
   inp.placeholder=inp.getAttribute('data-ph-'+lang())||'';
 
@@ -2052,7 +2114,7 @@ var SC=document.getElementById('twBody');
     var l=lang(), qn=norm(q.trim());
     return (window.__cmds||[]).filter(function(c){
       if(!qn) return true;
-      var hay=norm((c.c||'')+' '+c[l]+' '+c.k+' '+c.g);
+      var hay=norm((c.c||'')+' '+(c[l]||c.es)+' '+c.k+' '+c.g);
       return qn.split(/\s+/).every(function(w){ return hay.indexOf(w)>-1; });
     });
   }
@@ -2062,10 +2124,8 @@ var SC=document.getElementById('twBody');
     var l=lang();
     ac.innerHTML=hits.map(function(c,n){
       return '<div class="it" role="option" aria-selected="'+(n===0)+'" data-i="'+n+'">'+
-             '<span class="c">'+(c.c||'')+'</span><span class="l">'+c[l]+'</span></div>';
-    }).join('')+'<div class="hint">'+(l==='en'
-        ?'tab completes · ↑↓ moves · ↵ runs'
-        :'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
+             '<span class="c">'+(c.c||'')+'</span><span class="l">'+(c[l]||c.es)+'</span></div>';
+    }).join('')+'<div class="hint">'+({en:'tab completes · ↑↓ moves · ↵ runs',ca:'tab completa · ↑↓ mou · ↵ executa'}[l]||'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
     items=[].slice.call(ac.querySelectorAll('.it')); sel=0;
     items.forEach(function(el){
       el.addEventListener('click',function(){ runHit(hits[+el.dataset.i],false); });
@@ -2118,7 +2178,7 @@ var SC=document.getElementById('twBody');
        no hizo nada porque el campo se vacia de golpe */
     if(visible && c.c){ inp.value=c.c; }
     setTimeout(function(){
-      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+c[l]+'</span>','echo');
+      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+(c[l]||c.es)+'</span>','echo');
       inp.value='';
       if(window.__runCmd) window.__runCmd(c);
     }, visible && c.c ? 130 : 0);
@@ -2126,16 +2186,16 @@ var SC=document.getElementById('twBody');
   function help(){
     var l=lang(), by={};
     (window.__cmds||[]).forEach(function(c){ (by[c.g]=by[c.g]||[]).push(c); });
-    var G={ir:{es:'ir a',en:'go to'},abrir:{es:'abrir caso',en:'open case'},hacer:{es:'acciones',en:'actions'}};
+    var G={ir:{es:'ir a',en:'go to',ca:'anar a'},abrir:{es:'abrir caso',en:'open case',ca:'obrir cas'},hacer:{es:'acciones',en:'actions',ca:'accions'}};
     var html='';
     Object.keys(by).forEach(function(g){
-      html+='<div class="dim">'+(G[g]?G[g][l]:g)+'</div><table>'+
-        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+c[l]+'</td></tr>'; }).join('')+
+      html+='<div class="dim">'+(G[g]?(G[g][l]||G[g].es):g)+'</div><table>'+
+        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+(c[l]||c.es)+'</td></tr>'; }).join('')+
         '</table>';
     });
-    html+='<div class="dim">'+(l==='en'?'also':'además')+
-      '</div><table><tr><td>help</td><td>'+(l==='en'?'this list':'esta lista')+
-      '</td></tr><tr><td>clear</td><td>'+(l==='en'?'clear the console':'limpia la consola')+
+    html+='<div class="dim">'+(({en:'also',ca:'a més'}[l]||'además'))+
+      '</div><table><tr><td>help</td><td>'+(({en:'this list',ca:'aquesta llista'}[l]||'esta lista'))+
+      '</td></tr><tr><td>clear</td><td>'+(({en:'clear the console',ca:'neteja la consola'}[l]||'limpia la consola'))+
       '</td></tr></table>';
     line(html, '', TTL_LONG);
   }
@@ -2195,8 +2255,8 @@ var SC=document.getElementById('twBody');
     var hit=hits[ac.classList.contains('on')?sel:0];
     if(!hit){
       line('<b>$</b> '+q,'echo');
-      line('<span class="ko">'+(l==='en'?'command not found':'orden no encontrada')+
-           '</span> <span class="dim">· '+(l==='en'?'hit tab to list them':'pulsa tab para verlos')+'</span>');
+      line('<span class="ko">'+(({en:'command not found',ca:'ordre no trobada'}[l]||'orden no encontrada'))+
+           '</span> <span class="dim">· '+(({en:'hit tab to list them',ca:'prem tab per llistar-los'}[l]||'pulsa tab para verlos'))+'</span>');
       inp.value=''; return;
     }
     runHit(hit,true);
@@ -2262,6 +2322,32 @@ var SC=document.getElementById('twBody');
   /* cromo de la terminal y navegacion: no son documento, no se imprimen */
   var SKIP='script,style,noscript,svg,title,.progress,.tw-cmd,'+
            '#proto,#boot,.tw-con,.tw-ac,.tw-prompt,.tw-bar,.cmdk,.pcur';
+
+  /* ── el idioma INACTIVO no se imprime, y eso no es una optimizacion menor ──
+     El TreeWalker de split() no filtraba por visibilidad, asi que recorria tambien
+     el idioma en `display:none`: para cada nodo, un Range + un getClientRects() que
+     devuelve 0 rects + un span. No entraba en la busqueda binaria (la parte cara),
+     pero se pagaba igual, y build() volvia a recorrerlos para encenderlos a mano.
+     Medido en YOUTUBE con CPU x4, A/B intercalado, n=9: quitar el ingles ENTERO
+     ahorraba 226 ms de bloqueo de arranque; anadir un tercer idioma costaba 303 ms.
+     O sea ~226-300 ms POR IDIOMA OCULTO, sobre las 5 paginas de caso que ya
+     arrastran ~700 ms de deuda ([INC-PERF-01]).
+
+     No cambia el comportamiento: el texto que NO se envuelve en `.pl` no lleva
+     `opacity:0`, asi que se ve normal — que es exactamente donde acababa antes, con
+     build() marcandolo `.on` por tener caja de tamano cero. Al cambiar de idioma
+     aparece entero, igual que hoy.
+
+     Va en SKIP y no en un `closest` aparte porque asi es UNA sola llamada, y porque
+     build() debe saltarselos por el mismo motivo.
+
+     ⚠️ split() corre UNA vez (:3862) y `remeasure` NO vuelve a partir el texto —lo
+     dice su propio comentario, «carisimo»—, asi que esta lista se calcula con el
+     idioma de arranque y no caduca: los demas idiomas se quedan como texto plano
+     visible, que es su estado final de todos modos. */
+  var __lg=document.documentElement.lang||'es';
+  SKIP+=','+['es','en','ca'].filter(function(l){return l!==__lg;})
+                            .map(function(l){return '.t-'+l;}).join(',');
   /* cajas cuyo borde y fondo esperan a su primera linea: en la v4 el
      esqueleto de las tarjetas se pintaba mucho antes que su contenido */
   var BOXES='.pj,.mc,.cap,.claim,.ldg,.lex,.term,.cx-lines,.ascii-fw,'+
@@ -2733,13 +2819,24 @@ var SC=document.getElementById('twBody');
 
 (function(){ var orig=window.setLang; if(typeof orig!=="function") return;
   window.setLang=function(l){ orig(l); spy(true);
-    var L=document.documentElement.lang==="en"?"en":"es";
+    var L=document.documentElement.lang||"es";  /* [INC-SEED-02] antes: `lang==="en"?"en":"es"`, que en catalan cae al else
+       y deja el selector mostrando "ES" con la pagina en catalan. */
     var t=document.getElementById("twIn");
-    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||"";
+    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||t.getAttribute("data-ph-es")||"";
     var c=document.getElementById("langCur"); if(c) c.textContent=L.toUpperCase();
     var li=document.getElementById("langList");
     if(li) li.querySelectorAll("li").forEach(function(o){
       o.setAttribute("aria-selected", String(o.dataset.v===L)); });
+    /* [INC-JS-05] Los widgets que PINTA el JS no se re-pintaban al cambiar de idioma:
+       sus dos ganchos existian (`__railRefresh` :1823, `__quotaRefresh` :1736) pero su
+       UNICO llamador era la `setLang` pre-chasis, que esta muerta desde el port. Medido
+       sobre la version comiteada, SIN catalan de por medio: el panel de la cadena decia
+       «Alineacion» antes y despues de `setLang('en')`. O sea que un lector ingles lleva
+       leyendo ese panel en castellano desde el port, en produccion.
+       Van con guarda: en las 5 paginas que no tienen esos widgets no hacen nada, y asi
+       el chasis sigue siendo identico en las 6. */
+    if(window.__railRefresh) window.__railRefresh();
+    if(window.__quotaRefresh) window.__quotaRefresh();
     if(window.__printRemeasure) setTimeout(window.__printRemeasure,60);
   }; })();
 
@@ -2823,8 +2920,8 @@ var SC=document.getElementById('twBody');
 <script>
 /* ── contacto: copiar el email. Un mailto: no hace nada sin cliente de correo ── */
 (function(){
-  var T={ok:{es:'copiado',en:'copied'},base:{es:'copiar',en:'copy'}};
-  function paint(b,k){ b.innerHTML='<span class="t-es">'+T[k].es+'</span><span class="t-en">'+T[k].en+'</span>'; }
+  var T={ok:{es:'copiado',en:'copied',ca:'copiat'},base:{es:'copiar',en:'copy',ca:'copiar'}};
+  function paint(b,k){ b.innerHTML=TRI(T[k].es,T[k].en,T[k].ca); }
   Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'),function(b){
     b.addEventListener('click',function(){
       var v=b.dataset.copy, done=function(){ b.classList.add('done'); paint(b,'ok');

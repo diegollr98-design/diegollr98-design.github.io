@@ -14,6 +14,9 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Diego · RESELLERMASTER · el sistema que impide a una IA mentir sobre un producto">
 <meta name="twitter:card" content="summary_large_image">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ca_ES">
 <meta property="og:type" content="website">
 <meta name="author" content="Diego · RESELLERMASTER">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%B8%3C/text%3E%3C/svg%3E">
@@ -23,8 +26,18 @@
 <script>
   /* set language ASAP — no FOUC. stored pref > browser lang > es */
   (function(){try{
+    var OK={es:1,en:1,ca:1};   /* los idiomas que ESTA pagina tiene. Una pagina con catalan anade ca:1 */
     var l=localStorage.getItem('pf_lang');
-    if(!l){l=(navigator.language||'es').toLowerCase().indexOf('en')===0?'en':'es';}
+    if(!OK[l]){
+      /* [SEED §5.8] Antes preguntaba literalmente «es ingles? si no, castellano», asi que
+         un navegador en `ca-ES` aterrizaba en castellano: justo el lector para el que se
+         tradujo. Se comprueba el catalan PRIMERO porque es el mas especifico de los tres.
+         El `if(!OK[l])` final no es de adorno: una pagina que no tenga esa lengua cae al
+         castellano en vez de quedarse con las tres ocultas ([INC-JS-04]). */
+      var n=(navigator.language||'es').toLowerCase();
+      l = n.indexOf('ca')===0 ? 'ca' : (n.indexOf('en')===0 ? 'en' : 'es');
+      if(!OK[l]) l='es';
+    }
     document.documentElement.lang=l;
     document.documentElement.className='lang-'+l;
   }catch(e){}})();
@@ -64,8 +77,17 @@ img,svg{display:block}
 :focus-visible{outline:2px solid var(--g2);outline-offset:3px;border-radius:4px}
 
 /* i18n: hide the inactive language */
-html.lang-es .t-en{display:none!important}
-html.lang-en .t-es{display:none!important}
+/* Cada idioma oculta a TODOS los demas. Con solo dos reglas, anadir `t-ca` lo hacia
+   visible en castellano y en ingles a la vez. */
+html.lang-es .t-en,html.lang-es .t-ca{display:none!important}
+html.lang-en .t-es,html.lang-en .t-ca{display:none!important}
+html.lang-ca .t-es,html.lang-ca .t-en{display:none!important}
+/* [INC-TIPO-01] Inter compone `l·l` como ela geminada precompuesta y a 16 px el punt
+   volat desaparece: «cel·les» se lee «ceHes». `locl 0` desactiva esa forma
+   localizada. Medido: el `·` pasa de 1,53 px a 4,61, y el layout no se mueve
+   (docH/docW/h1 +0 a 390 y 1440, en catalan). NO lo arreglan `kern`, `liga`,
+   `dlig`, `calt` ni `ccmp`, ni cambiar el caracter por `ŀ`. */
+html.lang-ca .t-ca{font-feature-settings:'locl' 0}
 
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,6vw,40px)}
 .grad-text{background:var(--grad3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
@@ -413,6 +435,7 @@ footer .hl{color:var(--muted2)}
   .stbl td{border:0;padding:10px 16px}
   .stbl td::before{content:attr(data-h-es);display:block;font-family:'JetBrains Mono';font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
   html.lang-en .stbl td::before{content:attr(data-h)}
+  html.lang-ca .stbl td::before{content:attr(data-h-ca)}
 }
 @media(max-width:520px){.stations{grid-template-columns:1fr}footer{flex-direction:column;text-align:center}}
 @media(prefers-reduced-motion:reduce){
@@ -784,7 +807,7 @@ body{overflow:hidden}
            ellos. La pastilla con texto vive en las otras cinco paginas. -->
       <a class="tw-mail" href="mailto:diegollr98@gmail.com" title="diegollr98@gmail.com">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
-          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span></span></a>
+          <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 6.5l9 6.5 9-6.5"/></svg><span class="tw-mail-t"><span class="t-es">Escríbeme</span><span class="t-en">Write to me</span><span class="t-ca">Escriu-me</span></span></a>
       <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M4.98 3.5a2.5 2.5 0 11-.01 5 2.5 2.5 0 01.01-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.5 4.76 5.76V21h-4v-5.7c0-1.36-.03-3.1-1.9-3.1-1.9 0-2.19 1.47-2.19 3v5.8h-4z"/></svg>
@@ -802,12 +825,13 @@ body{overflow:hidden}
          diseño de la ventana es no usar el desplegable nativo. -->
     <div class="tw-lang">
       <button type="button" id="langBtn" aria-haspopup="listbox" aria-expanded="false">
-        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span>
+        <span class="sr t-es">Idioma</span><span class="sr t-en">Language</span><span class="sr t-ca">Idioma</span>
         <span id="langCur">ES</span><i aria-hidden="true"></i>
       </button>
       <ul class="tw-langlist" id="langList" role="listbox" hidden>
         <li role="option" data-v="es" aria-selected="true">ES</li>
         <li role="option" data-v="en" aria-selected="false">EN</li>
+        <li role="option" data-v="ca" aria-selected="false">CA</li>
       </ul>
     </div>
   </div>
@@ -818,12 +842,12 @@ body{overflow:hidden}
 <div class="wrap" id="top">
   <!-- hero -->
   <header class="hero">
-    <div class="eyebrow"><span class="t-es">AI Engineer · visión + LLM · reventa de segunda mano</span><span class="t-en">AI Engineer · vision + LLM · second-hand reselling</span></div>
+    <div class="eyebrow"><span class="t-es">AI Engineer · visión + LLM · reventa de segunda mano</span><span class="t-en">AI Engineer · vision + LLM · second-hand reselling</span><span class="t-ca">AI Engineer · visió + LLM · revenda de segona mà</span></div>
 
     <a class="hero-repo" href="https://github.com/diegollr98-design/resellermaster" target="_blank" rel="noopener">github.com/diegollr98-design/resellermaster<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
 
     <h1 class="t-es display">Construí el <span class="grad-text">sistema</span> que impide a una IA mentir sobre un producto.</h1>
-    <h1 class="t-en display">I built the <span class="grad-text">system</span> that stops an AI from lying about a product.</h1>
+    <h1 class="t-en display">I built the <span class="grad-text">system</span> that stops an AI from lying about a product.</h1><h1 class="t-ca display">Vaig construir el <span class="grad-text">sistema</span> que impedeix a una IA mentir sobre un producte.</h1>
 
     <p class="lede t-es">
       RESELLERMASTER coge un lote de fotos mezcladas de ropa y objetos de segunda mano, las <strong>agrupa por producto</strong>
@@ -836,23 +860,23 @@ body{overflow:hidden}
       and produces the listing ready to copy-paste into Wallapop and Vinted, title, brand, size, condition, price, <strong>without asserting a single attribute that isn't legible in a photo</strong>. This project's failure mode isn't the code
       crashing: it's the pipeline fluently inventing "Nike, size M, cotton, €25" and me publishing it.
       A bad listing isn't a bug: it's a <strong>lost sale</strong> and burned reputation. I started not knowing how to code; I built it solo, with AI.
-    </p>
+    </p><p class="lede t-ca">RESELLERMASTER agafa un lot de fotos barrejades de roba i objectes de segona mà, les <strong>agrupa per producte</strong> i produeix la fitxa a punt per copiar i enganxar a Wallapop i Vinted (títol, marca, talla, estat, preu) <strong>sense afirmar ni un atribut que no sigui llegible en una foto</strong>. El mode de fallada d'aquest projecte no és que el codi peti: és que el pipeline s'inventi «Nike, talla M, cotó, 25€» amb tota fluïdesa i jo ho publiqui. Una fitxa dolenta no és un bug: és una <strong>venda perduda</strong> i reputació cremada. Vaig començar sense saber programar; el vaig aixecar sol, amb IA.</p>
 
-    <p class="hero-note"><span class="t-es">App local de un solo usuario. No automatiza la publicación (va contra los términos de Wallapop/Vinted): llega hasta «copiar y pegar en 2 clics», a propósito.</span><span class="t-en">Local single-user app. It does not automate publishing (against Wallapop/Vinted terms): it goes as far as "copy &amp; paste in 2 clicks", on purpose.</span></p>
+    <p class="hero-note"><span class="t-es">App local de un solo usuario. No automatiza la publicación (va contra los términos de Wallapop/Vinted): llega hasta «copiar y pegar en 2 clics», a propósito.</span><span class="t-en">Local single-user app. It does not automate publishing (against Wallapop/Vinted terms): it goes as far as "copy &amp; paste in 2 clicks", on purpose.</span><span class="t-ca">App local d'un sol usuari. No automatitza la publicació (va contra els termes de Wallapop/Vinted): arriba fins a «copiar i enganxar en 2 clics», a propòsit.</span></p>
 
     <div class="cta">
       <a href="#recorrido" class="btn btn-primary">
         <svg viewBox="0 0 24 24" fill="#08080d"><path d="M8 5v14l11-7z"/></svg>
-        <span class="t-es">Ver el recorrido</span><span class="t-en">Watch the walkthrough</span>
+        <span class="t-es">Ver el recorrido</span><span class="t-en">Watch the walkthrough</span><span class="t-ca">Veure el recorregut</span>
       </a>
-      <a href="#verdad" class="btn btn-ghost"><span class="t-es">El Loop de Verdad</span><span class="t-en">The Truth Loop</span></a>
+      <a href="#verdad" class="btn btn-ghost"><span class="t-es">El Loop de Verdad</span><span class="t-en">The Truth Loop</span><span class="t-ca">El Loop de Veritat</span></a>
     </div>
 
     <div class="stats">
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="210" data-pre="~"></span><span class="u">s</span></div><div class="l"><span class="t-es">un export real cronometrado (n=1) · a mano ~285 s, estimado por un panel</span><span class="t-en">one real timed export (n=1) · by hand ~285 s, estimated by a panel</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="0"></span></div><div class="l"><span class="t-es">afirmaciones con confianza alta sin un píxel que las respalde · 33 fotos reales (7 productos), medido con la API contra el mapa de legibilidad</span><span class="t-en">high-confidence claims with no pixel to back them · 33 real photos (7 products), measured against the API using the legibility map</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="3.4" data-dec="1"></span><span class="u"> cts</span></div><div class="l"><span class="t-es">coste medio de extracción por producto · 0 al reprocesar (caché)</span><span class="t-en">avg extraction cost per product · 0 on reprocess (cache)</span></div></div>
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="5"></span></div><div class="l"><span class="t-es">fases cerradas · agrupar → extraer → export → precio → finanzas</span><span class="t-en">phases closed · group → extract → export → price → finances</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="210" data-pre="~"></span><span class="u">s</span></div><div class="l"><span class="t-es">un export real cronometrado (n=1) · a mano ~285 s, estimado por un panel</span><span class="t-en">one real timed export (n=1) · by hand ~285 s, estimated by a panel</span><span class="t-ca">un export real cronometrat (n=1) · a mà ~285 s, estimat per un panell</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="0"></span></div><div class="l"><span class="t-es">afirmaciones con confianza alta sin un píxel que las respalde · 33 fotos reales (7 productos), medido con la API contra el mapa de legibilidad</span><span class="t-en">high-confidence claims with no pixel to back them · 33 real photos (7 products), measured against the API using the legibility map</span><span class="t-ca">afirmacions amb confiança alta sense un píxel que les avali · 33 fotos reals (7 productes), mesurat amb l'API contra el mapa de llegibilitat</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="3.4" data-dec="1"></span><span class="u"> cts</span></div><div class="l"><span class="t-es">coste medio de extracción por producto · 0 al reprocesar (caché)</span><span class="t-en">avg extraction cost per product · 0 on reprocess (cache)</span><span class="t-ca">cost mitjà d'extracció per producte · 0 en reprocessar (cau)</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="5"></span></div><div class="l"><span class="t-es">fases cerradas · agrupar → extraer → export → precio → finanzas</span><span class="t-en">phases closed · group → extract → export → price → finances</span><span class="t-ca">fases tancades · agrupar → extreure → export → preu → finances</span></div></div>
     </div>
   </header>
 </div>
@@ -863,50 +887,50 @@ body{overflow:hidden}
 <section id="recorrido">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Recorrido</span><span class="t-en">Walkthrough</span></div>
+      <div class="eyebrow"><span class="t-es">Recorrido</span><span class="t-en">Walkthrough</span><span class="t-ca">Recorregut</span></div>
       <h2 class="t-es">Del montón de fotos a la ficha, en 2 clics</h2>
-      <h2 class="t-en">From a pile of photos to the listing, in 2 clicks</h2>
+      <h2 class="t-en">From a pile of photos to the listing, in 2 clicks</h2><h2 class="t-ca">Del munt de fotos a la fitxa, en 2 clics</h2>
       <p class="t-es">El producto es visual, así que la prueba también. Un vídeo del pipeline real: <strong>ingesta del lote → curar la agrupación → ficha con cada campo junto a su recorte → export copy-paste por plataforma → finanzas</strong>. El clímax es el export cronometrado.</p>
-      <p class="t-en">The product is visual, so is the proof. A video of the real pipeline: <strong>batch ingest → curate the grouping → listing with each field next to its crop → per-platform copy-paste export → finances</strong>. The climax is the timed export.</p>
+      <p class="t-en">The product is visual, so is the proof. A video of the real pipeline: <strong>batch ingest → curate the grouping → listing with each field next to its crop → per-platform copy-paste export → finances</strong>. The climax is the timed export.</p><p class="t-ca">El producte és visual, així que la prova també. Un vídeo del pipeline real: <strong>ingesta del lot → curar l'agrupació → fitxa amb cada camp al costat del seu retall → export copy-paste per plataforma → finances</strong>. El clímax és l'export cronometrat.</p>
     </div>
     <div class="video vp reveal" id="vpBox" data-hero="RESELLERMASTER-corte-hero-90s.mp4" data-tour="RESELLERMASTER-recorrido.mp4">
       <video id="vpVideo" src="RESELLERMASTER-corte-hero-90s.mp4" poster="../assets/poster-resellermaster.jpg"
              muted loop playsinline preload="metadata"></video>
-      <span class="vp-tag"><span class="t-es">vista previa · corte hero</span><span class="t-en">preview · hero cut</span></span>
+      <span class="vp-tag"><span class="t-es">vista previa · corte hero</span><span class="t-en">preview · hero cut</span><span class="t-ca">vista prèvia · tall hero</span></span>
       <button class="vp-ov" id="vpBtn" type="button">
         <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
-        <span class="vt"><span class="t-es">Recorrido del pipeline · 1:55</span><span class="t-en">Pipeline walkthrough · 1:55</span></span>
-        <span class="vs"><span class="t-es">Sin voz: el pipeline real con los rótulos en pantalla. Pasa el ratón para ver el corte de 90 s; pulsa para el recorrido entero.</span><span class="t-en">No voice-over: the real pipeline with on-screen captions. Hover for the 90 s cut; click for the full walkthrough.</span></span>
+        <span class="vt"><span class="t-es">Recorrido del pipeline · 1:55</span><span class="t-en">Pipeline walkthrough · 1:55</span><span class="t-ca">Recorregut del pipeline · 1:55</span></span>
+        <span class="vs"><span class="t-es">Sin voz: el pipeline real con los rótulos en pantalla. Pasa el ratón para ver el corte de 90 s; pulsa para el recorrido entero.</span><span class="t-en">No voice-over: the real pipeline with on-screen captions. Hover for the 90 s cut; click for the full walkthrough.</span><span class="t-ca">Sense veu: el pipeline real amb els rètols a la pantalla. Passa el ratolí per veure el tall de 90 s; prem per al recorregut sencer.</span></span>
       </button>
     </div>
-    <p class="video-note"><span class="t-es">Guion: ingesta → cremallera con pestillo (curar) → ficha con badges 📷/🧠 → export por plataforma → «5. Finanzas» (Subido → Vendido → beneficio → Excel). El export real se cronometró una vez en <b>~210 s</b> (<b>n=1</b>; a mano ~285 s, estimado).</span><span class="t-en">Script: ingest → latching zipper (curate) → listing with 📷/🧠 badges → per-platform export → "5. Finances" (Uploaded → Sold → profit → Excel). The real export was timed once at <b>~210 s</b> (<b>n=1</b>; by hand ~285 s, estimated).</span></p>
+    <p class="video-note"><span class="t-es">Guion: ingesta → cremallera con pestillo (curar) → ficha con badges 📷/🧠 → export por plataforma → «5. Finanzas» (Subido → Vendido → beneficio → Excel). El export real se cronometró una vez en <b>~210 s</b> (<b>n=1</b>; a mano ~285 s, estimado).</span><span class="t-en">Script: ingest → latching zipper (curate) → listing with 📷/🧠 badges → per-platform export → "5. Finances" (Uploaded → Sold → profit → Excel). The real export was timed once at <b>~210 s</b> (<b>n=1</b>; by hand ~285 s, estimated).</span><span class="t-ca">Guió: ingesta → cremallera amb balda (curar) → fitxa amb badges 📷/🧠 → export per plataforma → «5. Finances» (Pujat → Venut → benefici → Excel). L'export real es va cronometrar un cop en <b>~210 s</b> (<b>n=1</b>; a mà ~285 s, estimat).</span></p>
 
     <!-- prueba visual: la ficha real (representación fiel de la pantalla) -->
     <div class="proof">
       <div class="ficha reveal">
         <div class="fh">
-          <b><span class="t-es">Ficha · producto 3</span><span class="t-en">Listing · product 3</span></b>
-          <span class="tag"><span class="t-es">representación de la pantalla real</span><span class="t-en">representation of the real screen</span></span>
+          <b><span class="t-es">Ficha · producto 3</span><span class="t-en">Listing · product 3</span><span class="t-ca">Fitxa · producte 3</span></b>
+          <span class="tag"><span class="t-es">representación de la pantalla real</span><span class="t-en">representation of the real screen</span><span class="t-ca">representació de la pantalla real</span></span>
         </div>
-        <div class="frow"><span class="fk">Marca</span><span class="fv">Reebok</span><span class="badge badge-foto">📷 <span class="t-es">leído</span><span class="t-en">read</span></span></div>
-        <div class="frow"><span class="fk">Talla</span><span class="fv">XXL</span><span class="badge badge-foto">📷 <span class="t-es">leído</span><span class="t-en">read</span></span></div>
-        <div class="frow"><span class="fk"><span class="t-es">Tipo</span><span class="t-en">Type</span></span><span class="fv"><span class="t-es">sudadera</span><span class="t-en">hoodie</span></span><span class="badge badge-inf">🧠 <span class="t-es">inferido</span><span class="t-en">inferred</span></span></div>
-        <div class="frow"><span class="fk">Color</span><span class="fv"><span class="t-es">gris</span><span class="t-en">grey</span></span><span class="badge badge-inf">🧠 <span class="t-es">inferido</span><span class="t-en">inferred</span></span></div>
-        <div class="frow"><span class="fk"><span class="t-es">Material</span><span class="t-en">Material</span></span><span class="fv"><small><span class="t-es">, (etiqueta no fotografiada)</span><span class="t-en">, (label not photographed)</span></small></span><span class="badge badge-null">null</span></div>
-        <div class="frow"><span class="fk"><span class="t-es">Estado</span><span class="t-en">Condition</span></span><span class="fv"><span class="t-es">Muy bueno</span><span class="t-en">Very good</span></span><span class="badge badge-diego"><span class="t-es">✓ lo confirma Diego</span><span class="t-en">✓ Diego confirms</span></span></div>
-        <div class="frow"><span class="fk"><span class="t-es">Precio</span><span class="t-en">Price</span></span><span class="fv">20 € <small><span class="t-es">mediana de 15 parecidos</span><span class="t-en">median of 15 similar</span></small></span><span class="badge badge-inf"><span class="t-es">comparables</span><span class="t-en">comparables</span></span></div>
-        <div class="fnote"><span class="t-es">Cada campo lleva su recorte de la foto al lado. La app PROPONE; Diego CONFIRMA con el píxel delante.</span><span class="t-en">Each field shows its photo crop alongside. The app PROPOSES; Diego CONFIRMS with the pixel in front of him.</span></div>
+        <div class="frow"><span class="fk">Marca</span><span class="fv">Reebok</span><span class="badge badge-foto">📷 <span class="t-es">leído</span><span class="t-en">read</span><span class="t-ca">llegit</span></span></div>
+        <div class="frow"><span class="fk">Talla</span><span class="fv">XXL</span><span class="badge badge-foto">📷 <span class="t-es">leído</span><span class="t-en">read</span><span class="t-ca">llegit</span></span></div>
+        <div class="frow"><span class="fk"><span class="t-es">Tipo</span><span class="t-en">Type</span><span class="t-ca">Tipus</span></span><span class="fv"><span class="t-es">sudadera</span><span class="t-en">hoodie</span><span class="t-ca">dessuadora</span></span><span class="badge badge-inf">🧠 <span class="t-es">inferido</span><span class="t-en">inferred</span><span class="t-ca">inferit</span></span></div>
+        <div class="frow"><span class="fk">Color</span><span class="fv"><span class="t-es">gris</span><span class="t-en">grey</span><span class="t-ca">gris</span></span><span class="badge badge-inf">🧠 <span class="t-es">inferido</span><span class="t-en">inferred</span><span class="t-ca">inferit</span></span></div>
+        <div class="frow"><span class="fk"><span class="t-es">Material</span><span class="t-en">Material</span><span class="t-ca">Material</span></span><span class="fv"><small><span class="t-es">, (etiqueta no fotografiada)</span><span class="t-en">, (label not photographed)</span><span class="t-ca">, (etiqueta no fotografiada)</span></small></span><span class="badge badge-null">null</span></div>
+        <div class="frow"><span class="fk"><span class="t-es">Estado</span><span class="t-en">Condition</span><span class="t-ca">Estat</span></span><span class="fv"><span class="t-es">Muy bueno</span><span class="t-en">Very good</span><span class="t-ca">Molt bo</span></span><span class="badge badge-diego"><span class="t-es">✓ lo confirma Diego</span><span class="t-en">✓ Diego confirms</span><span class="t-ca">✓ ho confirma en Diego</span></span></div>
+        <div class="frow"><span class="fk"><span class="t-es">Precio</span><span class="t-en">Price</span><span class="t-ca">Preu</span></span><span class="fv">20 € <small><span class="t-es">mediana de 15 parecidos</span><span class="t-en">median of 15 similar</span><span class="t-ca">mediana de 15 semblants</span></small></span><span class="badge badge-inf"><span class="t-es">comparables</span><span class="t-en">comparables</span><span class="t-ca">comparables</span></span></div>
+        <div class="fnote"><span class="t-es">Cada campo lleva su recorte de la foto al lado. La app PROPONE; Diego CONFIRMA con el píxel delante.</span><span class="t-en">Each field shows its photo crop alongside. The app PROPOSES; Diego CONFIRMS with the pixel in front of him.</span><span class="t-ca">Cada camp porta el seu retall de la foto al costat. L'app PROPOSA; en Diego CONFIRMA amb el píxel al davant.</span></div>
       </div>
       <div class="proof-body reveal">
         <p class="t-es">Esto es lo que ningún otro proyecto mío tiene: <strong>una ficha donde cada dato dice de dónde salió.</strong> Un badge <span class="hl">📷 leído</span> significa que el valor está <em>contenido en el texto legible del recorte citado</em>. Un <span class="hl">🧠 inferido</span> es la mejor estimación del modelo, marcada como tal y con confianza baja.</p>
         <p class="t-es">El material sale <strong>vacío</strong> porque la etiqueta no está en ninguna foto, y eso es un acierto, no un hueco: un campo vacío se recupera; una talla inventada es una devolución.</p>
         <p class="t-en">This is what no other project of mine has: <strong>a listing where every value says where it came from.</strong> A <span class="hl">📷 read</span> badge means the value is <em>contained in the legible text of the cited crop</em>. A <span class="hl">🧠 inferred</span> one is the model's best guess, flagged as such with low confidence.</p>
-        <p class="t-en">Material is left <strong>empty</strong> because the label isn't in any photo, and that's a win, not a gap: an empty field is recoverable; an invented size is a return.</p>
+        <p class="t-en">Material is left <strong>empty</strong> because the label isn't in any photo, and that's a win, not a gap: an empty field is recoverable; an invented size is a return.</p><p class="t-ca">Això és el que cap altre projecte meu té: <strong>una fitxa on cada dada diu d'on va sortir.</strong> Un badge <span class="hl">📷 llegit</span> vol dir que el valor està <em>contingut en el text llegible del retall citat</em>. Un <span class="hl">🧠 inferit</span> és la millor estimació del model, marcada com a tal i amb confiança baixa.</p><p class="t-ca">El material surt <strong>buit</strong> perquè l'etiqueta no és a cap foto, i això és un encert, no un forat: un camp buit es recupera; una talla inventada és una devolució.</p>
         <div class="proof-legend">
-          <span><span class="badge badge-foto">📷</span> <span class="t-es">en la foto</span><span class="t-en">in the photo</span></span>
-          <span><span class="badge badge-inf">🧠</span> <span class="t-es">inferido</span><span class="t-en">inferred</span></span>
-          <span><span class="badge badge-diego">✓</span> <span class="t-es">confirmado</span><span class="t-en">confirmed</span></span>
-          <span><span class="badge badge-null">null</span> <span class="t-es">no legible</span><span class="t-en">not legible</span></span>
+          <span><span class="badge badge-foto">📷</span> <span class="t-es">en la foto</span><span class="t-en">in the photo</span><span class="t-ca">a la foto</span></span>
+          <span><span class="badge badge-inf">🧠</span> <span class="t-es">inferido</span><span class="t-en">inferred</span><span class="t-ca">inferit</span></span>
+          <span><span class="badge badge-diego">✓</span> <span class="t-es">confirmado</span><span class="t-en">confirmed</span><span class="t-ca">confirmat</span></span>
+          <span><span class="badge badge-null">null</span> <span class="t-es">no legible</span><span class="t-en">not legible</span><span class="t-ca">no llegible</span></span>
         </div>
       </div>
     </div>
@@ -918,44 +942,44 @@ body{overflow:hidden}
 <section id="escala">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">El ahorro a escala</span><span class="t-en">Saving at scale</span></div>
+      <div class="eyebrow"><span class="t-es">El ahorro a escala</span><span class="t-en">Saving at scale</span><span class="t-ca">L'estalvi a escala</span></div>
       <h2 class="t-es">La app no gana en un producto. Gana en el lote.</h2>
-      <h2 class="t-en">The app doesn't win on one product. It wins on the batch.</h2>
+      <h2 class="t-en">The app doesn't win on one product. It wins on the batch.</h2><h2 class="t-ca">L'app no guanya en un producte. Guanya en el lot.</h2>
       <p class="t-es">A mano, cada producto es trabajo íntegro que se repite: fotografiar, teclear, categorizar, tasar, pegar. Con la app, el agrupado, la extracción y la confirmación se hacen <strong>en bloque para todo el lote</strong>, así que la ventaja no es fija: <strong>compone</strong> con cada producto que añades.</p>
-      <p class="t-en">By hand, each product is full work repeated: shoot, type, categorize, price, paste. With the app, grouping, extraction and confirmation happen <strong>in bulk for the whole batch</strong>, so the advantage isn't fixed: it <strong>compounds</strong> with every product you add.</p>
+      <p class="t-en">By hand, each product is full work repeated: shoot, type, categorize, price, paste. With the app, grouping, extraction and confirmation happen <strong>in bulk for the whole batch</strong>, so the advantage isn't fixed: it <strong>compounds</strong> with every product you add.</p><p class="t-ca">A mà, cada producte és feina íntegra que es repeteix: fotografiar, teclejar, categoritzar, taxar, enganxar. Amb l'app, l'agrupament, l'extracció i la confirmació es fan <strong>en bloc per a tot el lot</strong>, així que l'avantatge no és fix: <strong>compon</strong> amb cada producte que hi afegeixes.</p>
     </div>
 
     <div class="calc reveal">
       <div class="calc-top">
-        <span class="cl"><span class="t-es">productos en el lote</span><span class="t-en">products in the batch</span></span>
-        <span class="cn"><b class="calc-n">10</b> <span class="t-es">productos</span><span class="t-en">products</span></span>
+        <span class="cl"><span class="t-es">productos en el lote</span><span class="t-en">products in the batch</span><span class="t-ca">productes al lot</span></span>
+        <span class="cn"><b class="calc-n">10</b> <span class="t-es">productos</span><span class="t-en">products</span><span class="t-ca">productes</span></span>
       </div>
       <input type="range" min="1" max="30" value="10" id="calc-range" aria-label="Número de productos en el lote">
       <div class="bar-row">
-        <div class="bl"><span class="who"><span class="t-es">A mano</span><span class="t-en">By hand</span></span><span class="tm" id="tm-manual">1 h 10 min</span></div>
+        <div class="bl"><span class="who"><span class="t-es">A mano</span><span class="t-en">By hand</span><span class="t-ca">A mà</span></span><span class="tm" id="tm-manual">1 h 10 min</span></div>
         <div class="bar manual"><div class="fill" id="fill-manual" style="width:33.3%"></div></div>
       </div>
       <div class="bar-row">
-        <div class="bl"><span class="who"><span class="t-es">Con la app</span><span class="t-en">With the app</span></span><span class="tm" id="tm-app">37 min</span></div>
+        <div class="bl"><span class="who"><span class="t-es">Con la app</span><span class="t-en">With the app</span><span class="t-ca">Amb l'app</span></span><span class="tm" id="tm-app">37 min</span></div>
         <div class="bar app"><div class="fill" id="fill-app" style="width:17.6%"></div></div>
       </div>
       <div class="calc-saved">
         <span class="cs-txt">
           <span class="t-es">Ahorro proyectado: <b class="saved-v">~33 min</b> en <span class="calc-n">10</span> productos.</span>
-          <span class="t-en">Projected saving: <b class="saved-v">~33 min</b> across <span class="calc-n">10</span> products.</span>
+          <span class="t-en">Projected saving: <b class="saved-v">~33 min</b> across <span class="calc-n">10</span> products.</span><span class="t-ca">Estalvi projectat: <b class="saved-v">~33 min</b> en <span class="calc-n">10</span> productes.</span>
         </span>
-        <span class="calc-pct"><b class="pct-v">−47%</b><small><span class="t-es">menos tiempo</span><span class="t-en">less time</span></small></span>
+        <span class="calc-pct"><b class="pct-v">−47%</b><small><span class="t-es">menos tiempo</span><span class="t-en">less time</span><span class="t-ca">menys temps</span></small></span>
       </div>
       <div class="calc-note">
         <span class="t-es"><b>⚠ ESTIMACIÓN RAZONADA (persona media), no cronometrada.</b> A mano ≈ <b style="color:#8fbaff">7 min/producto</b> y <b>todo se repite</b>: separar las fotos · buscar referencia de precio en Wallapop/Vinted/Google · pensar título+descripción · categoría+atributos · subir a las 2 plataformas · registrar en Excel. Con la app: <b>~2 min fijos</b> de montar el lote (ingesta + «extraer todo»: 2 clics para N productos) <b>+ ~3,5 min por ficha</b> (revisar con el recorte + export copy-paste; ≈ el export medido, n=1). Por eso el <b>% crece con el lote</b>: lo fijo se amortiza. Cifras para una persona media (Diego va más rápido); el único dato MEDIDO es el export (~210 s). El imbatible sigue siendo cronometrar un lote real.</span>
-        <span class="t-en"><b>⚠ REASONED ESTIMATE (average person), not timed.</b> By hand ≈ <b style="color:#8fbaff">7 min/product</b> and <b>everything repeats</b>: separate the photos · look up a price reference on Wallapop/Vinted/Google · think up title+description · category+attributes · upload to both platforms · log it in Excel. With the app: <b>~2 min fixed</b> to set up the batch (ingest + "extract all": 2 clicks for N products) <b>+ ~3.5 min per listing</b> (review with the crop + copy-paste export; ≈ the measured export, n=1). That's why the <b>% grows with the batch</b>: the fixed cost amortizes. Figures for an average person (Diego is faster); the only MEASURED datum is the export (~210 s). The unbeatable one is still to time a real batch.</span>
+        <span class="t-en"><b>⚠ REASONED ESTIMATE (average person), not timed.</b> By hand ≈ <b style="color:#8fbaff">7 min/product</b> and <b>everything repeats</b>: separate the photos · look up a price reference on Wallapop/Vinted/Google · think up title+description · category+attributes · upload to both platforms · log it in Excel. With the app: <b>~2 min fixed</b> to set up the batch (ingest + "extract all": 2 clicks for N products) <b>+ ~3.5 min per listing</b> (review with the crop + copy-paste export; ≈ the measured export, n=1). That's why the <b>% grows with the batch</b>: the fixed cost amortizes. Figures for an average person (Diego is faster); the only MEASURED datum is the export (~210 s). The unbeatable one is still to time a real batch.</span><span class="t-ca"><b>⚠ ESTIMACIÓ RAONADA (persona mitjana), no cronometrada.</b> A mà ≈ <b style="color:#8fbaff">7 min/producte</b> i <b>tot es repeteix</b>: separar les fotos · buscar referència de preu a Wallapop/Vinted/Google · pensar títol+descripció · categoria+atributs · pujar a les 2 plataformes · registrar a Excel. Amb l'app: <b>~2 min fixos</b> de muntar el lot (ingesta + «extreure tot»: 2 clics per a N productes) <b>+ ~3,5 min per fitxa</b> (revisar amb el retall + export copy-paste; ≈ l'export mesurat, n=1). Per això el <b>% creix amb el lot</b>: el que és fix s'amortitza. Xifres per a una persona mitjana (en Diego va més ràpid); l'única dada MESURADA és l'export (~210 s). L'imbatible segueix sent cronometrar un lot real.</span>
       </div>
     </div>
 
     <div class="scale-facts">
-      <div class="sf reveal"><div class="sfn"><b>14 → 2</b></div><h4><span class="t-es">clics para extraer el lote</span><span class="t-en">clicks to extract the batch</span></h4><p><span class="t-es">«Extraer TODO el lote» cuesta 2 clics, sea N=1 o N=30. Antes era 2 por producto. Hecho contado, no estimado.</span><span class="t-en">"Extract the WHOLE batch" costs 2 clicks, whether N=1 or N=30. It used to be 2 per product. A counted fact, not an estimate.</span></p></div>
-      <div class="sf reveal"><div class="sfn">~<b>1 €</b></div><h4><span class="t-es">coste de 30 productos</span><span class="t-en">cost of 30 products</span></h4><p><span class="t-es">3,4 cts/producto de extracción · <b>0 al reprocesar</b> (caché por hash de imagen: cada llamada se paga una vez).</span><span class="t-en">3.4 cts/product for extraction · <b>0 on reprocess</b> (cache by image hash: each call is paid once).</span></p></div>
-      <div class="sf reveal"><div class="sfn"><b>×N</b></div><h4><span class="t-es">cómo compone</span><span class="t-en">how it compounds</span></h4><p><span class="t-es">A mano cada producto se repite entero; en la app agrupar / extraer / confirmar se amortizan sobre todo el lote.</span><span class="t-en">By hand each product repeats in full; in the app grouping / extracting / confirming amortize across the whole batch.</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>14 → 2</b></div><h4><span class="t-es">clics para extraer el lote</span><span class="t-en">clicks to extract the batch</span><span class="t-ca">clics per extreure el lot</span></h4><p><span class="t-es">«Extraer TODO el lote» cuesta 2 clics, sea N=1 o N=30. Antes era 2 por producto. Hecho contado, no estimado.</span><span class="t-en">"Extract the WHOLE batch" costs 2 clicks, whether N=1 or N=30. It used to be 2 per product. A counted fact, not an estimate.</span><span class="t-ca">«Extreure TOT el lot» costa 2 clics, sigui N=1 o N=30. Abans era 2 per producte. Fet comptat, no estimat.</span></p></div>
+      <div class="sf reveal"><div class="sfn">~<b>1 €</b></div><h4><span class="t-es">coste de 30 productos</span><span class="t-en">cost of 30 products</span><span class="t-ca">cost de 30 productes</span></h4><p><span class="t-es">3,4 cts/producto de extracción · <b>0 al reprocesar</b> (caché por hash de imagen: cada llamada se paga una vez).</span><span class="t-en">3.4 cts/product for extraction · <b>0 on reprocess</b> (cache by image hash: each call is paid once).</span><span class="t-ca">3,4 cts/producte d'extracció · <b>0 en reprocessar</b> (cau per hash d'imatge: cada crida es paga un cop).</span></p></div>
+      <div class="sf reveal"><div class="sfn"><b>×N</b></div><h4><span class="t-es">cómo compone</span><span class="t-en">how it compounds</span><span class="t-ca">com compon</span></h4><p><span class="t-es">A mano cada producto se repite entero; en la app agrupar / extraer / confirmar se amortizan sobre todo el lote.</span><span class="t-en">By hand each product repeats in full; in the app grouping / extracting / confirming amortize across the whole batch.</span><span class="t-ca">A mà cada producte es repeteix sencer; a l'app agrupar / extreure / confirmar s'amortitzen sobre tot el lot.</span></p></div>
     </div>
   </div>
 </section>
@@ -965,11 +989,11 @@ body{overflow:hidden}
 <section id="verdad">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Flagship · el corazón del proyecto</span><span class="t-en">Flagship · the heart of the project</span></div>
+      <div class="eyebrow"><span class="t-es">Flagship · el corazón del proyecto</span><span class="t-en">Flagship · the heart of the project</span><span class="t-ca">Flagship · el cor del projecte</span></div>
       <h2 class="t-es">El Loop de Verdad: la app no AFIRMA, PROPONE</h2>
-      <h2 class="t-en">The Truth Loop: the app doesn't ASSERT, it PROPOSES</h2>
+      <h2 class="t-en">The Truth Loop: the app doesn't ASSERT, it PROPOSES</h2><h2 class="t-ca">El Loop de Veritat: l'app no AFIRMA, PROPOSA</h2>
       <p class="t-es">La app está diseñada para que yo confíe y copie rápido, y esa confianza es exactamente lo que convierte una alucinación en una venta perdida. Así que la honestidad no es un eslogan: está <strong>incrustada en la arquitectura</strong>. Quien AFIRMA es el humano al confirmar; la máquina sólo propone y enseña el píxel.</p>
-      <p class="t-en">The app is built so I trust it and copy fast, and that trust is exactly what turns a hallucination into a lost sale. So honesty isn't a slogan: it's <strong>baked into the architecture</strong>. The one who ASSERTS is the human on confirm; the machine only proposes and shows the pixel.</p>
+      <p class="t-en">The app is built so I trust it and copy fast, and that trust is exactly what turns a hallucination into a lost sale. So honesty isn't a slogan: it's <strong>baked into the architecture</strong>. The one who ASSERTS is the human on confirm; the machine only proposes and shows the pixel.</p><p class="t-ca">L'app està dissenyada perquè jo m'hi confiï i copiï de pressa, i aquesta confiança és exactament el que converteix una al·lucinació en una venda perduda. Així que l'honestedat no és un eslògan: està <strong>incrustada a l'arquitectura</strong>. Qui AFIRMA és l'humà en confirmar; la màquina només proposa i ensenya el píxel.</p>
     </div>
 
     <div class="sb">
@@ -1006,7 +1030,7 @@ cite  = crop(<span class="b">"IMG_0421.jpg"</span>, label_region)
 <span class="cm"># extending a reading ("Reebok" → "Reebok</span>
 <span class="cm"># Classic 100% cotton") is UNEXPRESSABLE:</span>
 <span class="cm"># the extended value is no longer in the cite.</span>
-</div>
+</div><div class="sb-code reveal t-ca"><span class="cm"># la garantia no la dona el prompt — la força un `if`</span> <span class="cm"># core/extract.py :: _construir_campo_desde_sintesis</span> valor = <span class="g">"Reebok"</span> cita = crop(<span class="b">"IMG_0421.jpg"</span>, region_etiqueta) <span class="a">if</span> valor.lower() <span class="a">in</span> texto_legible(cita).lower(): fuente = <span class="g">"foto"</span> <span class="cm"># és al píxel</span> confianza = <span class="g">"media"</span> <span class="a">else</span>: fuente = <span class="r">"inferido"</span> <span class="cm"># NO es veu → es marca</span> confianza = <span class="r">"baja"</span> <span class="cm"># estendre una lectura ("Reebok" → "Reebok</span> <span class="cm"># Classic 100% cotó") és INEXPRESSABLE:</span> <span class="cm"># el valor estès ja no és a la cita.</span></div>
       <div class="sb-body reveal t-es">
         <p>Cada campo lleva <strong>procedencia obligatoria</strong>: <span class="hl">valor · fuente · evidencia · confianza</span>. Un <span class="mono">fuente=foto</span> sin evidencia no es un dato, es un bug.</p>
         <p>Un panel adversarial <strong>Opus</strong> (mi agente <span class="mono">listing-audit</span>) cazó justo esto: el <span class="mono">if</span> sólo validaba que la <em>cita</em> existiera, no que el <strong>valor</strong> estuviera en ese píxel: el modelo podía extender una lectura y colarla como leída. Veredicto BLOQUEANTE, corregido con guarda + test.</p>
@@ -1016,19 +1040,19 @@ cite  = crop(<span class="b">"IMG_0421.jpg"</span>, label_region)
         <p>Every field carries <strong>mandatory provenance</strong>: <span class="hl">value · source · evidence · confidence</span>. A <span class="mono">source=photo</span> without evidence isn't a datum, it's a bug.</p>
         <p>An adversarial <strong>Opus</strong> panel (my <span class="mono">listing-audit</span> agent) caught exactly this: the <span class="mono">if</span> only checked the <em>citation</em> existed, not that the <strong>value</strong> was in that pixel: the model could extend a reading and pass it as read. BLOCKING verdict, fixed with a guard + test.</p>
         <p class="sb-kicker"><strong>A guarantee promised in prose isn't guaranteed until an `if` enforces it.</strong></p>
-      </div>
+      </div><div class="sb-body reveal t-ca"><p>Cada camp porta <strong>procedència obligatòria</strong>: <span class="hl">valor · font · evidència · confiança</span>. Un <span class="mono">fuente=foto</span> sense evidència no és una dada, és un bug.</p> <p>Un panell adversarial <strong>Opus</strong> (el meu agent <span class="mono">listing-audit</span>) va caçar justament això: l'<span class="mono">if</span> només validava que la <em>cita</em> existís, no que el <strong>valor</strong> fos en aquell píxel: el model podia estendre una lectura i colar-la com a llegida. Veredicte BLOQUEJANT, corregit amb guarda + test.</p> <p class="sb-kicker"><strong>Una garantia promesa en prosa no està garantida fins que un `if` la força.</strong></p></div>
     </div>
 
     <div class="truth reveal">
-      <span class="tl grad-text"><span class="t-es">El precio nunca sale del LLM</span><span class="t-en">Price never comes from the LLM</span></span>
+      <span class="tl grad-text"><span class="t-es">El precio nunca sale del LLM</span><span class="t-en">Price never comes from the LLM</span><span class="t-ca">El preu mai surt de l'LLM</span></span>
       <p class="t-es">El precio <b>no es un atributo del producto</b>: es una observación del mercado. Sale de <b>comparables reales con su URL</b> (la mediana de N parecidos, que puedo abrir y comprobar) o es <b>None + motivo</b>. Nunca un número plausible sin fuente. Límite honesto que la propia app declara en su UI: los anuncios publican lo que la gente <b>PIDE</b>, no por cuánto <b>VENDIÓ</b> (los precios de venta no son públicos).</p>
-      <p class="t-en">Price <b>is not a product attribute</b>: it's a market observation. It comes from <b>real comparables with their URL</b> (the median of N similar items I can open and check) or it's <b>None + reason</b>. Never a plausible number without a source. An honest limit the app states in its own UI: listings publish what people <b>ASK</b>, not what they <b>SOLD</b> for (sale prices aren't public).</p>
+      <p class="t-en">Price <b>is not a product attribute</b>: it's a market observation. It comes from <b>real comparables with their URL</b> (the median of N similar items I can open and check) or it's <b>None + reason</b>. Never a plausible number without a source. An honest limit the app states in its own UI: listings publish what people <b>ASK</b>, not what they <b>SOLD</b> for (sale prices aren't public).</p><p class="t-ca">El preu <b>no és un atribut del producte</b>: és una observació del mercat. Surt de <b>comparables reals amb la seva URL</b> (la mediana de N semblants, que puc obrir i comprovar) o és <b>None + motiu</b>. Mai un número plausible sense font. Límit honest que la mateixa app declara a la seva UI: els anuncis publiquen el que la gent <b>DEMANA</b>, no per quant es va <b>VENDRE</b> (els preus de venda no són públics).</p>
     </div>
 
     <div class="layers">
-      <div class="layer reveal"><div class="n grad-text">COSTURA 01 · ExtractorEngine</div><h4><span class="t-es">Un solo punto de llamada</span><span class="t-en">One call point</span></h4><p><span class="t-es">Toda llamada a cualquier proveedor (Claude/OCR/local) pasa por un módulo: contabiliza el coste por producto y cachea por hash de imagen. El proveedor es una decisión reversible, no una dependencia esparcida.</span><span class="t-en">Every call to any provider (Claude/OCR/local) goes through one module: it accounts cost per product and caches by image hash. The provider is a reversible decision, not a scattered dependency.</span></p></div>
-      <div class="layer reveal"><div class="n grad-text">COSTURA 02 · PriceEngine</div><h4><span class="t-es">Precio desde comparables</span><span class="t-en">Price from comparables</span></h4><p><span class="t-es">Lee la búsqueda pública por texto, coge ~15 parecidos y devuelve mediana + rango + URLs. Sin n≥5 → None + motivo. Leer ≠ publicar: volumen doméstico, sin herramientas de evasión.</span><span class="t-en">Reads the public text search, takes ~15 similar items and returns median + range + URLs. Without n≥5 → None + reason. Reading ≠ publishing: domestic volume, no anti-detection tooling.</span></p></div>
-      <div class="layer reveal"><div class="n grad-text">COSTURA 03 · ListingSchema</div><h4><span class="t-es">Los campos, en un sitio</span><span class="t-en">Fields in one place</span></h4><p><span class="t-es">Los campos obligatorios de cada plataforma × categoría viven en un esquema declarativo. El LLM RELLENA un esquema; no inventa campos ni olvida los obligatorios. Añadir una categoría es añadir datos, no código.</span><span class="t-en">Each platform × category's required fields live in a declarative schema. The LLM FILLS a schema; it doesn't invent fields or forget required ones. Adding a category is adding data, not code.</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">COSTURA 01 · ExtractorEngine</div><h4><span class="t-es">Un solo punto de llamada</span><span class="t-en">One call point</span><span class="t-ca">Un sol punt de crida</span></h4><p><span class="t-es">Toda llamada a cualquier proveedor (Claude/OCR/local) pasa por un módulo: contabiliza el coste por producto y cachea por hash de imagen. El proveedor es una decisión reversible, no una dependencia esparcida.</span><span class="t-en">Every call to any provider (Claude/OCR/local) goes through one module: it accounts cost per product and caches by image hash. The provider is a reversible decision, not a scattered dependency.</span><span class="t-ca">Tota crida a qualsevol proveïdor (Claude/OCR/local) passa per un mòdul: comptabilitza el cost per producte i fa cau per hash d'imatge. El proveïdor és una decisió reversible, no una dependència escampada.</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">COSTURA 02 · PriceEngine</div><h4><span class="t-es">Precio desde comparables</span><span class="t-en">Price from comparables</span><span class="t-ca">Preu des de comparables</span></h4><p><span class="t-es">Lee la búsqueda pública por texto, coge ~15 parecidos y devuelve mediana + rango + URLs. Sin n≥5 → None + motivo. Leer ≠ publicar: volumen doméstico, sin herramientas de evasión.</span><span class="t-en">Reads the public text search, takes ~15 similar items and returns median + range + URLs. Without n≥5 → None + reason. Reading ≠ publishing: domestic volume, no anti-detection tooling.</span><span class="t-ca">Llegeix la cerca pública per text, agafa ~15 semblants i torna mediana + rang + URLs. Sense n≥5 → None + motiu. Llegir ≠ publicar: volum domèstic, sense eines d'evasió.</span></p></div>
+      <div class="layer reveal"><div class="n grad-text">COSTURA 03 · ListingSchema</div><h4><span class="t-es">Los campos, en un sitio</span><span class="t-en">Fields in one place</span><span class="t-ca">Els camps, en un sol lloc</span></h4><p><span class="t-es">Los campos obligatorios de cada plataforma × categoría viven en un esquema declarativo. El LLM RELLENA un esquema; no inventa campos ni olvida los obligatorios. Añadir una categoría es añadir datos, no código.</span><span class="t-en">Each platform × category's required fields live in a declarative schema. The LLM FILLS a schema; it doesn't invent fields or forget required ones. Adding a category is adding data, not code.</span><span class="t-ca">Els camps obligatoris de cada plataforma × categoria viuen en un esquema declaratiu. L'LLM OMPLE un esquema; no s'inventa camps ni oblida els obligatoris. Afegir una categoria és afegir dades, no codi.</span></p></div>
     </div>
   </div>
 </section>
@@ -1038,56 +1062,56 @@ cite  = crop(<span class="b">"IMG_0421.jpg"</span>, label_region)
 <section id="decisiones">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Lo que decidí NO construir</span><span class="t-en">What I decided NOT to build</span></div>
+      <div class="eyebrow"><span class="t-es">Lo que decidí NO construir</span><span class="t-en">What I decided NOT to build</span><span class="t-ca">El que vaig decidir NO construir</span></div>
       <h2 class="t-es">Decisiones medidas, no intuidas</h2>
-      <h2 class="t-en">Measured decisions, not guessed</h2>
+      <h2 class="t-en">Measured decisions, not guessed</h2><h2 class="t-ca">Decisions mesurades, no intuïdes</h2>
       <p class="t-es">El activo que no se puede fingir no es el código: es el <strong>juicio</strong>. Antes de pagar una API o meter una dependencia, mido la alternativa gratuita sobre <strong>datos reales</strong>. Matar una hipótesis con un dato ( incluso cuando el dato va en mi contra ) es la señal de un proceso serio.</p>
-      <p class="t-en">The asset you can't fake isn't the code: it's <strong>judgment</strong>. Before paying for an API or adding a dependency, I measure the free alternative on <strong>real data</strong>. Killing a hypothesis with data ( even when the data goes against me ) is the signature of a serious process.</p>
+      <p class="t-en">The asset you can't fake isn't the code: it's <strong>judgment</strong>. Before paying for an API or adding a dependency, I measure the free alternative on <strong>real data</strong>. Killing a hypothesis with data ( even when the data goes against me ) is the signature of a serious process.</p><p class="t-ca">L'actiu que no es pot fingir no és el codi: és el <strong>criteri</strong>. Abans de pagar una API o ficar-hi una dependència, mesuro l'alternativa gratuïta sobre <strong>dades reals</strong>. Matar una hipòtesi amb una dada ( fins i tot quan la dada va en contra meu ) és el senyal d'un procés seriós.</p>
     </div>
 
     <table class="stbl reveal">
       <thead><tr>
-        <th><span class="t-es">Idea</span><span class="t-en">Idea</span></th>
-        <th><span class="t-es">Por qué tentaba</span><span class="t-en">Why it tempted</span></th>
-        <th><span class="t-es">Qué medí</span><span class="t-en">What I measured</span></th>
-        <th><span class="t-es">Veredicto</span><span class="t-en">Verdict</span></th>
+        <th><span class="t-es">Idea</span><span class="t-en">Idea</span><span class="t-ca">Idea</span></th>
+        <th><span class="t-es">Por qué tentaba</span><span class="t-en">Why it tempted</span><span class="t-ca">Per què temptava</span></th>
+        <th><span class="t-es">Qué medí</span><span class="t-en">What I measured</span><span class="t-ca">Què vaig mesurar</span></th>
+        <th><span class="t-es">Veredicto</span><span class="t-en">Verdict</span><span class="t-ca">Veredicte</span></th>
       </tr></thead>
       <tbody>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Búsqueda por imagen / Lens</span><span class="t-en">Image search / Lens</span></span><span class="sd"><span class="t-es">identificar el producto por su foto</span><span class="t-en">identify the product from its photo</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">«sube la foto y te dice qué es»</span><span class="t-en">"upload the photo and it tells you what it is"</span></td>
-          <td data-h="What I measured" data-h-es="Qué medí" class="mono"><span class="t-es">todas exigen URL pública; app local sin hosting</span><span class="t-en">all require a public URL; local app, no hosting</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Descartada · 4 agentes</span><span class="t-en">Ruled out · 4 agents</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">Búsqueda por imagen / Lens</span><span class="t-en">Image search / Lens</span><span class="t-ca">Cerca per imatge / Lens</span></span><span class="sd"><span class="t-es">identificar el producto por su foto</span><span class="t-en">identify the product from its photo</span><span class="t-ca">identificar el producte per la seva foto</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">«sube la foto y te dice qué es»</span><span class="t-en">"upload the photo and it tells you what it is"</span><span class="t-ca">«puja la foto i et diu què és»</span></td>
+          <td data-h="What I measured" data-h-es="Qué medí" data-h-ca="Què vaig mesurar" class="mono"><span class="t-es">todas exigen URL pública; app local sin hosting</span><span class="t-en">all require a public URL; local app, no hosting</span><span class="t-ca">totes exigeixen URL pública; app local sense hosting</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill"><span class="t-es">Descartada · 4 agentes</span><span class="t-en">Ruled out · 4 agents</span><span class="t-ca">Descartada · 4 agents</span></span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn">CLIP · <span class="t-es">match visual</span><span class="t-en">visual match</span></span><span class="sd"><span class="t-es">agrupar fotos del mismo producto por similitud</span><span class="t-en">group same-product photos by similarity</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">embeddings gratis, sin API</span><span class="t-en">free embeddings, no API</span></td>
-          <td data-h="What I measured" data-h-es="Qué medí" class="mono"><span class="t-es">0.90 de similitud entre dos sudaderas DISTINTAS</span><span class="t-en">0.90 similarity between two DIFFERENT hoodies</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill">[INC-004]</span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn">CLIP · <span class="t-es">match visual</span><span class="t-en">visual match</span><span class="t-ca">match visual</span></span><span class="sd"><span class="t-es">agrupar fotos del mismo producto por similitud</span><span class="t-en">group same-product photos by similarity</span><span class="t-ca">agrupar fotos del mateix producte per similitud</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">embeddings gratis, sin API</span><span class="t-en">free embeddings, no API</span><span class="t-ca">embeddings gratis, sense API</span></td>
+          <td data-h="What I measured" data-h-es="Qué medí" data-h-ca="Què vaig mesurar" class="mono"><span class="t-es">0.90 de similitud entre dos sudaderas DISTINTAS</span><span class="t-en">0.90 similarity between two DIFFERENT hoodies</span><span class="t-ca">0.90 de similitud entre dues dessuadores DIFERENTS</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill">[INC-004]</span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn">OCR · <span class="t-es">clasificar tipo de foto</span><span class="t-en">classify photo type</span></span><span class="sd"><span class="t-es">detectar etiqueta/metro/plano por su texto</span><span class="t-en">detect label/tape/wide-shot by its text</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">etiqueta y metro SON texto</span><span class="t-en">label and tape ARE text</span></td>
-          <td data-h="What I measured" data-h-es="Qué medí" class="mono"><span class="t-es">los caracteres se solapan por completo</span><span class="t-en">character counts overlap completely</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill">[INC-007]</span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn">OCR · <span class="t-es">clasificar tipo de foto</span><span class="t-en">classify photo type</span><span class="t-ca">classificar tipus de foto</span></span><span class="sd"><span class="t-es">detectar etiqueta/metro/plano por su texto</span><span class="t-en">detect label/tape/wide-shot by its text</span><span class="t-ca">detectar etiqueta/metre/pla pel seu text</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">etiqueta y metro SON texto</span><span class="t-en">label and tape ARE text</span><span class="t-ca">etiqueta i metre SÓN text</span></td>
+          <td data-h="What I measured" data-h-es="Qué medí" data-h-ca="Què vaig mesurar" class="mono"><span class="t-es">los caracteres se solapan por completo</span><span class="t-en">character counts overlap completely</span><span class="t-ca">els caràcters se solapen del tot</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill">[INC-007]</span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">VLM local</span><span class="t-en">Local VLM</span></span><span class="sd"><span class="t-es">correr un modelo de visión en mi portátil</span><span class="t-en">run a vision model on my laptop</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">coste 0, sin depender de nadie</span><span class="t-en">zero cost, no dependency</span></td>
-          <td data-h="What I measured" data-h-es="Qué medí" class="mono">RTX 3050 · 4 GB VRAM <span class="t-es">→ no entra</span><span class="t-en">→ won't fit</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Medido, no intuido</span><span class="t-en">Measured, not guessed</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">VLM local</span><span class="t-en">Local VLM</span><span class="t-ca">VLM local</span></span><span class="sd"><span class="t-es">correr un modelo de visión en mi portátil</span><span class="t-en">run a vision model on my laptop</span><span class="t-ca">córrer un model de visió al meu portàtil</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">coste 0, sin depender de nadie</span><span class="t-en">zero cost, no dependency</span><span class="t-ca">cost 0, sense dependre de ningú</span></td>
+          <td data-h="What I measured" data-h-es="Qué medí" data-h-ca="Què vaig mesurar" class="mono">RTX 3050 · 4 GB VRAM <span class="t-es">→ no entra</span><span class="t-en">→ won't fit</span><span class="t-ca">→ no hi entra</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill"><span class="t-es">Medido, no intuido</span><span class="t-en">Measured, not guessed</span><span class="t-ca">Mesurat, no intuït</span></span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Automatizar la publicación</span><span class="t-en">Automate publishing</span></span><span class="sd"><span class="t-es">Selenium sobre los formularios de Wallapop/Vinted</span><span class="t-en">Selenium over Wallapop/Vinted forms</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">el paso final «gratis»</span><span class="t-en">the "free" final step</span></td>
-          <td data-h="What I measured" data-h-es="Qué medí" class="mono"><span class="t-es">contra sus términos → baneo de la cuenta que ES el negocio</span><span class="t-en">against their terms → ban on the account that IS the business</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-kill"><span class="t-es">Descartada a propósito</span><span class="t-en">Ruled out on purpose</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">Automatizar la publicación</span><span class="t-en">Automate publishing</span><span class="t-ca">Automatitzar la publicació</span></span><span class="sd"><span class="t-es">Selenium sobre los formularios de Wallapop/Vinted</span><span class="t-en">Selenium over Wallapop/Vinted forms</span><span class="t-ca">Selenium sobre els formularis de Wallapop/Vinted</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">el paso final «gratis»</span><span class="t-en">the "free" final step</span><span class="t-ca">el pas final «gratis»</span></td>
+          <td data-h="What I measured" data-h-es="Qué medí" data-h-ca="Què vaig mesurar" class="mono"><span class="t-es">contra sus términos → baneo de la cuenta que ES el negocio</span><span class="t-en">against their terms → ban on the account that IS the business</span><span class="t-ca">contra els seus termes → bloqueig del compte que ÉS el negoci</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-kill"><span class="t-es">Descartada a propósito</span><span class="t-en">Ruled out on purpose</span><span class="t-ca">Descartada a propòsit</span></span></td>
         </tr>
         <tr>
-          <td data-h="Idea" data-h-es="Idea"><span class="sn"><span class="t-es">Umbral de agrupación 15 s</span><span class="t-en">15 s grouping threshold</span></span><span class="sd"><span class="t-es">cuándo dos fotos son productos distintos</span><span class="t-en">when two photos are different products</span></span></td>
-          <td data-h="Why it tempted" data-h-es="Por qué tentaba"><span class="t-es">barrido completo 5–30 s sobre 33 fotos reales</span><span class="t-en">full 5–30 s sweep over 33 real photos</span></td>
-          <td data-h="What I measured" data-h-es="Qué medí" class="mono"><span class="t-es">zona segura 1–23 s → 0 fusiones; acantilado a 24 s</span><span class="t-en">safe zone 1–23 s → 0 merges; cliff at 24 s</span></td>
-          <td data-h="Verdict" data-h-es="Veredicto"><span class="v v-val"><span class="t-es">En uso</span><span class="t-en">In use</span></span></td>
+          <td data-h="Idea" data-h-es="Idea" data-h-ca="Idea"><span class="sn"><span class="t-es">Umbral de agrupación 15 s</span><span class="t-en">15 s grouping threshold</span><span class="t-ca">Llindar d'agrupació 15 s</span></span><span class="sd"><span class="t-es">cuándo dos fotos son productos distintos</span><span class="t-en">when two photos are different products</span><span class="t-ca">quan dues fotos són productes diferents</span></span></td>
+          <td data-h="Why it tempted" data-h-es="Por qué tentaba" data-h-ca="Per què temptava"><span class="t-es">barrido completo 5–30 s sobre 33 fotos reales</span><span class="t-en">full 5–30 s sweep over 33 real photos</span><span class="t-ca">escombrada completa 5–30 s sobre 33 fotos reals</span></td>
+          <td data-h="What I measured" data-h-es="Qué medí" data-h-ca="Què vaig mesurar" class="mono"><span class="t-es">zona segura 1–23 s → 0 fusiones; acantilado a 24 s</span><span class="t-en">safe zone 1–23 s → 0 merges; cliff at 24 s</span><span class="t-ca">zona segura 1–23 s → 0 fusions; espadat a 24 s</span></td>
+          <td data-h="Verdict" data-h-es="Veredicto" data-h-ca="Veredicte"><span class="v v-val"><span class="t-es">En uso</span><span class="t-en">In use</span><span class="t-ca">En ús</span></span></td>
         </tr>
       </tbody>
     </table>
@@ -1099,44 +1123,44 @@ cite  = crop(<span class="b">"IMG_0421.jpg"</span>, label_region)
 <section id="flujo">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">El pipeline</span><span class="t-en">The pipeline</span></div>
+      <div class="eyebrow"><span class="t-es">El pipeline</span><span class="t-en">The pipeline</span><span class="t-ca">El pipeline</span></div>
       <h2 class="t-es">Cinco etapas, un solo estado en disco</h2>
-      <h2 class="t-en">Five stages, one state on disk</h2>
+      <h2 class="t-en">Five stages, one state on disk</h2><h2 class="t-ca">Cinc etapes, un sol estat al disc</h2>
       <p class="t-es">El flujo es un flywheel de cinco etapas. El estado del curado se escribe <strong>en disco</strong>, no sólo en memoria: un rerun de Streamlit, un crash o un cierre de pestaña no pueden costarme dos horas de trabajo.</p>
-      <p class="t-en">The flow is a five-stage flywheel. Curation state is written <strong>to disk</strong>, not just memory: a Streamlit rerun, a crash or a closed tab can't cost me two hours of work.</p>
+      <p class="t-en">The flow is a five-stage flywheel. Curation state is written <strong>to disk</strong>, not just memory: a Streamlit rerun, a crash or a closed tab can't cost me two hours of work.</p><p class="t-ca">El flux és un flywheel de cinc etapes. L'estat del curat s'escriu <strong>al disc</strong>, no només a memòria: un rerun de Streamlit, un crash o un tancament de pestanya no em poden costar dues hores de feina.</p>
     </div>
 
     <div class="cockpit">
       <div class="reveal">
         <div class="stage" aria-hidden="true">
           <div class="orbit"></div>
-          <div class="hub"><b class="grad-text">store</b><span class="t-es">estado en disco</span><span class="t-en">state on disk</span></div>
+          <div class="hub"><b class="grad-text">store</b><span class="t-es">estado en disco</span><span class="t-en">state on disk</span><span class="t-ca">estat al disc</span></div>
           <div class="ring">
-            <div class="nd" style="--a:0deg"><div class="bubble"><span class="num grad-text">1</span><span class="nm"><span class="t-es">Ingerir</span><span class="t-en">Ingest</span></span></div></div>
-            <div class="nd" style="--a:72deg"><div class="bubble"><span class="num grad-text">2</span><span class="nm"><span class="t-es">Agrupar</span><span class="t-en">Group</span></span></div></div>
-            <div class="nd" style="--a:144deg"><div class="bubble"><span class="num grad-text">3</span><span class="nm"><span class="t-es">Extraer</span><span class="t-en">Extract</span></span></div></div>
-            <div class="nd" style="--a:216deg"><div class="bubble"><span class="num grad-text">4</span><span class="nm"><span class="t-es">Tasar</span><span class="t-en">Price</span></span></div></div>
-            <div class="nd" style="--a:288deg"><div class="bubble"><span class="num grad-text">5</span><span class="nm"><span class="t-es">Exportar</span><span class="t-en">Export</span></span></div></div>
+            <div class="nd" style="--a:0deg"><div class="bubble"><span class="num grad-text">1</span><span class="nm"><span class="t-es">Ingerir</span><span class="t-en">Ingest</span><span class="t-ca">Ingerir</span></span></div></div>
+            <div class="nd" style="--a:72deg"><div class="bubble"><span class="num grad-text">2</span><span class="nm"><span class="t-es">Agrupar</span><span class="t-en">Group</span><span class="t-ca">Agrupar</span></span></div></div>
+            <div class="nd" style="--a:144deg"><div class="bubble"><span class="num grad-text">3</span><span class="nm"><span class="t-es">Extraer</span><span class="t-en">Extract</span><span class="t-ca">Extreure</span></span></div></div>
+            <div class="nd" style="--a:216deg"><div class="bubble"><span class="num grad-text">4</span><span class="nm"><span class="t-es">Tasar</span><span class="t-en">Price</span><span class="t-ca">Taxar</span></span></div></div>
+            <div class="nd" style="--a:288deg"><div class="bubble"><span class="num grad-text">5</span><span class="nm"><span class="t-es">Exportar</span><span class="t-en">Export</span><span class="t-ca">Exportar</span></span></div></div>
           </div>
         </div>
-        <div class="stage-note"><span class="t-es">pasa el ratón por una etapa para resaltarla</span><span class="t-en">hover a stage to highlight it</span></div>
+        <div class="stage-note"><span class="t-es">pasa el ratón por una etapa para resaltarla</span><span class="t-en">hover a stage to highlight it</span><span class="t-ca">passa el ratolí per una etapa per ressaltar-la</span></div>
       </div>
 
       <div class="reveal">
         <div class="stations">
-          <div class="st"><div class="stt grad-text">1 <span class="t-es">INGERIR</span><span class="t-en">INGEST</span></div><h4><span class="t-es">Fotos + EXIF</span><span class="t-en">Photos + EXIF</span></h4><p><span class="t-es">Sin fecha (WhatsApp la borra) la señal primaria no existe → la app avisa en la ingesta.</span><span class="t-en">No date (WhatsApp strips it) → the primary signal is gone → the app warns on ingest.</span></p></div>
-          <div class="st"><div class="stt grad-text">2 <span class="t-es">AGRUPAR</span><span class="t-en">GROUP</span></div><h4><span class="t-es">La cremallera</span><span class="t-en">The zipper</span></h4><p><span class="t-es">Propone clusters por hueco temporal; Diego confirma. Fusionar dos productos es INEXPRESABLE.</span><span class="t-en">Proposes clusters by time gap; Diego confirms. Merging two products is UNEXPRESSABLE.</span></p></div>
-          <div class="st"><div class="stt grad-text">3 <span class="t-es">EXTRAER</span><span class="t-en">EXTRACT</span></div><h4><span class="t-es">Schema + procedencia</span><span class="t-en">Schema + provenance</span></h4><p><span class="t-es">OCR localiza el texto → recorte → el VLM lee. Cada campo con su badge 📷/🧠.</span><span class="t-en">OCR locates text → crop → the VLM reads. Every field with its 📷/🧠 badge.</span></p></div>
-          <div class="st"><div class="stt grad-text">4 <span class="t-es">TASAR</span><span class="t-en">PRICE</span></div><h4><span class="t-es">Comparables</span><span class="t-en">Comparables</span></h4><p><span class="t-es">Mediana de parecidos con URL, editable. Sin n≥5 → None + motivo.</span><span class="t-en">Median of similar items with URLs, editable. Without n≥5 → None + reason.</span></p></div>
-          <div class="st"><div class="stt grad-text">5 <span class="t-es">EXPORTAR</span><span class="t-en">EXPORT</span></div><h4><span class="t-es">Copy-paste por plataforma</span><span class="t-en">Per-platform copy-paste</span></h4><p><span class="t-es">Literales exactos por plataforma, orden del formulario de cada una. Era el ~66% de mi tiempo.</span><span class="t-en">Exact platform literals, each one's form order. It was ~66% of my time.</span></p></div>
+          <div class="st"><div class="stt grad-text">1 <span class="t-es">INGERIR</span><span class="t-en">INGEST</span><span class="t-ca">INGERIR</span></div><h4><span class="t-es">Fotos + EXIF</span><span class="t-en">Photos + EXIF</span><span class="t-ca">Fotos + EXIF</span></h4><p><span class="t-es">Sin fecha (WhatsApp la borra) la señal primaria no existe → la app avisa en la ingesta.</span><span class="t-en">No date (WhatsApp strips it) → the primary signal is gone → the app warns on ingest.</span><span class="t-ca">Sense data (WhatsApp l'esborra) el senyal primari no existeix → l'app avisa a la ingesta.</span></p></div>
+          <div class="st"><div class="stt grad-text">2 <span class="t-es">AGRUPAR</span><span class="t-en">GROUP</span><span class="t-ca">AGRUPAR</span></div><h4><span class="t-es">La cremallera</span><span class="t-en">The zipper</span><span class="t-ca">La cremallera</span></h4><p><span class="t-es">Propone clusters por hueco temporal; Diego confirma. Fusionar dos productos es INEXPRESABLE.</span><span class="t-en">Proposes clusters by time gap; Diego confirms. Merging two products is UNEXPRESSABLE.</span><span class="t-ca">Proposa clústers per buit temporal; en Diego confirma. Fusionar dos productes és INEXPRESSABLE.</span></p></div>
+          <div class="st"><div class="stt grad-text">3 <span class="t-es">EXTRAER</span><span class="t-en">EXTRACT</span><span class="t-ca">EXTREURE</span></div><h4><span class="t-es">Schema + procedencia</span><span class="t-en">Schema + provenance</span><span class="t-ca">Schema + procedència</span></h4><p><span class="t-es">OCR localiza el texto → recorte → el VLM lee. Cada campo con su badge 📷/🧠.</span><span class="t-en">OCR locates text → crop → the VLM reads. Every field with its 📷/🧠 badge.</span><span class="t-ca">L'OCR localitza el text → retall → el VLM llegeix. Cada camp amb el seu badge 📷/🧠.</span></p></div>
+          <div class="st"><div class="stt grad-text">4 <span class="t-es">TASAR</span><span class="t-en">PRICE</span><span class="t-ca">TAXAR</span></div><h4><span class="t-es">Comparables</span><span class="t-en">Comparables</span><span class="t-ca">Comparables</span></h4><p><span class="t-es">Mediana de parecidos con URL, editable. Sin n≥5 → None + motivo.</span><span class="t-en">Median of similar items with URLs, editable. Without n≥5 → None + reason.</span><span class="t-ca">Mediana de semblants amb URL, editable. Sense n≥5 → None + motiu.</span></p></div>
+          <div class="st"><div class="stt grad-text">5 <span class="t-es">EXPORTAR</span><span class="t-en">EXPORT</span><span class="t-ca">EXPORTAR</span></div><h4><span class="t-es">Copy-paste por plataforma</span><span class="t-en">Per-platform copy-paste</span><span class="t-ca">Copy-paste per plataforma</span></h4><p><span class="t-es">Literales exactos por plataforma, orden del formulario de cada una. Era el ~66% de mi tiempo.</span><span class="t-en">Exact platform literals, each one's form order. It was ~66% of my time.</span><span class="t-ca">Literals exactes per plataforma, ordre del formulari de cadascuna. Era el ~66% del meu temps.</span></p></div>
         </div>
       </div>
     </div>
 
     <div class="truth reveal">
-      <span class="tl grad-text"><span class="t-es">El reloj puede PARTIR, pero no CONFIRMAR</span><span class="t-en">The clock can SPLIT, but not CONFIRM</span></span>
+      <span class="tl grad-text"><span class="t-es">El reloj puede PARTIR, pero no CONFIRMAR</span><span class="t-en">The clock can SPLIT, but not CONFIRM</span><span class="t-ca">El rellotge pot PARTIR, però no CONFIRMAR</span></span>
       <p class="t-es">La agrupación no optimiza acierto: optimiza <b>no-fusionar</b>. Partir un producto de más cuesta 5 segundos; fusionar dos mete una foto del producto A en la ficha del B, y eso <b>no lo caza nadie</b>. Por eso una pausa larga puede partir un grupo, pero la ausencia de pausa no confirma nada, y ningún grupo sale con confianza alta desde el reloj. La unidad de la UI es la <b>frontera</b>, no la foto: mezclar dos productos lejanos es <b>inexpresable</b>, no sólo desaconsejado.</p>
-      <p class="t-en">Grouping doesn't optimize accuracy: it optimizes <b>not-merging</b>. Over-splitting a product costs 5 seconds; merging two puts a photo of product A into product B's listing, and <b>nobody catches that</b>. So a long pause may split a group, but the absence of a pause confirms nothing, and no group ships with high confidence from the clock. The UI's unit is the <b>boundary</b>, not the photo: mixing two distant products is <b>unexpressable</b>, not merely discouraged.</p>
+      <p class="t-en">Grouping doesn't optimize accuracy: it optimizes <b>not-merging</b>. Over-splitting a product costs 5 seconds; merging two puts a photo of product A into product B's listing, and <b>nobody catches that</b>. So a long pause may split a group, but the absence of a pause confirms nothing, and no group ships with high confidence from the clock. The UI's unit is the <b>boundary</b>, not the photo: mixing two distant products is <b>unexpressable</b>, not merely discouraged.</p><p class="t-ca">L'agrupació no optimitza encert: optimitza <b>no-fusionar</b>. Partir un producte de més costa 5 segons; fusionar-ne dos fica una foto del producte A a la fitxa del B, i això <b>no ho caça ningú</b>. Per això una pausa llarga pot partir un grup, però l'absència de pausa no confirma res, i cap grup surt amb confiança alta des del rellotge. La unitat de la UI és la <b>frontera</b>, no la foto: barrejar dos productes llunyans és <b>inexpressable</b>, no només desaconsellat.</p>
     </div>
   </div>
 </section>
@@ -1146,11 +1170,11 @@ cite  = crop(<span class="b">"IMG_0421.jpg"</span>, label_region)
 <section id="metodo">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span></div>
+      <div class="eyebrow"><span class="t-es">Cómo trabajo con IA</span><span class="t-en">How I work with AI</span><span class="t-ca">Com treballo amb IA</span></div>
       <h2 class="t-es">Validación adversarial multi-agente</h2>
-      <h2 class="t-en">Adversarial multi-agent validation</h2>
+      <h2 class="t-en">Adversarial multi-agent validation</h2><h2 class="t-ca">Validació adversarial multiagent</h2>
       <p class="t-es">No le pido a la IA una respuesta. Un orquestador (Opus) delega la construcción en agentes Sonnet en paralelo, y luego <strong>un panel escéptico ataca</strong> lo construido: <span class="mono">bug-hunter</span> busca la causa raíz sin contexto, <span class="mono">listing-audit</span> intenta pillar al pipeline mintiendo contra las fotos reales, <span class="mono">flow-qa</span> mide la velocidad. El orquestador <strong>re-deriva cada veredicto ejecutando</strong>, no por informe. Yo juzgo.</p>
-      <p class="t-en">I don't ask the AI for an answer. An orchestrator (Opus) delegates building to parallel Sonnet agents, then <strong>a skeptical panel attacks</strong> what was built: <span class="mono">bug-hunter</span> finds the root cause with no context, <span class="mono">listing-audit</span> tries to catch the pipeline lying against the real photos, <span class="mono">flow-qa</span> measures speed. The orchestrator <strong>re-derives every verdict by executing</strong>, not by report. I judge.</p>
+      <p class="t-en">I don't ask the AI for an answer. An orchestrator (Opus) delegates building to parallel Sonnet agents, then <strong>a skeptical panel attacks</strong> what was built: <span class="mono">bug-hunter</span> finds the root cause with no context, <span class="mono">listing-audit</span> tries to catch the pipeline lying against the real photos, <span class="mono">flow-qa</span> measures speed. The orchestrator <strong>re-derives every verdict by executing</strong>, not by report. I judge.</p><p class="t-ca">No li demano a la IA una resposta. Un orquestrador (Opus) delega la construcció en agents Sonnet en paral·lel, i després <strong>un panell escèptic ataca</strong> el que s'ha construït: <span class="mono">bug-hunter</span> busca la causa arrel sense context, <span class="mono">listing-audit</span> intenta enxampar el pipeline mentint contra les fotos reals, <span class="mono">flow-qa</span> mesura la velocitat. L'orquestrador <strong>re-deriva cada veredicte executant</strong>, no per informe. Jo jutjo.</p>
     </div>
 
     <div class="engine reveal" style="margin-bottom:34px">
@@ -1197,50 +1221,50 @@ cite  = crop(<span class="b">"IMG_0421.jpg"</span>, label_region)
         <circle r="3.2" fill="#37e0ff" color="#37e0ff" class="dg-particle dg-glow"><animateMotion dur="3.4s" repeatCount="indefinite" path="M840,230 C720,410 250,410 116,230"/></circle>
         <circle r="3.2" fill="#37e0ff" color="#37e0ff" class="dg-particle dg-glow"><animateMotion dur="3.4s" begin="1.7s" repeatCount="indefinite" path="M840,230 C720,410 250,410 116,230"/></circle>
         <text x="540" y="398" text-anchor="middle" class="dg-loop t-es">el orquestador re-deriva el veredicto EJECUTANDO · no por informe</text>
-        <text x="540" y="398" text-anchor="middle" class="dg-loop t-en">the orchestrator re-derives the verdict by EXECUTING · not by report</text>
+        <text x="540" y="398" text-anchor="middle" class="dg-loop t-en">the orchestrator re-derives the verdict by EXECUTING · not by report</text><text x="540" y="398" text-anchor="middle" class="dg-loop t-ca">l'orquestrador re-deriva el veredicte EXECUTANT · no per informe</text>
         <text x="578" y="20" text-anchor="middle" class="dg-el t-es" style="fill:#ff7a9c;font-weight:700">PANEL ADVERSARIAL · intentan pillar al pipeline mintiendo</text>
-        <text x="578" y="20" text-anchor="middle" class="dg-el t-en" style="fill:#ff7a9c;font-weight:700">ADVERSARIAL PANEL · they try to catch the pipeline lying</text>
+        <text x="578" y="20" text-anchor="middle" class="dg-el t-en" style="fill:#ff7a9c;font-weight:700">ADVERSARIAL PANEL · they try to catch the pipeline lying</text><text x="578" y="20" text-anchor="middle" class="dg-el t-ca" style="fill:#ff7a9c;font-weight:700">PANELL ADVERSARIAL · intenten enxampar el pipeline mentint</text>
         <!-- nodes -->
         <rect class="dg-rect" x="28" y="162" width="176" height="68" rx="12" stroke="#9b5cff" stroke-width="1.8"/>
-        <text x="116" y="188" text-anchor="middle" class="dg-title t-es">CONSTRUIR</text><text x="116" y="188" text-anchor="middle" class="dg-title t-en">BUILD</text>
-        <text x="116" y="206" text-anchor="middle" class="dg-sub t-es">Sonnet en paralelo</text><text x="116" y="206" text-anchor="middle" class="dg-sub t-en">parallel Sonnet</text>
+        <text x="116" y="188" text-anchor="middle" class="dg-title t-es">CONSTRUIR</text><text x="116" y="188" text-anchor="middle" class="dg-title t-en">BUILD</text><text x="116" y="188" text-anchor="middle" class="dg-title t-ca">CONSTRUIR</text>
+        <text x="116" y="206" text-anchor="middle" class="dg-sub t-es">Sonnet en paralelo</text><text x="116" y="206" text-anchor="middle" class="dg-sub t-en">parallel Sonnet</text><text x="116" y="206" text-anchor="middle" class="dg-sub t-ca">Sonnet en paral·lel</text>
         <rect class="dg-rect" x="236" y="172" width="148" height="50" rx="11" stroke="#22d3ff" stroke-width="1.7"/>
         <text x="310" y="192" text-anchor="middle" class="dg-title">/eval</text>
-        <text x="310" y="209" text-anchor="middle" class="dg-sub t-es">golden set · alucinación</text><text x="310" y="209" text-anchor="middle" class="dg-sub t-en">golden set · hallucination</text>
+        <text x="310" y="209" text-anchor="middle" class="dg-sub t-es">golden set · alucinación</text><text x="310" y="209" text-anchor="middle" class="dg-sub t-en">golden set · hallucination</text><text x="310" y="209" text-anchor="middle" class="dg-sub t-ca">golden set · al·lucinació</text>
         <rect class="dg-rect dg-pulse" x="418" y="30" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
         <text x="482" y="49" text-anchor="middle" class="dg-title">bug-hunter</text>
-        <text x="482" y="64" text-anchor="middle" class="dg-sub t-es">causa raíz, sin contexto</text><text x="482" y="64" text-anchor="middle" class="dg-sub t-en">root cause, no context</text>
+        <text x="482" y="64" text-anchor="middle" class="dg-sub t-es">causa raíz, sin contexto</text><text x="482" y="64" text-anchor="middle" class="dg-sub t-en">root cause, no context</text><text x="482" y="64" text-anchor="middle" class="dg-sub t-ca">causa arrel, sense context</text>
         <rect class="dg-rect dg-pulse" x="602" y="30" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
         <text x="666" y="49" text-anchor="middle" class="dg-title">listing-audit</text>
-        <text x="666" y="64" text-anchor="middle" class="dg-sub t-es">refuta las afirmaciones</text><text x="666" y="64" text-anchor="middle" class="dg-sub t-en">refutes the claims</text>
+        <text x="666" y="64" text-anchor="middle" class="dg-sub t-es">refuta las afirmaciones</text><text x="666" y="64" text-anchor="middle" class="dg-sub t-en">refutes the claims</text><text x="666" y="64" text-anchor="middle" class="dg-sub t-ca">refuta les afirmacions</text>
         <rect class="dg-rect dg-pulse" x="418" y="318" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
         <text x="482" y="337" text-anchor="middle" class="dg-title">flow-qa</text>
-        <text x="482" y="352" text-anchor="middle" class="dg-sub t-es">segundos por producto</text><text x="482" y="352" text-anchor="middle" class="dg-sub t-en">seconds per product</text>
+        <text x="482" y="352" text-anchor="middle" class="dg-sub t-es">segundos por producto</text><text x="482" y="352" text-anchor="middle" class="dg-sub t-en">seconds per product</text><text x="482" y="352" text-anchor="middle" class="dg-sub t-ca">segons per producte</text>
         <rect class="dg-rect dg-pulse" x="602" y="318" width="128" height="44" rx="11" stroke="#bd9bff" stroke-width="1.6"/>
         <text x="666" y="337" text-anchor="middle" class="dg-title">/seed-review</text>
-        <text x="666" y="352" text-anchor="middle" class="dg-sub t-es">agente ciego</text><text x="666" y="352" text-anchor="middle" class="dg-sub t-en">blind agent</text>
+        <text x="666" y="352" text-anchor="middle" class="dg-sub t-es">agente ciego</text><text x="666" y="352" text-anchor="middle" class="dg-sub t-en">blind agent</text><text x="666" y="352" text-anchor="middle" class="dg-sub t-ca">agent cec</text>
         <rect class="dg-rect dg-pulse" x="500" y="162" width="156" height="68" rx="12" stroke="url(#mv-grad)" stroke-width="2.2"/>
-        <text x="578" y="188" text-anchor="middle" class="dg-title t-es">LA FICHA</text><text x="578" y="188" text-anchor="middle" class="dg-title t-en">THE LISTING</text>
-        <text x="578" y="206" text-anchor="middle" class="dg-sub t-es">bajo ataque</text><text x="578" y="206" text-anchor="middle" class="dg-sub t-en">under attack</text>
+        <text x="578" y="188" text-anchor="middle" class="dg-title t-es">LA FICHA</text><text x="578" y="188" text-anchor="middle" class="dg-title t-en">THE LISTING</text><text x="578" y="188" text-anchor="middle" class="dg-title t-ca">LA FITXA</text>
+        <text x="578" y="206" text-anchor="middle" class="dg-sub t-es">bajo ataque</text><text x="578" y="206" text-anchor="middle" class="dg-sub t-en">under attack</text><text x="578" y="206" text-anchor="middle" class="dg-sub t-ca">sota atac</text>
         <rect class="dg-rect" x="760" y="162" width="160" height="68" rx="12" stroke="#a273ff" stroke-width="1.9"/>
-        <text x="840" y="188" text-anchor="middle" class="dg-title t-es">DIEGO · juzga</text><text x="840" y="188" text-anchor="middle" class="dg-title t-en">DIEGO · judges</text>
-        <text x="840" y="206" text-anchor="middle" class="dg-sub t-es">el píxel delante</text><text x="840" y="206" text-anchor="middle" class="dg-sub t-en">the pixel in front</text>
+        <text x="840" y="188" text-anchor="middle" class="dg-title t-es">DIEGO · juzga</text><text x="840" y="188" text-anchor="middle" class="dg-title t-en">DIEGO · judges</text><text x="840" y="188" text-anchor="middle" class="dg-title t-ca">DIEGO · jutja</text>
+        <text x="840" y="206" text-anchor="middle" class="dg-sub t-es">el píxel delante</text><text x="840" y="206" text-anchor="middle" class="dg-sub t-en">the pixel in front</text><text x="840" y="206" text-anchor="middle" class="dg-sub t-ca">el píxel al davant</text>
         <rect class="dg-rect" x="946" y="84" width="124" height="54" rx="11" stroke="#5dff9b" stroke-width="1.8"/>
-        <text x="1008" y="106" text-anchor="middle" class="dg-title t-es">PUBLICA</text><text x="1008" y="106" text-anchor="middle" class="dg-title t-en">PUBLISHES</text>
-        <text x="1008" y="123" text-anchor="middle" class="dg-sub t-es">copy-paste</text><text x="1008" y="123" text-anchor="middle" class="dg-sub t-en">copy-paste</text>
+        <text x="1008" y="106" text-anchor="middle" class="dg-title t-es">PUBLICA</text><text x="1008" y="106" text-anchor="middle" class="dg-title t-en">PUBLISHES</text><text x="1008" y="106" text-anchor="middle" class="dg-title t-ca">PUBLICA</text>
+        <text x="1008" y="123" text-anchor="middle" class="dg-sub t-es">copy-paste</text><text x="1008" y="123" text-anchor="middle" class="dg-sub t-en">copy-paste</text><text x="1008" y="123" text-anchor="middle" class="dg-sub t-ca">copy-paste</text>
         <text x="1058" y="101" text-anchor="end" class="dg-badge" fill="#5dff9b">&#10003;</text>
         <rect class="dg-rect" x="946" y="248" width="124" height="54" rx="11" stroke="#ff5d7a" stroke-width="1.8"/>
-        <text x="1008" y="270" text-anchor="middle" class="dg-title t-es">AL LEDGER</text><text x="1008" y="270" text-anchor="middle" class="dg-title t-en">TO THE LEDGER</text>
-        <text x="1008" y="287" text-anchor="middle" class="dg-sub t-es">→ regla vía /optimize</text><text x="1008" y="287" text-anchor="middle" class="dg-sub t-en">→ rule via /optimize</text>
+        <text x="1008" y="270" text-anchor="middle" class="dg-title t-es">AL LEDGER</text><text x="1008" y="270" text-anchor="middle" class="dg-title t-en">TO THE LEDGER</text><text x="1008" y="270" text-anchor="middle" class="dg-title t-ca">AL LEDGER</text>
+        <text x="1008" y="287" text-anchor="middle" class="dg-sub t-es">→ regla vía /optimize</text><text x="1008" y="287" text-anchor="middle" class="dg-sub t-en">→ rule via /optimize</text><text x="1008" y="287" text-anchor="middle" class="dg-sub t-ca">→ regla via /optimize</text>
         <text x="1058" y="265" text-anchor="end" class="dg-badge" fill="#ff5d7a">&#10007;</text>
       </svg>
     </div>
-    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span></p>
+    <p class="zoom-hint"><span class="t-es">Pellizca para acercar y leer el detalle &#8596;</span><span class="t-en">Pinch to zoom in and read the detail &#8596;</span><span class="t-ca">Pessiga per apropar i llegir el detall &#8596;</span></p>
     <p class="engine-cap reveal t-es">Una ficha sobrevive sólo si <b>resiste el ataque</b>. El juicio final es mío, con el píxel delante: es la única capa que verifica verdad, no sólo legibilidad.</p>
-    <p class="engine-cap reveal t-en">A listing survives only if it <b>withstands the attack</b>. The final judgment is mine, with the pixel in front: the only layer that verifies truth, not just legibility.</p>
+    <p class="engine-cap reveal t-en">A listing survives only if it <b>withstands the attack</b>. The final judgment is mine, with the pixel in front: the only layer that verifies truth, not just legibility.</p><p class="engine-cap reveal t-ca">Una fitxa sobreviu només si <b>resisteix l'atac</b>. El judici final és meu, amb el píxel al davant: és l'única capa que verifica veritat, no només llegibilitat.</p>
 
     <div class="mgrid">
-      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg><span class="t-es">Verificación por ejecución</span><span class="t-en">Verification by execution</span></h4><p><span class="t-es">Ningún «el subagente reportó que OK» cierra nada. Corro yo <span class="hl">pytest / /eval / la app</span> y pego la salida REAL en el prompt del siguiente agente. Un informe no es evidencia; una salida sí.</span><span class="t-en">No "the subagent reported OK" closes anything. I run <span class="hl">pytest / /eval / the app</span> myself and paste the REAL output into the next agent's prompt. A report isn't evidence; output is.</span></p></div>
+      <div class="mc reveal"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="url(#pg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg><span class="t-es">Verificación por ejecución</span><span class="t-en">Verification by execution</span><span class="t-ca">Verificació per execució</span></h4><p><span class="t-es">Ningún «el subagente reportó que OK» cierra nada. Corro yo <span class="hl">pytest / /eval / la app</span> y pego la salida REAL en el prompt del siguiente agente. Un informe no es evidencia; una salida sí.</span><span class="t-en">No "the subagent reported OK" closes anything. I run <span class="hl">pytest / /eval / the app</span> myself and paste the REAL output into the next agent's prompt. A report isn't evidence; output is.</span><span class="t-ca">Cap «el subagent ha reportat que OK» tanca res. Corro jo <span class="hl">pytest / /eval / l'app</span> i enganxo la sortida REAL al prompt de l'agent següent. Un informe no és evidència; una sortida sí.</span></p></div>
     </div>
 
 
@@ -1277,13 +1301,13 @@ $ /seed-review <span class="b">closing-ultra-review.md</span>
 [INC-031] <span class="r">schema 400 on EVERY re-extraction</span>  <span class="cm">// 904 green</span>
           <span class="cm">// tests didn't see it: they mock the engine and</span>
           <span class="cm">// never send the json_schema to the real API</span>
-</div>
+</div><div class="sb-code t-ca"><span class="cm"># aquesta mateixa setmana: el /seed-review del MEU pla de tancament</span> $ /seed-review <span class="b">cierre-ultra-review.md</span> <span class="a">agent CEC</span> <span class="cm">// no veu el pla → deriva l'objectiu des de la font</span> <span class="a">2 crítics</span> <span class="cm">// en paral·lel, mandat: REFUTAR</span> cec <span class="b">✎</span> el pla audita CODI amb 900 tests verds… però la mètrica-nord <span class="r">«segons-fins-a-publicar» MAI es va mesurar</span> en 5 fases → és un PROXY, no l'objectiu <span class="cm">[INC-016]</span> <span class="cm"># vaig reordenar: MESURAR primer →</span> <span class="g">~210 s amb l'app vs ~285 a mà</span> <span class="cm"># i mesurant-ho va aparèixer un bug real:</span> [INC-031] <span class="r">400 d'esquema en TOTA re-extracció</span> <span class="cm">// 904 tests</span> <span class="cm">// verds no ho van veure: mockegen el motor i</span> <span class="cm">// mai envien el json_schema a l'API real</span></div>
     </div>
 
     <p class="engine-cap reveal t-es" style="margin-top:16px">El panel cazó que mi propio plan de cierre probaba un <b>proxy</b>: auditar código verde en vez de medir la métrica primaria del proyecto. Reordené, medir primero, y el número que corona el proyecto (~210 s) apareció ahí, junto a un bug que 904 tests verdes no veían. <b>El rigor es cuestionar tu propio plan, no defenderlo.</b></p>
-    <p class="engine-cap reveal t-en" style="margin-top:16px">The panel caught that my own closing plan was testing a <b>proxy</b>: auditing green code instead of measuring the project's primary metric. I reordered, measure first, and the number that crowns the project (~210 s) showed up there, next to a bug 904 green tests couldn't see. <b>Rigor is questioning your own plan, not defending it.</b></p>
+    <p class="engine-cap reveal t-en" style="margin-top:16px">The panel caught that my own closing plan was testing a <b>proxy</b>: auditing green code instead of measuring the project's primary metric. I reordered, measure first, and the number that crowns the project (~210 s) showed up there, next to a bug 904 green tests couldn't see. <b>Rigor is questioning your own plan, not defending it.</b></p><p class="engine-cap reveal t-ca" style="margin-top:16px">El panell va caçar que el meu propi pla de tancament provava un <b>proxy</b>: auditar codi verd en comptes de mesurar la mètrica primària del projecte. Vaig reordenar, mesurar primer, i el número que corona el projecte (~210 s) va aparèixer allà, al costat d'un bug que 904 tests verds no veien. <b>El rigor és qüestionar el teu propi pla, no defensar-lo.</b></p>
 
-    <p class="bridge reveal"><span class="t-es">El resto del método (la refutación asimétrica, el agente ciego que audita mis planes, el ledger que convierte un fallo en regla) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (asymmetric refutation, the blind agent auditing my own plans, the ledger that turns a failure into a rule) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span></p>
+    <p class="bridge reveal"><span class="t-es">El resto del método (la refutación asimétrica, el agente ciego que audita mis planes, el ledger que convierte un fallo en regla) es el mismo en los cinco sistemas y está contado una vez: <a href="../index.html#metodo">en el índice</a>.</span><span class="t-en">The rest of the method (asymmetric refutation, the blind agent auditing my own plans, the ledger that turns a failure into a rule) is the same across all five systems and is told once: <a href="../index.html#metodo">on the index</a>.</span><span class="t-ca">La resta del mètode (la refutació asimètrica, l'agent cec que audita els meus plans, el ledger que converteix una fallada en regla) és el mateix als cinc sistemes i està explicat una vegada: <a href="../index.html#metodo">a l'índex</a>.</span></p>
   </div>
 </section>
 
@@ -1293,17 +1317,17 @@ $ /seed-review <span class="b">closing-ultra-review.md</span>
 <section id="contacto">
   <div class="wrap">
     <div class="contact reveal">
-      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span></div>
+      <div class="eyebrow" style="justify-content:center"><span class="t-es">Disponible para trabajar</span><span class="t-en">Available for work</span><span class="t-ca">Disponible per treballar</span></div>
       <h2 class="t-es">Cojo un problema difuso, lo descompongo y orquesto IA para construir cada pieza, sin perder el rigor.</h2>
-      <h2 class="t-en">I take a fuzzy problem, break it down and orchestrate AI to build every piece, without losing the rigor.</h2>
+      <h2 class="t-en">I take a fuzzy problem, break it down and orchestrate AI to build every piece, without losing the rigor.</h2><h2 class="t-ca">Agafo un problema difús, el descomponc i orquestro IA per construir cada peça, sense perdre el rigor.</h2>
       <p class="t-es">Si buscas a alguien para applied-AI, automatización o forward-deployed engineering, que construye sistemas para que la IA no se engañe a sí misma, hablemos.</p>
-      <p class="t-en">If you're looking for someone in applied-AI, automation or forward-deployed engineering who builds systems so the AI can't fool itself, let's talk.</p>
+      <p class="t-en">If you're looking for someone in applied-AI, automation or forward-deployed engineering who builds systems so the AI can't fool itself, let's talk.</p><p class="t-ca">Si busques algú per a applied-AI, automatització o forward-deployed engineering, que construeix sistemes perquè la IA no s'enganyi a si mateixa, parlem-ne.</p>
       <div class="cta">
         <a href="mailto:diegollr98@gmail.com" class="btn btn-primary">diegollr98@gmail.com</a>
-        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span></button>
+        <button type="button" class="btn btn-ghost cp-mail" data-copy="diegollr98@gmail.com"><span class="t-es">copiar</span><span class="t-en">copy</span><span class="t-ca">copiar</span></button>
         <a href="https://www.linkedin.com/in/diego-tom%C3%A1s-llopis-rosell-32a243407/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
         <a href="https://github.com/diegollr98-design/resellermaster" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
-        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span></a>
+        <a href="../index.html" class="btn btn-ghost"><span class="t-es">Volver al índice</span><span class="t-en">Back to index</span><span class="t-ca">Tornar a l'índex</span></a>
       </div>
     </div>
   </div>
@@ -1311,7 +1335,7 @@ $ /seed-review <span class="b">closing-ultra-review.md</span>
 
 <footer class="wrap">
   <span>RESELLERMASTER · <span class="hl">Diego</span> · 2026</span>
-  <span><span class="t-es">App local · construido con IA · sin formación técnica previa</span><span class="t-en">Local app · built with AI · no prior technical background</span></span>
+  <span><span class="t-es">App local · construido con IA · sin formación técnica previa</span><span class="t-en">Local app · built with AI · no prior technical background</span><span class="t-ca">App local · construït amb IA · sense formació tècnica prèvia</span></span>
 </footer>
   </div>
   </div>
@@ -1319,21 +1343,41 @@ $ /seed-review <span class="b">closing-ultra-review.md</span>
   <div class="tw-ac" id="twAc" role="listbox" aria-label="Comandos"></div>
   <form class="tw-prompt" id="twForm" autocomplete="off">
     <span class="twp-u" aria-hidden="true">diego@portfolio</span><span class="twp-d" id="twPath" aria-hidden="true">:~</span><span class="twp-s" aria-hidden="true">$</span>
-    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span></label>
+    <label class="sr" for="twIn"><span class="t-es">Comando</span><span class="t-en">Command</span><span class="t-ca">Comanda</span></label>
     <input id="twIn" type="text" spellcheck="false" autocapitalize="off"
-           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands">
+           data-ph-es="haz clic para ver los comandos" data-ph-en="click to see the commands" data-ph-ca="fes clic per veure les comandes">
     <span class="twp-car" aria-hidden="true">&#9611;</span>
   </form>
 
 
 <script>
 /* ── language toggle ── */
+/* [INC-JS-04] Quita TODA clase `lang-*` en vez de enumerar 'lang-es','lang-en'.
+   Una lista tecleada describe el marcado desde fuera y se desfasa sola: es la misma
+   clase que `var COLS=7` ([INC-JS-01]). Con `lang-ca` sin quitar, la secuencia
+   es -> ca -> es dejaba `class="lang-ca lang-es"`, que casa las reglas de ocultacion
+   de DOS idiomas a la vez: pagina EN BLANCO, `<h1>` vacio, 0 errores de consola. */
+/* Tres spans, uno por idioma: el CSS elige, igual que en el resto de la pagina. Vive
+   junto a twSoloLang porque es chasis: cualquier sitio donde el JS PINTE texto bilingue
+   necesita emitir los TRES, o en el idioma sin rama el widget sale VACIO ([INC-JS-06]). */
+function TRI(es, en, ca){
+  /* la clase se COMPONE a proposito: `_pares()` de eval_portfolio cuenta
+     `class="t-xx"` sobre el HTML crudo, y un literal aqui dentro sumaria un bloque
+     fantasma por idioma en las 6 paginas. */
+  var w = function(l, t){ return '<span class="t-'+l+'">'+t+'</span>'; };
+  return w('es', es) + w('en', en) + w('ca', ca);
+}
+function twSoloLang(el, l){
+  if(!el) return;
+  for(var i=el.classList.length-1; i>=0; i--){
+    if(el.classList[i].indexOf('lang-')===0) el.classList.remove(el.classList[i]);
+  }
+  el.classList.add('lang-'+l);
+}
 function setLang(l){
   document.documentElement.lang=l;
-  document.documentElement.classList.remove('lang-es','lang-en');
-  document.documentElement.classList.add('lang-'+l);
-  document.body.classList.remove('lang-es','lang-en');
-  document.body.classList.add('lang-'+l);
+  twSoloLang(document.documentElement, l);
+  twSoloLang(document.body, l);
   document.querySelectorAll('[data-lang-btn]').forEach(function(b){
     b.setAttribute('aria-pressed', String(b.dataset.langBtn===l));
   });
@@ -1515,7 +1559,7 @@ window.__cmds=[
   {g:'abrir',ic:'↗',es:'Caso · SEKURA',en:'Case · SEKURA',c:'open sekura',k:'sekura sekura',url:'../SEKURA/SEKURA.html'},
   {g:'hacer',ic:'✉',es:'Escribirme un email',en:'Write me an email',c:'/mail',k:'email correo mail escribir write contacto contact',url:MAIL},
   {g:'hacer',ic:'↗',es:'Abrir mi LinkedIn',en:'Open my LinkedIn',c:'open linkedin',k:'linkedin perfil profile red social',url:LI,blank:true},
-  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') setLang(document.documentElement.lang==='en'?'es':'en'); }}
+  {g:'hacer',ic:'⇄',es:'Ver la página en inglés',en:'Ver la página en español',c:'/lang',k:'idioma language english ingles espanol spanish traducir',fn:function(){ if(typeof setLang==='function') (function(){var v=[].map.call(document.querySelectorAll('#langList li'),function(x){return x.dataset.v;});if(!v.length)return;var i=v.indexOf(document.documentElement.lang);setLang(v[(i+1)%v.length]);})(); }}
 ];
 window.__runCmd=function(c){
   if(c.fn){ c.fn(); return; }
@@ -1526,10 +1570,8 @@ window.__runCmd=function(c){
 /* ── language toggle ── */
 function setLang(l){
   document.documentElement.lang=l;
-  document.documentElement.classList.remove('lang-es','lang-en');
-  document.documentElement.classList.add('lang-'+l);
-  document.body.classList.remove('lang-es','lang-en');
-  document.body.classList.add('lang-'+l);
+  twSoloLang(document.documentElement, l);
+  twSoloLang(document.body, l);
   /* el desplegable tiene que reflejar el cambio venga de donde venga:
      tambien lo dispara el comando /lang de la paleta */
   var cur=document.getElementById('langCur');
@@ -1664,7 +1706,8 @@ var SC=document.getElementById('twBody');
   var form=document.getElementById('twForm'), inp=document.getElementById('twIn');
   var con=document.getElementById('twCon'), ac=document.getElementById('twAc');
   if(!form) return;
-  function lang(){ return document.documentElement.lang==='en'?'en':'es'; }
+  function lang(){ var l=document.documentElement.lang;
+                   return (l==='en'||l==='ca') ? l : 'es'; }
   function norm(t){ return (t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
   inp.placeholder=inp.getAttribute('data-ph-'+lang())||'';
 
@@ -1674,7 +1717,7 @@ var SC=document.getElementById('twBody');
     var l=lang(), qn=norm(q.trim());
     return (window.__cmds||[]).filter(function(c){
       if(!qn) return true;
-      var hay=norm((c.c||'')+' '+c[l]+' '+c.k+' '+c.g);
+      var hay=norm((c.c||'')+' '+(c[l]||c.es)+' '+c.k+' '+c.g);
       return qn.split(/\s+/).every(function(w){ return hay.indexOf(w)>-1; });
     });
   }
@@ -1684,10 +1727,8 @@ var SC=document.getElementById('twBody');
     var l=lang();
     ac.innerHTML=hits.map(function(c,n){
       return '<div class="it" role="option" aria-selected="'+(n===0)+'" data-i="'+n+'">'+
-             '<span class="c">'+(c.c||'')+'</span><span class="l">'+c[l]+'</span></div>';
-    }).join('')+'<div class="hint">'+(l==='en'
-        ?'tab completes · ↑↓ moves · ↵ runs'
-        :'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
+             '<span class="c">'+(c.c||'')+'</span><span class="l">'+(c[l]||c.es)+'</span></div>';
+    }).join('')+'<div class="hint">'+({en:'tab completes · ↑↓ moves · ↵ runs',ca:'tab completa · ↑↓ mou · ↵ executa'}[l]||'tab completa · ↑↓ mueve · ↵ ejecuta')+'</div>';
     items=[].slice.call(ac.querySelectorAll('.it')); sel=0;
     items.forEach(function(el){
       el.addEventListener('click',function(){ runHit(hits[+el.dataset.i],false); });
@@ -1740,7 +1781,7 @@ var SC=document.getElementById('twBody');
        no hizo nada porque el campo se vacia de golpe */
     if(visible && c.c){ inp.value=c.c; }
     setTimeout(function(){
-      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+c[l]+'</span>','echo');
+      line('<b>$</b> '+(c.c||'')+'  <span class="dim">'+(c[l]||c.es)+'</span>','echo');
       inp.value='';
       if(window.__runCmd) window.__runCmd(c);
     }, visible && c.c ? 130 : 0);
@@ -1751,13 +1792,13 @@ var SC=document.getElementById('twBody');
     var G={ir:{es:'ir a',en:'go to'},abrir:{es:'abrir caso',en:'open case'},hacer:{es:'acciones',en:'actions'}};
     var html='';
     Object.keys(by).forEach(function(g){
-      html+='<div class="dim">'+(G[g]?G[g][l]:g)+'</div><table>'+
-        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+c[l]+'</td></tr>'; }).join('')+
+      html+='<div class="dim">'+(G[g]?(G[g][l]||G[g].es):g)+'</div><table>'+
+        by[g].map(function(c){ return '<tr><td>'+(c.c||'—')+'</td><td>'+(c[l]||c.es)+'</td></tr>'; }).join('')+
         '</table>';
     });
-    html+='<div class="dim">'+(l==='en'?'also':'además')+
-      '</div><table><tr><td>help</td><td>'+(l==='en'?'this list':'esta lista')+
-      '</td></tr><tr><td>clear</td><td>'+(l==='en'?'clear the console':'limpia la consola')+
+    html+='<div class="dim">'+(({en:'also',ca:'a més'}[l]||'además'))+
+      '</div><table><tr><td>help</td><td>'+(({en:'this list',ca:'aquesta llista'}[l]||'esta lista'))+
+      '</td></tr><tr><td>clear</td><td>'+(({en:'clear the console',ca:'neteja la consola'}[l]||'limpia la consola'))+
       '</td></tr></table>';
     line(html, '', TTL_LONG);
   }
@@ -1817,8 +1858,8 @@ var SC=document.getElementById('twBody');
     var hit=hits[ac.classList.contains('on')?sel:0];
     if(!hit){
       line('<b>$</b> '+q,'echo');
-      line('<span class="ko">'+(l==='en'?'command not found':'orden no encontrada')+
-           '</span> <span class="dim">· '+(l==='en'?'hit tab to list them':'pulsa tab para verlos')+'</span>');
+      line('<span class="ko">'+(({en:'command not found',ca:'ordre no trobada'}[l]||'orden no encontrada'))+
+           '</span> <span class="dim">· '+(({en:'hit tab to list them',ca:'prem tab per llistar-los'}[l]||'pulsa tab para verlos'))+'</span>');
       inp.value=''; return;
     }
     runHit(hit,true);
@@ -1884,6 +1925,32 @@ var SC=document.getElementById('twBody');
   /* cromo de la terminal y navegacion: no son documento, no se imprimen */
   var SKIP='script,style,noscript,svg,title,.progress,.tw-cmd,'+
            '#proto,#boot,.tw-con,.tw-ac,.tw-prompt,.tw-bar,.cmdk,.pcur';
+
+  /* ── el idioma INACTIVO no se imprime, y eso no es una optimizacion menor ──
+     El TreeWalker de split() no filtraba por visibilidad, asi que recorria tambien
+     el idioma en `display:none`: para cada nodo, un Range + un getClientRects() que
+     devuelve 0 rects + un span. No entraba en la busqueda binaria (la parte cara),
+     pero se pagaba igual, y build() volvia a recorrerlos para encenderlos a mano.
+     Medido en YOUTUBE con CPU x4, A/B intercalado, n=9: quitar el ingles ENTERO
+     ahorraba 226 ms de bloqueo de arranque; anadir un tercer idioma costaba 303 ms.
+     O sea ~226-300 ms POR IDIOMA OCULTO, sobre las 5 paginas de caso que ya
+     arrastran ~700 ms de deuda ([INC-PERF-01]).
+
+     No cambia el comportamiento: el texto que NO se envuelve en `.pl` no lleva
+     `opacity:0`, asi que se ve normal — que es exactamente donde acababa antes, con
+     build() marcandolo `.on` por tener caja de tamano cero. Al cambiar de idioma
+     aparece entero, igual que hoy.
+
+     Va en SKIP y no en un `closest` aparte porque asi es UNA sola llamada, y porque
+     build() debe saltarselos por el mismo motivo.
+
+     ⚠️ split() corre UNA vez (:3862) y `remeasure` NO vuelve a partir el texto —lo
+     dice su propio comentario, «carisimo»—, asi que esta lista se calcula con el
+     idioma de arranque y no caduca: los demas idiomas se quedan como texto plano
+     visible, que es su estado final de todos modos. */
+  var __lg=document.documentElement.lang||'es';
+  SKIP+=','+['es','en','ca'].filter(function(l){return l!==__lg;})
+                            .map(function(l){return '.t-'+l;}).join(',');
   /* cajas cuyo borde y fondo esperan a su primera linea: en la v4 el
      esqueleto de las tarjetas se pintaba mucho antes que su contenido */
   var BOXES='.pj,.mc,.cap,.claim,.ldg,.lex,.term,.cx-lines,.ascii-fw,'+
@@ -2355,13 +2422,24 @@ var SC=document.getElementById('twBody');
 
 (function(){ var orig=window.setLang; if(typeof orig!=="function") return;
   window.setLang=function(l){ orig(l); spy(true);
-    var L=document.documentElement.lang==="en"?"en":"es";
+    var L=document.documentElement.lang||"es";  /* [INC-SEED-02] antes: `lang==="en"?"en":"es"`, que en catalan cae al else
+       y deja el selector mostrando "ES" con la pagina en catalan. */
     var t=document.getElementById("twIn");
-    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||"";
+    if(t) t.placeholder=t.getAttribute("data-ph-"+L)||t.getAttribute("data-ph-es")||"";
     var c=document.getElementById("langCur"); if(c) c.textContent=L.toUpperCase();
     var li=document.getElementById("langList");
     if(li) li.querySelectorAll("li").forEach(function(o){
       o.setAttribute("aria-selected", String(o.dataset.v===L)); });
+    /* [INC-JS-05] Los widgets que PINTA el JS no se re-pintaban al cambiar de idioma:
+       sus dos ganchos existian (`__railRefresh` :1823, `__quotaRefresh` :1736) pero su
+       UNICO llamador era la `setLang` pre-chasis, que esta muerta desde el port. Medido
+       sobre la version comiteada, SIN catalan de por medio: el panel de la cadena decia
+       «Alineacion» antes y despues de `setLang('en')`. O sea que un lector ingles lleva
+       leyendo ese panel en castellano desde el port, en produccion.
+       Van con guarda: en las 5 paginas que no tienen esos widgets no hacen nada, y asi
+       el chasis sigue siendo identico en las 6. */
+    if(window.__railRefresh) window.__railRefresh();
+    if(window.__quotaRefresh) window.__quotaRefresh();
     if(window.__printRemeasure) setTimeout(window.__printRemeasure,60);
   }; })();
 
@@ -2445,8 +2523,8 @@ var SC=document.getElementById('twBody');
 <script>
 /* ── contacto: copiar el email. Un mailto: no hace nada sin cliente de correo ── */
 (function(){
-  var T={ok:{es:'copiado',en:'copied'},base:{es:'copiar',en:'copy'}};
-  function paint(b,k){ b.innerHTML='<span class="t-es">'+T[k].es+'</span><span class="t-en">'+T[k].en+'</span>'; }
+  var T={ok:{es:'copiado',en:'copied',ca:'copiat'},base:{es:'copiar',en:'copy',ca:'copiar'}};
+  function paint(b,k){ b.innerHTML=TRI(T[k].es,T[k].en,T[k].ca); }
   Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'),function(b){
     b.addEventListener('click',function(){
       var v=b.dataset.copy, done=function(){ b.classList.add('done'); paint(b,'ok');
