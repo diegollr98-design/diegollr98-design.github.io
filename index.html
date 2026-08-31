@@ -8,7 +8,7 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#06060a">
 <meta property="og:title" content="Diego · AI Engineer · sistemas de IA que no pueden mentir">
-<meta property="og:description" content="Evals, guardrails y grounding: construyo la capa que impide que un sistema de IA afirme algo falso. 5 sistemas en uso real, con gates que bloquean: 11.806 pedidos en la tienda, 257 tests en verde.">
+<meta property="og:description" content="Evals, guardrails y grounding: construyo la capa que impide que un sistema de IA afirme algo falso. 5 sistemas en uso real, con gates que bloquean: 136 facturas conciliadas por OCR en 4 divisas, 1.424 commits en 5 repos.">
 <meta property="og:url" content="https://diegotomasllopis.com/">
 <meta property="og:image" content="https://diegotomasllopis.com/assets/og-index.png">
 <meta property="og:image:width" content="1200">
@@ -473,9 +473,18 @@ section{padding:clamp(62px,9vw,108px) 0;border-top:1px solid var(--line);positio
    el alto de la pagina y no da error de consola. */
 .mdl-box .mrow .mfig{margin:18px 0 0;flex:1 1 200px;max-width:230px}
 /* `.mev` REDEFINE el ancho: `.ev-scroll img` esta clavado a 1770px, que es el de
-   la tira de totales, y estiraria esta captura deformandola. */
+   la tira de totales, y estiraria estas capturas deformandolas.
+   ⛔ `width:auto` y NO un pixelaje fijo: estuvo clavado a 1366 (el ancho de la
+   captura de Oktopet, la unica que habia) y al entrar las de 1831-1836 las
+   encogia un 26%, que en una tabla de texto es la diferencia entre leerla y
+   adivinarla. Con `auto` cada una va a su tamaño natural; para Oktopet son los
+   mismos 1366 de antes.
+   ⚠️ Y si alguna vez vuelve una captura de cuenta a un `<details>`, necesita la
+   misma regla: hubo un `.fold-b .ev-scroll img{width:auto}` del 29-08 que se
+   retiro al mover las capturas a la linea temporal, y sin el la de Oktopet se
+   estira de 1366 a 1770 (+30%). */
 .mdl-box .mev{margin-top:18px}
-.mdl-box .mev img{width:1366px}
+.mdl-box .mev img{width:auto}
 .mdl-box .ev-cap{margin-top:9px}
 /* ══ .deck · los 5 proyectos en horizontal (PRUEBA, 2026-08-26) ═══════════
    Scroller nativo con scroll-snap: el swipe de movil sale gratis y NO se
@@ -1535,7 +1544,7 @@ body{overflow:hidden}
   <header class="hero">
     <p class="eyebrow reveal"><span class="t-es">AI Engineer · sistemas agénticos que se auditan a sí mismos · remoto</span><span class="t-en">AI Engineer · agentic systems that audit themselves · remote</span><span class="t-ca">AI Engineer · sistemes agèntics que s'auditen a si mateixos · remot</span></p>
 
-    <p class="ficha reveal"><span class="t-es">Python · LLMs · agentes · <b>desde 2019</b> en ecommerce</span><span class="t-en">Python · LLMs · agents · <b>since 2019</b> in ecommerce</span><span class="t-ca">Python · LLMs · agents · <b>des del 2019</b> en ecommerce</span></p>
+    <p class="ficha reveal"><span class="t-es">Python · LLMs · agentes · <b>7 años</b> en ecommerce</span><span class="t-en">Python · LLMs · agents · <b>7 years</b> in ecommerce</span><span class="t-ca">Python · LLMs · agents · <b>7 anys</b> en ecommerce</span></p>
 
     <h1 id="h1">
       <!-- El punto va DENTRO del bloque de degradado a proposito. Fuera, el
@@ -1594,7 +1603,7 @@ body{overflow:hidden}
       <!-- El "a 13-08" NO es adorno: esta cifra decae a diario (YOUTUBE
            commiteo 7 veces solo hoy) y sin fecha se convierte en falsa
            sola en 48 h. Con fecha es una foto, que es lo que es. -->
-      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="1424"></span></div><div class="l"><span class="t-es">commits en 5 repos a 25-08 · ~5 meses y sin formación previa</span><span class="t-en">commits across 5 repos as of 25-08 · ~5 months, no prior training</span><span class="t-ca">commits en 5 repos a 25-08 · ~5 mesos i sense formació prèvia</span></div></div>
+      <div class="stat reveal"><div class="n display grad-text"><span class="ct" data-to="1424"></span></div><div class="l"><span class="t-es">commits en 5 repos a 25-08 · <b>14 meses con LLMs</b> (desde jun-2025), sin formación previa</span><span class="t-en">commits across 5 repos as of 25-08 · <b>14 months with LLMs</b> (since Jun 2025), no prior training</span><span class="t-ca">commits en 5 repos a 25-08 · <b>14 mesos amb LLMs</b> (des del jun-2025), sense formació prèvia</span></div></div>
       <!-- Decia "20 skills propias REUTILIZADAS" y era falso por implicatura:
            solo 4 viven en mas de un repo (run x3, optimize x3, eval x2,
            daily-run x2); las otras 16 estan en uno solo. Un ingeniero lo ve
@@ -1702,7 +1711,7 @@ body{overflow:hidden}
           <span class="t-en">Not Streamlit crashing: it's fluently asserting a false net profit. That figure decides whether a product is a "winner", which shifts the contract split from 50/50 to 40/60. One misattributed decimal is somebody else's pay.</span><span class="t-ca">No és que Streamlit peti: és que afirmi amb tota fluïdesa una utilitat neta falsa. Aquesta xifra decideix si un producte és «winner», i això canvia el repartiment del contracte de 50/50 a 40/60. Un decimal mal atribuït és el sou d'una altra persona.</span>
         </div>
         <div class="pj-nums">
-          <span><b>11.806</b> <span class="t-es">pedidos en la tienda</span><span class="t-en">orders in the store</span><span class="t-ca">comandes a la botiga</span></span>
+          <span><b>136</b> <span class="t-es">facturas OCR en 4 divisas</span><span class="t-en">OCR invoices in 4 currencies</span><span class="t-ca">factures OCR en 4 divises</span></span>
           <span><b>6.286</b> <span class="t-es">anuncios indexados</span><span class="t-en">ads indexed</span><span class="t-ca">anuncis indexats</span></span>
           <span><b>3/3</b> <span class="t-es">gates golden en verde</span><span class="t-en">golden gates green</span><span class="t-ca">gates golden en verd</span></span>
         </div>
@@ -2099,6 +2108,10 @@ body{overflow:hidden}
        Los puntos NO llevan JS propio: son `[data-mt]/[data-mc]`, que es lo que
        el modal reutilizable ya escucha — así se abren con CLIC y con ENTER, y
        sin hover, que en móvil no existe (punto 1 de la misma lista). ══ -->
+  <p class="deck-hint reveal" style="margin:0 0 10px">
+    <span class="t-es">Toca cualquier punto: abre la captura de su cuenta en Business Manager.</span>
+    <span class="t-en">Tap any point: it opens that account&#8217;s Business Manager capture.</span><span class="t-ca">Toca qualsevol punt: obre la captura del seu compte a Business Manager.</span>
+  </p>
   <div class="tl reveal">
     <svg class="tl-line" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
       <defs>
@@ -2122,18 +2135,36 @@ body{overflow:hidden}
       <span class="tl-dot" aria-hidden="true"></span>
     </button>
 
-    <button class="tl-n" type="button" style="--x:50%;--y:62%"
+    <button class="tl-n" type="button" style="--x:33.8%;--y:78.9%"
       data-mt="2020-21 · <span class='t-es'>El pulpito reversible</span><span class='t-en'>The reversible octopus</span><span class='t-ca'>El pop reversible</span>"
-      data-mc="<p><span class='t-es'>Se hizo viral y entré a tiempo: <b>59.238 € facturados con 15.201 € de anuncios</b> (ROAS 3,9) entre noviembre de 2020 y marzo de 2021. Acabé en <b>breakeven</b>: PayPal me retuvo 16.000 € durante seis meses y mi proveedor se fue de vacaciones sin avisar, con los pedidos sin despachar. La facturación estaba; el dinero no.</span><span class='t-en'>It went viral and I got in on time: <b>&#8364;59,238 billed on &#8364;15,201 of ads</b> (3.9 ROAS) between November 2020 and March 2021. I ended at <b>breakeven</b>: PayPal held &#8364;16,000 for six months and my supplier left on holiday without warning, orders unshipped. The revenue was there; the money wasn&#8217;t.</span><span class='t-ca'>Es va fer viral i vaig entrar a temps: <b>59.238 € facturats amb 15.201 € d'anuncis</b> (ROAS 3,9) entre novembre del 2020 i març del 2021. Vaig acabar en <b>breakeven</b>: PayPal em va retenir 16.000 € durant sis mesos i el meu proveïdor se'n va anar de vacances sense avisar, amb les comandes sense despatxar. La facturació hi era; els diners no.</span></p><div class='mrow'><figure class='mfig'><img src='assets/ev-ad-octopet-full.jpg' loading='lazy' width='900' height='900' alt='Creativo del anuncio del pulpito reversible / Reversible octopus ad creative'><figcaption><span class='t-es'>el creativo</span><span class='t-en'>the creative</span><span class='t-ca'>el creatiu</span></figcaption></figure><figure class='mfig'><img src='assets/ev-ad-octopet.jpg' loading='lazy' width='271' height='425' alt='Anuncio de Oktopet en Facebook / Oktopet Facebook ad'><figcaption><span class='t-es'>1K comentarios · 189 compartidos</span><span class='t-en'>1K comments · 189 shares</span><span class='t-ca'>1K comentaris · 189 compartits</span></figcaption></figure></div><div class='ev-scroll mev' data-sx='400'><img src='assets/ev-oktopet-campanas.png' loading='lazy' width='1366' height='332' alt='Las 9 campanas de Oktopet en Business Manager / Oktopet&#8217;s 9 campaigns in Business Manager'></div><p class='ev-cap'><span class='t-es'>Las <b>9 campañas</b> en Business Manager, con el rango arriba a la derecha (<b>10 nov 2020 – 8 mar 2021</b>). Sumadas dan las dos cifras de arriba al céntimo: <b>15.201,12 €</b> de gasto y <b>59.238,42 €</b> de valor de compra. Aterriza sobre el <b>gasto</b>, resaltado; desliza a la derecha para el ROAS y el valor de compra, y a la izquierda para los nombres de campaña. <i>El ID de la cuenta va difuminado; no se ha tocado nada más.</i></span><span class='t-en'>The <b>9 campaigns</b> in Business Manager, date range top right (<b>10 Nov 2020 – 8 Mar 2021</b>). Summed, they give the two figures above to the cent: <b>&#8364;15,201.12</b> of spend and <b>&#8364;59,238.42</b> of purchase value. It lands on <b>spend</b>, highlighted; swipe right for ROAS and purchase value, left for the campaign names. <i>The account ID is blurred; nothing else was touched.</i></span><span class='t-ca'>Les <b>9 campanyes</b> a Business Manager, amb el rang a dalt a la dreta (<b>10 nov 2020 – 8 mar 2021</b>). Sumades donen les dues xifres de dalt al cèntim: <b>15.201,12 €</b> de despesa i <b>59.238,42 €</b> de valor de compra. Aterra sobre la <b>despesa</b>, ressaltada; llisca a la dreta per al ROAS i el valor de compra, i a l'esquerra per als noms de campanya. <i>L'ID del compte va difuminat; no s'ha tocat res més.</i></span></p>">
+      data-mc="<p><span class='t-es'>Se hizo viral y entré a tiempo: <b>59.238 € facturados con 15.201 € de anuncios</b> (ROAS 3,9) entre noviembre de 2020 y marzo de 2021. Acabé en <b>breakeven</b>: PayPal me retuvo 16.000 € durante seis meses y mi proveedor se fue de vacaciones sin avisar, con los pedidos sin despachar. La facturación estaba; el dinero no.</span><span class='t-en'>It went viral and I got in on time: <b>&#8364;59,238 billed on &#8364;15,201 of ads</b> (3.9 ROAS) between November 2020 and March 2021. I ended at <b>breakeven</b>: PayPal held &#8364;16,000 for six months and my supplier left on holiday without warning, orders unshipped. The revenue was there; the money wasn&#8217;t.</span><span class='t-ca'>Es va fer viral i vaig entrar a temps: <b>59.238 € facturats amb 15.201 € d'anuncis</b> (ROAS 3,9) entre novembre del 2020 i març del 2021. Vaig acabar en <b>breakeven</b>: PayPal em va retenir 16.000 € durant sis mesos i el meu proveïdor se'n va anar de vacances sense avisar, amb les comandes sense despatxar. La facturació hi era; els diners no.</span></p><div class='mrow'><figure class='mfig'><img src='assets/ev-ad-octopet-full.jpg' loading='lazy' width='900' height='900' alt='Creativo del anuncio del pulpito reversible / Reversible octopus ad creative'><figcaption><span class='t-es'>el creativo</span><span class='t-en'>the creative</span><span class='t-ca'>el creatiu</span></figcaption></figure><figure class='mfig'><img src='assets/ev-ad-octopet.jpg' loading='lazy' width='271' height='425' alt='Anuncio de Oktopet en Facebook / Oktopet Facebook ad'><figcaption><span class='t-es'>1K comentarios · 189 compartidos</span><span class='t-en'>1K comments · 189 shares</span><span class='t-ca'>1K comentaris · 189 compartits</span></figcaption></figure></div><div class='ev-scroll mev' data-sx='810'><img src='assets/ev-oktopet-campanas.png' loading='lazy' width='1366' height='332' alt='Las 9 campanas de Oktopet en Business Manager / Oktopet&#8217;s 9 campaigns in Business Manager'></div><p class='ev-cap'><span class='t-es'>Las <b>9 campañas</b> en Business Manager, con el rango arriba a la derecha (<b>10 nov 2020 – 8 mar 2021</b>). Sumadas dan las dos cifras de arriba al céntimo: <b>15.201,12 €</b> de gasto y <b>59.238,42 €</b> de valor de compra. Aterriza sobre el <b>ROAS y el valor de compra</b>; desliza a la izquierda para el gasto, resaltado, y para los nombres de campaña. <i>El ID de la cuenta va difuminado y el resaltado amarillo es mío, de cuando revisé la cuenta; no se ha tocado nada más.</i></span><span class='t-en'>The <b>9 campaigns</b> in Business Manager, date range top right (<b>10 Nov 2020 – 8 Mar 2021</b>). Summed, they give the two figures above to the cent: <b>&#8364;15,201.12</b> of spend and <b>&#8364;59,238.42</b> of purchase value. It lands on <b>ROAS and purchase value</b>; swipe left for spend, highlighted, and for the campaign names. <i>The account ID is blurred and the yellow highlighting is mine, from when I reviewed the account; nothing else was touched.</i></span><span class='t-ca'>Les <b>9 campanyes</b> a Business Manager, amb el rang a dalt a la dreta (<b>10 nov 2020 – 8 mar 2021</b>). Sumades donen les dues xifres de dalt al cèntim: <b>15.201,12 €</b> de despesa i <b>59.238,42 €</b> de valor de compra. Aterra sobre el <b>ROAS i el valor de compra</b>; llisca a l'esquerra per a la despesa, ressaltada, i per als noms de campanya. <i>L'ID del compte va difuminat i el ressaltat groc és meu, de quan vaig revisar el compte; no s'ha tocat res més.</i></span></p>">
       <span class="tl-y">2020-21</span>
       <span class="tl-h"><span class="t-es">El pulpito reversible</span><span class="t-en">The reversible octopus</span><span class="t-ca">El pop reversible</span></span>
       <span class="tl-k"><span class="t-es">viral, y acabé en breakeven</span><span class="t-en">viral, and I ended at breakeven</span><span class="t-ca">viral, i vaig acabar en breakeven</span></span>
       <span class="tl-dot" aria-hidden="true"></span>
     </button>
 
+    <button class="tl-n" type="button" style="--x:50%;--y:62%"
+      data-mt="2021-24 · <span class='t-es'>Tres tiendas más</span><span class='t-en'>Three more stores</span><span class='t-ca'>Tres botigues més</span>"
+      data-mc="<p><span class='t-es'>Monté tres tiendas más y <b>las cerré todas</b>. De una queda la cuenta entera: <b>69 campañas, 2.289,56 € de inversión y ROAS 4,89</b> en otoño de 2023. Ninguna llegó a sostenerse, y por eso siguen aquí: <b>el pipeline que uso hoy es lo que sobrevivió de estas.</b></span><span class='t-en'>I set up three more stores and <b>closed every one</b>. From one of them the whole account survives: <b>69 campaigns, €2,289.56 of spend and 4.89 ROAS</b> in autumn 2023. None of them held up, which is why they are still here: <b>the pipeline I use today is what survived them.</b></span><span class='t-ca'>Vaig muntar tres botigues més i <b>les vaig tancar totes</b>. D'una queda el compte sencer: <b>69 campanyes, 2.289,56 € d'inversió i ROAS 4,89</b> a la tardor del 2023. Cap no va arribar a sostenir-se, i per això segueixen aquí: <b>el pipeline que faig servir avui és el que en va sobreviure.</b></span></p><div class='ev-scroll mev' data-sx='1600'><img src='assets/ev-cuenta-2023.png' loading='lazy' width='1835' height='697' alt='Cuenta de la tienda de 2023: 69 campanas, ROAS 4,89 / 2023 store account'></div><p class='ev-cap'><span class='t-es'>La cuenta entera de esa tienda: <b>69 campa&ntilde;as</b>, <b>2.289,56 &euro;</b> y <b>ROAS 4,89</b>. Aterriza sobre el valor de compra y el ROAS; desliza a la izquierda para el gasto y los nombres. <i>Se retir&oacute; la marca de agua de Windows; ninguna cifra tocada, y los <b>tres</b> r&oacute;tulos &laquo;Total&raquo; que tapaba se restituyeron copiando el mismo gemelo de esa fila.</i></span><span class='t-en'>That store's account in full: <b>69 campaigns</b>, <b>&euro;2,289.56</b> and <b>4.89 ROAS</b>. It lands on purchase value and ROAS; swipe left for spend and the campaign names. <i>The Windows watermark was removed; no figure touched, and the <b>three</b> &laquo;Total&raquo; labels it covered were restored by copying the same twin from that row.</i></span><span class='t-ca'>El compte sencer d'aquella botiga: <b>69 campanyes</b>, <b>2.289,56 &euro;</b> i <b>ROAS 4,89</b>. Aterra sobre el valor de compra i el ROAS; llisca a l'esquerra per a la despesa i els noms. <i>Es va retirar la marca d&#8217;aigua de Windows; cap xifra tocada, i els <b>tres</b> r&ograve;tuls &laquo;Total&raquo; que tapava es van restituir copiant el mateix bessó d'aquesta fila.</i></span></p>">
+      <span class="tl-y">2021-24</span>
+      <span class="tl-h"><span class="t-es">Tres tiendas más</span><span class="t-en">Three more stores</span><span class="t-ca">Tres botigues més</span></span>
+      <span class="tl-k"><span class="t-es">las cerré todas</span><span class="t-en">I closed every one</span><span class="t-ca">les vaig tancar totes</span></span>
+      <span class="tl-dot" aria-hidden="true"></span>
+    </button>
+
+    <button class="tl-n" type="button" style="--x:67.7%;--y:47.2%"
+      data-mt="Q4 2024 · <span class='t-es'>Monto la tienda de hoy</span><span class='t-en'>I set up the current store</span><span class='t-ca'>Munto la botiga d'avui</span>"
+      data-mc="<p><span class='t-es'>Arranca el ecommerce COD que sigue en marcha. La primera cuenta publicitaria fue en euros: <b>113 campañas, 3.173,12 € y 1.007 compras, con ROAS 7,11</b>. Son <b>28 € por campaña</b>: no es escalar, es <b>testear barato</b> hasta encontrar lo que aguanta.</span><span class='t-en'>The COD ecommerce that is still running starts here. The first ad account was in euros: <b>113 campaigns, €3,173.12 and 1,007 purchases, at 7.11 ROAS</b>. That is <b>€28 per campaign</b>: not scaling, but <b>testing cheap</b> until something holds.</span><span class='t-ca'>Arrenca l’ecommerce COD que segueix en marxa. El primer compte publicitari va ser en euros: <b>113 campanyes, 3.173,12 € i 1.007 compres, amb ROAS 7,11</b>. Són <b>28 € per campanya</b>: no és escalar, és <b>provar barat</b> fins a trobar el que aguanta.</span></p><div class='ev-scroll mev' data-sx='1440'><img src='assets/ev-cuenta-cod-eur.png' loading='lazy' width='1836' height='702' alt='Primera cuenta de la tienda COD, en euros: 113 campanas, ROAS 7,11 / First COD account'></div><p class='ev-cap'><span class='t-es'>La primera cuenta de esta tienda, en euros: <b>113 campa&ntilde;as</b>, <b>3.173,12 &euro;</b>, <b>1.007 compras</b> y <b>ROAS 7,11</b>. <i>Se retir&oacute; la marca de agua de Windows; ninguna cifra tocada. Se restituyeron <b>dos</b> r&oacute;tulos: &laquo;Total&raquo;, copiado de su gemelo en esta misma fila, y &laquo;Promedio&raquo;, copiado de otra captura de la misma interfaz porque en esta tabla no hay un segundo igual.</i></span><span class='t-en'>This store's first account, in euros: <b>113 campaigns</b>, <b>&euro;3,173.12</b>, <b>1,007 purchases</b> and <b>7.11 ROAS</b>. <i>The Windows watermark was removed; no figure touched. <b>Two</b> labels were restored: &laquo;Total&raquo;, copied from its twin in this same row, and &laquo;Promedio&raquo;, copied from another capture of the same interface as this table has no second one.</i></span><span class='t-ca'>El primer compte d'aquesta botiga, en euros: <b>113 campanyes</b>, <b>3.173,12 &euro;</b>, <b>1.007 compres</b> i <b>ROAS 7,11</b>. <i>Es va retirar la marca d&#8217;aigua de Windows; cap xifra tocada. Es van restituir <b>dos</b> r&ograve;tuls: &laquo;Total&raquo;, copiat del seu bess&oacute; d&#8217;aquesta mateixa fila, i &laquo;Promedio&raquo;, copiat d&#8217;una altra captura de la mateixa interf&iacute;cie perqu&egrave; en aquesta taula no n&#8217;hi ha cap altre.</i></span></p>">
+      <span class="tl-y">Q4 2024</span>
+      <span class="tl-h"><span class="t-es">Monto la tienda de hoy</span><span class="t-en">I set up the current store</span><span class="t-ca">Munto la botiga d'avui</span></span>
+      <span class="tl-k"><span class="t-es">113 campañas de testeo</span><span class="t-en">113 testing campaigns</span><span class="t-ca">113 campanyes de prova</span></span>
+      <span class="tl-dot" aria-hidden="true"></span>
+    </button>
+
     <button class="tl-n" type="button" style="--x:83.4%;--y:34%"
       data-mt="2025-26 · <span class='t-es'>COD en Colombia</span><span class='t-en'>COD in Colombia</span><span class='t-ca'>COD a Colòmbia</span>"
-      data-mc="<p><span class='t-es'>La tienda que ECXM opera. <b>Factura cuatro veces más que aquel pico, y esta vez con beneficio.</b> La cifra que miro ya no es la facturación: es la utilidad neta conciliada. La trato como lo que es: un negocio, no un pico.</span><span class='t-en'>The store ECXM runs. <b>It bills four times what that spike did, and this time at a profit.</b> The figure I watch is no longer revenue: it&#8217;s reconciled net profit. I treat it as what it is: a business, not a spike.</span><span class='t-ca'>La botiga que ECXM opera. <b>Factura quatre vegades més que aquell pic, i aquesta vegada amb benefici.</b> La xifra que miro ja no és la facturació: és la utilitat neta conciliada. La tracto com el que és: un negoci, no un pic.</span></p>">
+      data-mc="<p><span class='t-es'>La tienda que ECXM opera. <b>Factura cuatro veces más que aquel pico, y esta vez con beneficio.</b> La cifra que miro ya no es la facturación: es la utilidad neta conciliada. La trato como lo que es: un negocio, no un pico.</span><span class='t-en'>The store ECXM runs. <b>It bills four times what that spike did, and this time at a profit.</b> The figure I watch is no longer revenue: it&#8217;s reconciled net profit. I treat it as what it is: a business, not a spike.</span><span class='t-ca'>La botiga que ECXM opera. <b>Factura quatre vegades més que aquell pic, i aquesta vegada amb benefici.</b> La xifra que miro ja no és la facturació: és la utilitat neta conciliada. La tracto com el que és: un negoci, no un pic.</span></p><div class='ev-scroll mev' data-sx='1520'><img src='assets/ev-cuenta-cod-cop.png' loading='lazy' width='1831' height='662' alt='Cuenta principal en COP: 102 campanas, ROAS 6,97 / Main COP account'></div><p class='ev-cap'><span class='t-es'>La cuenta principal: <b>102 campa&ntilde;as</b>, <b>168.841.118 COP</b> (~37.520 &euro;) y <b>ROAS 6,97</b> sostenido mientras se escalaba. <i>Se retir&oacute; la marca de agua de Windows; ninguna cifra tocada, y el r&oacute;tulo que tapaba se restituy&oacute; copiando su gemelo de la misma fila.</i></span><span class='t-en'>The main account: <b>102 campaigns</b>, <b>168,841,118 COP</b> (~&euro;37,520) and <b>6.97 ROAS</b> held while scaling. <i>The Windows watermark was removed; no figure touched, and the label it covered was restored by copying its twin from the same row.</i></span><span class='t-ca'>El compte principal: <b>102 campanyes</b>, <b>168.841.118 COP</b> (~37.520 &euro;) i <b>ROAS 6,97</b> sostingut mentre s'escalava. <i>Es va retirar la marca d&#8217;aigua de Windows; cap xifra tocada, i el r&ograve;tul que tapava es va restituir copiant el seu bessó de la mateixa fila.</i></span></p><div class='ev-scroll mev' data-sx='1500'><img src='assets/ev-cuenta-cod-cop2.png' loading='lazy' width='1825' height='507' alt='Segunda cuenta en COP de la tienda COD: 8 campanas, ROAS 10,90 / Second COP account'></div><p class='ev-cap'><span class='t-es'>Y la segunda cuenta de la misma tienda, ya en 2026: <b>8 campa&ntilde;as</b>, <b>2.138.151 COP</b> (~475 &euro;) y <b>ROAS 10,90</b>, el m&aacute;s alto de las cinco sobre el gasto m&aacute;s peque&ntilde;o.</span><span class='t-en'>And the same store&#8217;s second account, in 2026: <b>8 campaigns</b>, <b>2,138,151 COP</b> (~&euro;475) and <b>10.90 ROAS</b>, the highest of the five on the smallest spend.</span><span class='t-ca'>I el segon compte de la mateixa botiga, ja el 2026: <b>8 campanyes</b>, <b>2.138.151 COP</b> (~475 &euro;) i <b>ROAS 10,90</b>, el m&eacute;s alt dels cinc sobre la despesa m&eacute;s petita.</span></p>">
       <span class="tl-y">2025-26</span>
       <span class="tl-h"><span class="t-es">COD en Colombia</span><span class="t-en">COD in Colombia</span><span class="t-ca">COD a Colòmbia</span></span>
       <span class="tl-k"><span class="t-es">cuatro veces más, con beneficio</span><span class="t-en">four times more, at a profit</span><span class="t-ca">quatre vegades més, amb benefici</span></span>
@@ -2142,8 +2173,8 @@ body{overflow:hidden}
   </div>
 
   <p class="bridge reveal" style="margin-top:0">
-    <span class="t-es">Esto es el negocio del que salió el criterio. No es un proyecto de software: es <strong>quince meses comprando medios con mi propio dinero</strong>, y la razón de que sepa qué cifra decide y cuál solo luce.</span>
-    <span class="t-en">This is the business the judgment came from. It isn't a software project: it's <strong>fifteen months buying media with my own money</strong>, and the reason I know which figure decides and which one merely looks good.</span><span class="t-ca">Això és el negoci del qual va sortir el criteri. No és un projecte de programari: són <strong>quinze mesos comprant mitjans amb els meus propis diners</strong>, i la raó que sàpiga quina xifra decideix i quina només llueix.</span>
+    <span class="t-es">Esto es el negocio del que salió el criterio. No es un proyecto de software: es <strong>seis años comprando medios con mi propio dinero</strong>, y la razón de que sepa qué cifra decide y cuál solo luce.</span>
+    <span class="t-en">This is the business the judgment came from. It isn't a software project: it's <strong>six years buying media with my own money</strong>, and the reason I know which figure decides and which one merely looks good.</span><span class="t-ca">Això és el negoci del qual va sortir el criteri. No és un projecte de programari: són <strong>sis anys comprant mitjans amb els meus propis diners</strong>, i la raó que sàpiga quina xifra decideix i quina només llueix.</span>
   </p>
 
   <!-- META ADS · el negocio real. Vivia como tarjeta 02 de #proyectos; movida aqui
@@ -2153,10 +2184,10 @@ body{overflow:hidden}
     <div class="pj-idx">META</div>
     <div class="pj-body">
       <div class="pj-top">
-        <h3><span class="t-es">Meta Ads · el negocio que ECXM operaba</span><span class="t-en">Meta Ads · the business ECXM ran</span><span class="t-ca">Meta Ads · el negoci que ECXM operava</span></h3>
+        <h3><span class="t-es">Meta Ads · seis años comprando medios</span><span class="t-en">Meta Ads · six years buying media</span><span class="t-ca">Meta Ads · sis anys comprant mitjans</span></h3>
         <span class="kind"><span class="t-es">performance marketing · COD Colombia</span><span class="t-en">performance marketing · COD Colombia</span><span class="t-ca">performance marketing · COD Colòmbia</span></span>
       </div>
-      <p class="thesis"><span class="t-es">Quince meses comprando medios para mi propio ecommerce COD, de abril de 2025 a junio de 2026. <strong>102 campañas con un pipeline explícito</strong> (product testing ABO → ad testing → adset testing → scaling ADV) y una cuenta aparte solo para validar productos antes de invertir. El ROAS se sostuvo en <strong>casi 7x mientras se escalaba</strong>, que es cuando cae.</span><span class="t-en">Fifteen months buying media for my own COD ecommerce, April 2025 to June 2026. <strong>102 campaigns with an explicit pipeline</strong> (product testing ABO → ad testing → adset testing → scaling ADV) plus a separate account just to validate products before spending. ROAS held at <strong>nearly 7x while scaling</strong>, which is when it drops.</span><span class="t-ca">Quinze mesos comprant mitjans per al meu propi ecommerce COD, d'abril del 2025 a juny del 2026. <strong>102 campanyes amb un pipeline explícit</strong> (product testing ABO → ad testing → adset testing → scaling ADV) i un compte a part només per validar productes abans d'invertir. El ROAS es va sostenir en <strong>gairebé 7x mentre s'escalava</strong>, que és quan cau.</span></p>
+      <p class="thesis"><span class="t-es"><strong>Seis años comprando medios con mi propio dinero</strong>: cinco cuentas y <strong>301 campañas</strong>, del pulpito de 2020 a la tienda COD que sigue en marcha. Lo de aquí abajo es la <strong>cuenta principal</strong>, <strong>102 campañas</strong> de abril de 2025 a junio de 2026, con un pipeline explícito (product testing ABO → ad testing → adset testing → scaling ADV) y una cuenta secundaria donde empecé validando producto y acabé escalando. El ROAS se sostuvo en <strong>casi 7x mientras se escalaba</strong>, que es cuando cae.</span><span class="t-en"><strong>Six years buying media with my own money</strong>: five accounts and <strong>301 campaigns</strong>, from the 2020 octopus to the COD store still running. What follows is the <strong>main account</strong>, <strong>102 campaigns</strong> from April 2025 to June 2026, with an explicit pipeline (product testing ABO → ad testing → adset testing → scaling ADV) plus a secondary account where I started validating product and ended up scaling. ROAS held at <strong>nearly 7x while scaling</strong>, which is when it drops.</span><span class="t-ca"><strong>Sis anys comprant mitjans amb els meus propis diners</strong>: cinc comptes i <strong>301 campanyes</strong>, del pop del 2020 a la botiga COD que segueix en marxa. El d'aquí sota és el <strong>compte principal</strong>, <strong>102 campanyes</strong> d'abril del 2025 a juny del 2026, amb un pipeline explícit (product testing ABO → ad testing → adset testing → scaling ADV) i un compte secundari on vaig començar validant producte i vaig acabar escalant. El ROAS es va sostenir en <strong>gairebé 7x mentre s'escalava</strong>, que és quan cau.</span></p>
       <div class="pipe"><span>product testing ABO</span><i>→</i><span>ad testing</span><i>→</i><span>adset testing</span><i>→</i><span>scaling ADV</span><i>⊣</i><span class="gate">utilidad neta conciliada</span></div>
       <div class="fail">
         <b><span class="t-es">modo de fallo</span><span class="t-en">failure mode</span><span class="t-ca">mode de fallada</span></b>
@@ -2164,10 +2195,10 @@ body{overflow:hidden}
         <span class="t-en">In COD, platform ROAS <strong>isn't the money you collect</strong>: it doesn't net out failed deliveries or returns. So the figure I decided on wasn't this one: it was the reconciled net profit ECXM computes over each month's closed orders, behind an exact-equality gate. The pretty number is up here; the real one goes through a gate.</span><span class="t-ca">En COD el ROAS de plataforma <strong>no són els diners que cobres</strong>: no descompta la no-entrega ni la devolució. Per això la xifra amb què decidia no era aquesta: era la utilitat neta conciliada que calcula ECXM sobre les comandes tancades de cada mes, amb gate d'igualtat exacta. El número bonic és aquí dalt; el número real passa per un gate.</span>
       </div>
       <div class="pj-nums">
-        <span><b>~37.500 €</b> <span class="t-es">gestionados en 15 meses</span><span class="t-en">managed over 15 months</span><span class="t-ca">gestionats en 15 mesos</span></span>
-        <span><b>10.975</b> <span class="t-es">compras</span><span class="t-en">purchases</span><span class="t-ca">compres</span></span>
-        <span><b>6,97</b> ROAS</span>
-        <span><b>6,81 %</b> <span class="t-es">CTR único</span><span class="t-en">unique CTR</span><span class="t-ca">CTR únic</span></span>
+        <span><b>~58.659 €</b> <span class="t-es">gestionados en 6 años</span><span class="t-en">managed over 6 years</span><span class="t-ca">gestionats en 6 anys</span></span>
+        <span><b>301</b> <span class="t-es">campañas en 5 cuentas</span><span class="t-en">campaigns across 5 accounts</span><span class="t-ca">campanyes en 5 comptes</span></span>
+        <span><b>6,13</b> <span class="t-es">ROAS combinado</span><span class="t-en">blended ROAS</span><span class="t-ca">ROAS combinat</span></span>
+        <span><b>6,97</b> <span class="t-es">ROAS de la cuenta principal</span><span class="t-en">main account ROAS</span><span class="t-ca">ROAS del compte principal</span></span>
       </div>
       <div class="ev-scroll reveal">
         <img src="assets/ev-metaads-totales.jpg" loading="lazy" width="1770" height="97"
@@ -2182,20 +2213,91 @@ body{overflow:hidden}
          ahi la marca de agua de Windows cruza el numero. Se sigue pudiendo deslizar en los dos sentidos.
          Se dispara al entrar en vista, no al cargar: dentro de .tw-body el
          elemento mide 0 hasta que el motor de impresion llega a el. */
+      /* ⚠️ Recorre TODOS los .ev-scroll del documento, no solo el primero.
+         Con `querySelector` (singular) las 4 capturas del desplegable de las 5
+         cuentas aterrizaban en scrollLeft=0, o sea sobre la columna «Campaña»:
+         cero cifras, que es justo lo que este mecanismo existe para evitar.
+         El destino sale de `data-sx`; sin atributo, al extremo derecho.
+         ⛔ Y se REAPLICA al cargar cada imagen: van con `loading="lazy"`, asi
+         que al primer intersect la imagen no tiene geometria todavia y el
+         scrollLeft se recorta contra un scrollWidth que aun no existe. Es el
+         mismo fallo que tuvo el modal durante semanas [INC-JS-09]. */
       (function(){
-        var s=document.querySelector('.ev-scroll'); if(!s) return;
-        var root=document.querySelector('#twBody')||null, hecho=false;
-        function anclar(){ if(hecho||!s.clientWidth) return; s.scrollLeft=s.scrollWidth; hecho=true; }
-        if('IntersectionObserver' in window){
-          var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) anclar(); }); },{root:root,threshold:.1});
-          io.observe(s);
-        } else { anclar(); }
+      /* ⛔ Este <script> vive ANTES del desplegable en el documento, asi que
+         al ejecutarse en linea su querySelectorAll solo veia la tira de la
+         tarjeta: las 4 capturas de las cuentas ni existian todavia. Por eso
+         va diferido, no en linea. */
+      function arranca(){
+        var ss=document.querySelectorAll('.ev-scroll'); if(!ss.length) return;
+        var root=document.querySelector('#twBody')||null;
+        function anclar(s){
+          if(!s.clientWidth) return;
+          var a=s.getAttribute('data-sx');
+          s.scrollLeft = a===null ? s.scrollWidth : (+a||0);
+        }
+        function vigilar(s){
+          s.querySelectorAll('img').forEach(function(im){
+            if(!im.complete) im.addEventListener('load', function(){ anclar(s); }, {once:true});
+          });
+        }
+        ss.forEach(function(s){
+          vigilar(s);
+          /* ⛔ El IntersectionObserver NO basta: cuatro de estas capturas viven
+             dentro de un <details> CERRADO, que es display:none, asi que nunca
+             llegan a intersectar y se quedaban en scrollLeft=0 — la columna
+             «Campaña», cero cifras. Se ancla tambien al abrir el desplegable. */
+          var det=s.closest('details');
+          if(det) det.addEventListener('toggle', function(){
+            if(!det.open) return;
+            anclar(s); requestAnimationFrame(function(){ anclar(s); });
+          });
+          if('IntersectionObserver' in window){
+            var io=new IntersectionObserver(function(es){ es.forEach(function(e){
+              if(e.isIntersecting){ anclar(s); requestAnimationFrame(function(){ anclar(s); }); }
+            }); },{root:root,threshold:.1});
+            io.observe(s);
+          } else { anclar(s); }
+        });
+      }
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',arranca);
+      else arranca();
       })();
       </script>
       <p class="ev-cap">
-        <span class="t-es">Business Manager, fila de totales de las <b>102 campañas</b>. De ahí salen <b>las cuatro, una a una</b>: <b>10.975 compras</b>, <b>ROAS 6,97</b>, <b>CTR único 6,81 %</b> y un gasto de <b>168.841.118 COP</b>, que a 4.500 COP/EUR son los ~37.500 €. Desliza para verla entera.</span>
-        <span class="t-en">Business Manager, totals row across <b>102 campaigns</b>. <b>Every one of the four comes from here</b>: <b>10,975 purchases</b>, <b>6.97 ROAS</b>, <b>6.81 % unique CTR</b> and <b>168,841,118 COP</b> of spend, which at 4,500 COP/EUR is the ~€37,500. Swipe to see it whole.</span><span class="t-ca">Business Manager, fila de totals de les <b>102 campanyes</b>. D'aquí surten <b>les quatre, una a una</b>: <b>10.975 compres</b>, <b>ROAS 6,97</b>, <b>CTR únic 6,81 %</b> i una despesa de <b>168.841.118 COP</b>, que a 4.500 COP/EUR són els ~37.500 €. Llisca per veure-la sencera.</span>
+        <span class="t-es">Business Manager, fila de totales de la <b>cuenta principal</b>, <b>102 campañas</b>. De ahí salen <b>una a una</b>: <b>10.975 compras</b>, <b>ROAS 6,97</b>, <b>CTR único 6,81 %</b> y un gasto de <b>168.841.118 COP</b>, que a 4.500 COP/EUR son los ~37.520 €. Desliza para verla entera. <i>Se retiró la marca de agua de Windows que cruzaba la fila; ninguna cifra tocada. La captura completa de esta cuenta, en la línea temporal, lleva la misma limpieza.</i></span>
+        <span class="t-en">Business Manager, totals row of the <b>main account</b>, <b>102 campaigns</b>. <b>Every one of these comes from here</b>: <b>10,975 purchases</b>, <b>6.97 ROAS</b>, <b>6.81 % unique CTR</b> and <b>168,841,118 COP</b> of spend, which at 4,500 COP/EUR is the ~€37,520. Swipe to see it whole. <i>The Windows watermark crossing the row was removed; no figure touched. This account&#8217;s full capture, on the timeline, carries the same cleanup.</i></span><span class="t-ca">Business Manager, fila de totals del <b>compte principal</b>, <b>102 campanyes</b>. D'aquí surten <b>una a una</b>: <b>10.975 compres</b>, <b>ROAS 6,97</b>, <b>CTR únic 6,81 %</b> i una despesa de <b>168.841.118 COP</b>, que a 4.500 COP/EUR són els ~37.520 €. Llisca per veure-la sencera. <i>Es va retirar la marca d&#8217;aigua de Windows que creuava la fila; cap xifra tocada. La captura completa d&#8217;aquest compte, a la l&iacute;nia temporal, porta la mateixa neteja.</i></span>
       </p>
+      <details class="fold" style="margin-top:16px">
+        <summary>
+          <span class="t-es">Las 5 cuentas publicitarias, una a una &middot; 301 campa&ntilde;as entre 2020 y 2026</span>
+          <span class="t-en">The 5 ad accounts, one by one &middot; 301 campaigns between 2020 and 2026</span><span class="t-ca">Els 5 comptes publicitaris, un a un &middot; 301 campanyes entre 2020 i 2026</span>
+        </summary>
+        <div class="fold-b">
+          <table class="hk">
+            <thead>
+              <tr>
+                <th><span class="t-es">cuenta</span><span class="t-en">account</span><span class="t-ca">compte</span></th>
+                <th><span class="t-es">camp.</span><span class="t-en">camp.</span><span class="t-ca">camp.</span></th>
+                <th><span class="t-es">inversi&oacute;n</span><span class="t-en">spend</span><span class="t-ca">inversi&oacute;</span></th>
+                <th>ROAS</th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr><td>Oktopet <i><span class='t-es'>nov 2020 – mar 2021</span><span class='t-en'>Nov 2020 – Mar 2021</span><span class='t-ca'>nov 2020 – març 2021</span></i></td><td>9</td><td>15.201 €</td><td>3,90</td></tr>
+            <tr><td><span class='t-es'>Tienda 2023</span><span class='t-en'>2023 store</span><span class='t-ca'>Botiga 2023</span> <i><span class='t-es'>otoño 2023</span><span class='t-en'>autumn 2023</span><span class='t-ca'>tardor 2023</span></i></td><td>69</td><td>2.290 €</td><td>4,89</td></tr>
+            <tr><td>COD · EUR <i><span class='t-es'>desde Q4 2024</span><span class='t-en'>from Q4 2024</span><span class='t-ca'>des del Q4 2024</span></i></td><td>113</td><td>3.173 €</td><td>7,11</td></tr>
+            <tr><td>COD · COP <i><span class='t-es'>2025-26</span><span class='t-en'>2025-26</span><span class='t-ca'>2025-26</span></i></td><td>102</td><td>~37.520 €</td><td>6,97</td></tr>
+            <tr><td>COD · COP 2 <i><span class='t-es'>2026</span><span class='t-en'>2026</span><span class='t-ca'>2026</span></i></td><td>8</td><td>~475 €</td><td>10,90</td></tr>
+            <tr class="hk-w"><td><b><span class='t-es'>TOTAL</span><span class='t-en'>TOTAL</span><span class='t-ca'>TOTAL</span></b></td><td><b>301</b></td><td><b>~58.659 &euro;</b></td><td><b>6,13</b></td></tr>
+            </tbody>
+          </table>
+          <p class="ev-cap">
+            <span class="t-es">Cinco cuentas, seis a&ntilde;os. <b>El ROAS sube con los a&ntilde;os</b> (3,90 &rarr; 4,89 &rarr; 7,11) y el gasto por campa&ntilde;a dice en qu&eacute; modo estaba cada una: <b>28 &euro; por campa&ntilde;a</b> en la cuenta de 2024 es testear barato; <b>368 &euro;</b> en la principal es escalar. <i>La inversi&oacute;n suma; las &laquo;compras&raquo; que reporta Meta son atribuciones de plataforma y no pedidos, as&iacute; que no las sumo aqu&iacute;. Las cuentas en COP van convertidas a 4.500 COP/EUR, como el resto de la tarjeta, y por eso llevan tilde. <b>Cada punto de la l&iacute;nea temporal de arriba abre la captura de su cuenta</b>, a tama&ntilde;o natural. <b>Cuatro de los cinco puntos</b> abren una: el de 2019 es anterior a cualquier cuenta. Y la de Oktopet <b>no imprime fila de totales</b>: sus dos cifras salen de sumar sus 9 campa&ntilde;as.</i></span>
+            <span class="t-en">Five accounts, six years. <b>ROAS climbs over the years</b> (3.90 &rarr; 4.89 &rarr; 7.11) and spend per campaign tells you the mode each one was in: <b>&euro;28 per campaign</b> in the 2024 account is cheap testing; <b>&euro;368</b> in the main one is scaling. <i>Spend adds up; the &laquo;purchases&raquo; Meta reports are platform attributions, not orders, so I don't total them here. The COP accounts are converted at 4,500 COP/EUR, like the rest of the card, which is why they carry a tilde. <b>Each point on the timeline above opens its account&#8217;s capture</b>, at natural size. <b>Four of the five points</b> open one: 2019 predates any account. And Oktopet&#8217;s <b>prints no totals row</b>: its two figures come from summing its 9 campaigns.</i></span>
+            <span class="t-ca">Cinc comptes, sis anys. <b>El ROAS puja amb els anys</b> (3,90 &rarr; 4,89 &rarr; 7,11) i la despesa per campanya diu en quin mode estava cadascuna: <b>28 &euro; per campanya</b> al compte del 2024 &eacute;s provar barat; <b>368 &euro;</b> al principal &eacute;s escalar. <i>La inversi&oacute; suma; les &laquo;compres&raquo; que reporta Meta s&oacute;n atribucions de plataforma i no comandes, aix&iacute; que no les sumo aqu&iacute;. Els comptes en COP van convertits a 4.500 COP/EUR, com la resta de la targeta, i per aix&ograve; porten titlla. <b>Cada punt de la l&iacute;nia temporal de dalt obre la captura del seu compte</b>, a mida natural. <b>Quatre dels cinc punts</b> n&#8217;obren una: el del 2019 &eacute;s anterior a qualsevol compte. I la d&#8217;Oktopet <b>no imprimeix fila de totals</b>: les seves dues xifres surten de sumar les 9 campanyes.</i></span>
+          </p>
+        </div>
+      </details>
       <details class="fold" style="margin-top:16px">
         <summary>
           <span class="t-es">Las 3 creatividades ganadoras · 752, 145 y 116 comentarios · una con el hook generado con IA</span>
@@ -2718,7 +2820,23 @@ document.querySelectorAll('.reveal').forEach(function(el,i){el.style.transitionD
        avisar. Medido: la tira aterrizaba en 0 en los 4 casos. Es la misma clase
        de fallo que el `getComputedTextLength()`→0 dentro de un contenedor
        oculto `[INC-MED-02]`: el DOM esta puesto y la geometria todavia no. */
-    c.querySelectorAll('[data-sx]').forEach(function(x){ x.scrollLeft=+x.getAttribute('data-sx')||0; });
+    /* 🔴 Y AUN ASI aterrizaba en 0, incluso con `complete:true` y
+       scrollWidth 1366 > clientWidth 564 (medido el 2026-08-29 sobre el popup
+       de Oktopet, que llevaba semanas publicado diciendo «Aterriza sobre el
+       gasto»). Mover la linea detras de `mdl-on` era necesario y NO suficiente:
+       las capturas van con `loading="lazy"`, asi que al abrir el modal la
+       imagen no tiene geometria y el scrollLeft se recorta contra un
+       scrollWidth que todavia no existe. Se reaplica en el siguiente frame Y
+       al cargar cada imagen. [INC-JS-09] */
+    c.querySelectorAll('[data-sx]').forEach(function(x){
+      var v=+x.getAttribute('data-sx')||0;
+      function poner(){ x.scrollLeft=v; }
+      poner();
+      requestAnimationFrame(function(){ requestAnimationFrame(poner); });
+      x.querySelectorAll('img').forEach(function(im){
+        if(!im.complete) im.addEventListener('load', poner, {once:true});
+      });
+    });
     m.querySelector('.mdl-x').focus();
   }
   function cerrar(){
